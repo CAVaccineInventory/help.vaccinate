@@ -96,3 +96,6 @@ exclude:
   - script/
   - webpack/
   - Procfile
+
+# Listen on all addresses so can run in Docker
+host: 0.0.0.0
