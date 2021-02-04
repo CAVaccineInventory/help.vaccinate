@@ -3,6 +3,9 @@ import "regenerator-runtime/runtime";
 import "custom-event-polyfill";
 import "whatwg-fetch";
 
+const AUTH0_DOMAIN = 'vaccinateca.us.auth0.com';
+const AUTH0_CLIENTID = 'ZnpcUDelsgbXXXMTayxzdPWTX8wikGi5';
+const AUTH0_AUDIENCE = 'https://help.vaccinateca.com';
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 import createAuth0Client from '@auth0/auth0-spa-js';
@@ -26,8 +29,9 @@ const updateLogin = (user) => {
 };
 
 createAuth0Client({
-  domain: 'vaccinateca.us.auth0.com',
-  client_id: 'ZnpcUDelsgbXXXMTayxzdPWTX8wikGi5',
+  domain: AUTH0_DOMAIN,
+  client_id: AUTH0_CLIENTID,
+  audience: AUTH0_AUDIENCE,
   redirect_uri: location.origin
 }).then(a0 => {
   console.log("Auth0 setup complete");
@@ -60,4 +64,20 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById('logout').addEventListener('click', () => {
     auth0.logout({returnTo: location.origin});
   });
+
+  document.getElementById('secureButton').addEventListener('click', async () => {
+    const accessToken = await auth0.getTokenSilently({
+        audience: AUTH0_AUDIENCE
+      });
+    const result = await fetch('/.netlify/functions/secure-test', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    const data = await result.json();
+    console.log("RESULTS", data);
+    document.getElementById('results').innerHTML = JSON.stringify(data); // XXX THE HORROR
+  });
+
 });
