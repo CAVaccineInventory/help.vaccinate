@@ -58,6 +58,6 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   document.getElementById('logout').addEventListener('click', () => {
-    auth0.logout({redirect_uri: location.origin});
+    auth0.logout({returnTo: location.origin});
   });
 });
