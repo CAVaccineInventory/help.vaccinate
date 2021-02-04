@@ -30,7 +30,7 @@
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.13.6",
     "@tarekraafat/autocomplete.js": "^8.2.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^3.8.3",
     "custom-event-polyfill": "^1.0.7",
     "handlebars": "^4.7.6",
