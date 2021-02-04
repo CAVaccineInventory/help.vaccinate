@@ -14,8 +14,4 @@ RUN bundle install
 
 COPY ./ /app/
 
-# do the build so we start serving right away
-RUN npx webpack
-
-EXPOSE 4000
-CMD ["npx", "nf", "start"]
+CMD ["netlify", "dev"]
