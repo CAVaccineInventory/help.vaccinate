@@ -4,7 +4,6 @@ module.exports = {
   "mode": "production",
   "entry": {
     "main": "./webpack/index.js",
-    "login": "./webpack/login.js",
   },
   "devtool": "source-map",
   "output": {
