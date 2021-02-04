@@ -1,0 +1,98 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely edit after that. If you find
+# yourself editing this file very often, consider using Jekyll's data files
+# feature for the data you need to update frequently.
+#
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
+#
+# If you need help with YAML syntax, here are some quick references for you:
+# https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
+# https://learnxinyminutes.com/docs/yaml/
+#
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.myvariable }}.
+
+title: VaccinateCA
+email: media@vaccinateca.com
+description: >- # this means to ignore newlines until "baseurl:"
+  Publishing up-to-date COVID-19 vaccine availability at hospitals and pharmacies across California.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://vaccinateca.com" # the base hostname & protocol for your site, e.g. http://example.com
+twitter_username: ca_covid
+github_username: CAVaccineInventory
+
+# Uncomment this when the site is ready to receive traffic:
+google_analytics_id: G-C1C9341MGL
+
+# Build settings
+plugins:
+  - jekyll-multiple-languages-plugin
+
+## Social media stuff supported by jekyll-seo-tag
+tagline: COVID-19 Vaccine Availability in California
+twitter:
+  card: summary_large_image
+  username: ca_covid
+
+social:
+  links:
+    - https://twitter.com/ca_covid
+    - https://github.com/CAVaccineInventory
+
+
+# Image used by jekyll-seo-tag plugin in the JSON-LD tag.
+logo: "/assets/img/logo.png"
+defaults:
+  - scope:
+      path: ""
+    values:
+      # Image used by jekyll-seo-tag plugin to generate Open Graph and other related meta tags.
+      image: /assets/img/link_card_image.png
+
+collections:
+  regions:
+    output: true
+  counties:
+    output: true
+
+include:
+  - _redirects
+
+languages: ["en"]
+
+# I'm sure there's a better way to do this than copying assets into the lang 
+# folders, but I couldn't figure it out easily.
+exclude_from_localizations: ["favicon.ico"]
+
+# Exclude from processing.
+# The following items will not be processed, by default.
+# Any item listed under the `exclude:` key here will be automatically added to
+# the internal "default list".
+#
+# Excluded items can be processed by explicitly listing the directories or
+# their entries' file path in the `include:` list.
+#
+exclude:
+  - package.json
+  - package-lock.json
+  - CODEOWNERS
+  - LICENSE
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - script/
+  - webpack/
+  - Procfile

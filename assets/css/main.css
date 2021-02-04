@@ -1,0 +1,160 @@
+:root {
+  font-family: "DM Sans", sans-serif;
+}
+@supports (font-variation-settings: normal) {
+  :root {
+    font-family: "DM Sans", sans-serif;
+  }
+}
+
+.main-content p {
+  margin-bottom: 12px;
+}
+
+/* Add underlines to links... */
+a {
+  color: #0366d6;
+  text-decoration: underline;
+}
+
+/* ... but exempt a bunch of things. */
+nav a,
+a[class^="bg-"],
+a[class*=" bg-"],
+a[class^="border-"],
+a[class*=" border-"],
+a.no-underline {
+  text-decoration: none;
+}
+
+.site-card {
+  box-shadow: 1px 1px 20px 2px rgba(0, 0, 0, 0.1);
+}
+
+.invert {
+  filter: invert(1);
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg width="16" height="25" viewBox="0 1 24 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 10.127L12 18.127L20 10.127H4Z" fill="%238E8E93"/></svg>');
+  background-repeat: no-repeat;
+  background-position-y: 50%;
+  background-position-x: 97%;
+}
+
+.up-arrow:before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 20px;
+  bottom: 100%;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-bottom-color: #e5e7eb;
+}
+
+.up-arrow:after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 21px;
+  bottom: 100%;
+  width: 0;
+  height: 0;
+  border: 9px solid transparent;
+  border-bottom-color: white;
+}
+
+.airtable-embed {
+  height: 85vh;
+}
+
+.autoComplete_wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+#autoComplete {
+  width: 100%;
+  padding: 4px 8px;
+}
+
+#autoComplete_list {
+  position: absolute;
+  top: 34px;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  margin: 0 5px;
+  border-radius: 0 0 5px 5px;
+  background-color: #fff;
+  box-shadow: 0 3px 6px rgba(149, 157, 165, 0.15);
+  outline: 0;
+  z-index: 1;
+}
+
+#main_search_autocomplete_list {
+  z-index: 1;
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  margin: 0 5px;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 3px 6px rgba(149, 157, 165, 0.15);
+  border: 1px solid #ededed;
+  outline: 0;
+}
+
+.autoComplete_result {
+  padding: 2px 5px;
+  list-style: none;
+  text-align: left;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #777;
+  cursor: pointer;
+}
+.autoComplete_result:hover {
+  background: #ddd;
+}
+
+.autoComplete_highlighted {
+  color: #000;
+}
+
+.autoComplete_selected {
+  cursor: pointer;
+  background-color: #f0f0f0;
+}
+
+.mapInfo h1 {
+  font-size: 2em;
+}
+
+.mapInfo .supersite-tag {
+  color: #007fff;
+}
+
+.search-input {
+  background: url(/assets/img/search.svg) no-repeat scroll 8px 48%;
+  padding-left: 32px;
+}
+
+.icon {
+  margin-bottom: 2px;
+  flex-shrink: 0;
+}
+
+.word-break {
+  word-break: break-word;
+}

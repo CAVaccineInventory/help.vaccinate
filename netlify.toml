@@ -1,0 +1,4 @@
+[dev]
+  port = 8080
+  publish = "/_site"
+  command = "script/server"
