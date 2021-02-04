@@ -28,8 +28,7 @@
     "url": "git+https://github.com/CAVaccineInventory/help.vaccinate.git"
   },
   "dependencies": {
-    "@okta/jwt-verifier": "^1.0.1",
-    "@okta/okta-signin-widget": "^4.2.7",
+    "@auth0/auth0-spa-js": "^1.13.6",
     "@tarekraafat/autocomplete.js": "^8.2.0",
     "axios": "^0.19.2",
     "core-js": "^3.8.3",

@@ -1,6 +1,6 @@
-FROM ruby:2.7.2-buster
+FROM ruby:2.7.2-alpine
 
-RUN apt-get update && apt-get install -y build-essential git npm && apt-get -y clean
+RUN apk add npm bash git make g++
 
 RUN mkdir -p /app/node_modules
 WORKDIR /app
@@ -12,5 +12,8 @@ RUN bundle install
 
 COPY ./ /app/
 
+# do the build so we start serving right away
+RUN npx webpack
+
 EXPOSE 4000
-CMD ["/app/script/server"]
+CMD ["npx", "nf", "start"]
