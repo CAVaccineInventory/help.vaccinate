@@ -1,0 +1,217 @@
+# These are strings used in multiple places
+global:
+  details: Details
+  appt_info: Appointment information
+  address: Address
+  latest_info: Latest info
+  location_notes: Location notes
+  latest_report: Updated
+  loading: Loading...
+  super_site: Super Site
+site_list:
+  vaccine_sites: Vaccines reported available
+  no_vaccine_sites: Vaccines reported unavailable
+  no_report_sites: Uncontacted locations
+
+#These are per-page strings.
+titles:
+  about_us: About Us
+  county_policies: County Policies
+  home: COVID-19 Vaccine Availability
+  vaccination_sites: Vaccination Sites
+  providers: Providers
+  nearest: Vaccination Sites Near You
+nearest:
+  dropdown_1: Sites we have contacted
+  dropdown_2: Sites with reported doses
+  dropdown_3: All known vaccination sites
+  appointment_required: Appointment required
+  latest_info: Latest info
+  vaccines_available: Vaccines reported available
+  vaccines_not_available: Vaccines reported unavailable
+  vaccine_unknown: Unknown vaccine status
+vaccination_sites:
+  explainer: |
+    This is a list of all of the sites we are aware of in California which may, 
+    at some point, receive the COVID-19 vaccine. <b>Most of them do not have the 
+    vaccine available</b>; we are calling as many as we can daily to update the 
+    list so please check the <a href="https://www.vaccinateca.com">latest report
+    </a>. If we missed a site, <a href="https://airtable.com/shrY44NvEjHBscrOH">
+    let us know</a>! We are working on expanding the list with additional 
+    pharmacies and other locations.
+head:
+  meta_image_tag: |
+    An image of the VaccinateCA logo with the text 'VaccinateCA. Find vaccines
+    near you with our community-run tracker'
+header:
+  menu_open: Open main menu
+map:
+  locate_button: Locate around me!
+  locating: Locating...
+  failed: Failed, please try again
+  not_supported: Geolocation not supported
+search_form:
+  enter_zip: Enter ZIP
+  enter_county: or county
+  location: Use my location
+  location_placeholder: My location
+  submit_button: Find <span class="hidden md:inline">Vaccine</span>
+site_template:
+  county_header: Within your county
+  no_reports: No contact reports
+not_found:
+  text: |
+    The page you've requested does not exist. If you're looking for help with 
+    finding vaccines in California, please check 
+    [VaccinateCA.com](https://www.vaccinateca.com).
+county_policies:
+  text: |
+    The state of California has a vaccine strategy, but has delegated
+    prioritization and administration to each county. Decisions as to which
+    patients to vaccinate and in what fashion are ultimately up to medical
+    providers.
+
+    We have collected the **most recent county-level information** below.
+    Broadly, we think that if the information we have on file from a county
+    disagrees with a medical provider in it, the one most likely to be right is 
+    the one who could (or could not) put a shot in someone's arm.
+
+    Some counties have set up scheduling systems or have advice; please check 
+    your county below.
+index:
+  header: Find a COVID-19 vaccine for yourself or a loved one
+  subtitle: | 
+     Safe and reliable COVID-19 vaccines are becoming available to seniors and healthcare workers
+     in California. But it can be difficult to find out where and how to get a shot. We call
+     hospitals and pharmacies daily to track their vaccine availability and their processes for getting one.
+  disclaimer: |
+    Safe and reliable COVID-19 vaccines are available to several groups of people in California. 
+    But it can be difficult to find out where and how to get a shot. 
+    We are a group of volunteers calling hospitals and pharmacies daily to track their vaccine availability and their processes for getting one.
+  disclaimer_1: |
+    The State of California has
+    <a href="https://www.npr.org/2021/01/13/956574947/california-to-vaccinate-residents-65-or-older-against-covid-19">approved</a>
+    giving the COVID-19 vaccine to people age 65 and older. California’s statewide
+    COVID-19 vaccination program has been evolving rapidly.
+    <a href="https://www.cdc.gov/coronavirus/2019-ncov/vaccines/index.html">Federal</a>,
+    <a href="https://covid19.ca.gov/vaccines/">state</a>,
+    and <a href="https://www.vaccinateca.com/county-policies">county</a> officials are
+    all publishing frequent updates. These government websites are your best
+    source for official information.
+  disclaimer_2: |
+    We are a community-led website and do not represent the government or any
+    healthcare provider.
+  illustration: Illustration of doctor administering vaccines
+  positive_feedback: Let us know if you found this site useful!
+  corrections: |
+    If you have a missing location to report, or think we have incorrect
+    contact information,
+    <a href="https://airtable.com/shrY44NvEjHBscrOH" class="text-black">please let us know.</a>
+  locations_by_county: Vaccination locations by county
+  more_info: More information about vaccine availability
+  find_county: Find your county
+  about_us: About VaccinateCA
+data_js:
+  alert: Could not retrieve the vaccination site data.
+  call_back: Could not reach human, calling back later
+nearest_js:
+  alert_detect: Failed to detect your location. Please try again or enter your zip code
+  alert_zipcode: Failed to locate your zip code, please try again
+  years_up: years old and up
+  patients_only: Current patients only
+  county_only: County residents only
+post_list_disclaimer:
+  disclaimer: |
+      We do our best to keep the information on this site current, but vaccine
+      eligibility and availability at a specific location may have changed by the
+      time you read this. If you find anything on this site that is out of date,
+      <a href="https://airtable.com/shrY44NvEjHBscrOH"
+        class="font-medium text-yellow-600"
+      >
+        please report it</a
+      >. Your report will help other Californians.
+pre_list_disclaimer:
+  disclaimer: |
+    We call hospitals, pharmacies, and other health providers across California
+    every day to find out if they are currently administering vaccines. The
+    medical professionals working at these providers tell us about their current
+    vaccination programs and we report what they say here. While we do our best
+    to verify all information we receive, we strongly encourage you to check
+    with your doctor or local officials if you have questions about a 
+    vaccination site.
+providers:
+  header: |
+    This is an overview of the latest information we have for all major provider 
+    networks in California. It is possible that the staff working at a particular 
+    location within these networks will choose to operate differently.
+footer:
+  lang_disclaimer: |
+    Translation of this website is in active development. Some information may
+    not yet be available in this language— we apologize for the inconvenience!
+about_us:
+  coordinators: "Some of us who worked on this project on Day 1:"
+  intro_1: |
+    VaccinateCA is a community-driven effort to help Californians learn accurate, up-to-date, verified information about
+    the coronavirus vaccine, so they they can learn when they will be eligible and how to take their place in line.
+  intro_2: |
+    Our professionals call medical professionals at hundreds of potential vaccination sites daily, asking them if they 
+    have the vaccine and if so to whom they will administer it to and how to get an appointment. We write down what 
+    they tell us, and publish it to this site.
+  faq_header: |
+    Frequently Asked Questions (FAQ)
+  faq_help: How can I help?
+  faq_help_answer_1: |
+    Get the word out about the vaccine in your community. Help your eligible loved ones get the vaccine. Continue 
+    wearing your mask and observe social distancing guidelines.
+  faq_help_answer_2: |
+    What we need the most right now are responsible volunteers who can help us call healthcare providers across 
+    the state so we can continue to offer comprehensive information about COVID-19 vaccine availability to all 
+    Californians. 
+  faq_help_answer_3: |
+    If you'd like to volunteer to help us make calls, please <a href="https://airtable.com/shrY9Ac8PGuudZAe3">let us know</a>.
+  faq_help_answer_4: |
+    <a href="https://twitter.com/ca_covid">Follow us on Twitter</a> to keep up to date on other 
+    opportunities to help out.
+  faq_help_answer_5: |
+    We don't need money. Many charitable projects <i>do</i>; they would appreciate your generous support.
+  faq_press: |
+    I am a reporter. Can I get in touch?
+  faq_press_answer: |
+    Please email <a href="mailto:media@vaccinateca.com">media@vaccinateca.com</a>; we'll be in touch quickly.
+  faq_medical: |
+    I work at a medical provider! How do I ask you to update our information or make a request of you?
+  faq_medical_answer_1: |
+    We appreciate the work you are doing, and are here to support it!
+  faq_medical_answer_2: |
+    Please text <a href="tel:+14153014597">(415) 301-4597</a> with your message, institutional affiliation, and an 
+    internal extension or contact name so we can call back to verify. We cannot receive photos at this number; 
+    text only, please.
+  faq_medical_answer_3: |
+    One of the organizers will read your message and take action as soon as reasonably possible.
+  faq_community: |
+    I work in a community-facing organization or for the government. Can we discuss this?
+  faq_community_answer_1: |
+    We want to support the urgent work you are doing in getting Californians vaccinated as quickly as possible. 
+    Please email us at <a href="mailto:partners@vaccinateca.com">partners@vaccinateca.com</a> to discuss.
+  faq_toil: |
+    Does this effort increase or decrease toil in the healthcare system?
+  faq_toil_answr_1: |
+    Most hospitals will get thousands of phone calls per day. They are currently being slammed by many more people than 
+    usual asking them the same question: "Do you have the vaccine?"
+  faq_toil_answr_2: |
+    By asking that question and publishing the answer, we can save their phone bandwidth for the day-to-day operations 
+    of the hospital. We also save people seeking the vaccine from having to call dozens of locations to find one that 
+    has availability.
+  faq_accurate: |
+    Is the information on this website accurate?
+  faq_accurate_answer_1: |
+    We publish only what the vaccine site told us when we called. The situation is complex, supplies may vary throughout
+    the day, and not everyone at the site might have up-to-the-minute information as to what their policies actually 
+    are.
+  faq_accurate_answer_2: |
+    We're doing our best, but can't make any guarantees.
+  faq_who: |
+    Who are you?
+  faq_who_answer: |
+    We are a community-driven organization, with over 300 volunteers working with us. As of January 23rd, 2021, our 
+    core team was approximately 20 people.

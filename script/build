@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e -u
+
+npx webpack build
+bundle exec jekyll build
