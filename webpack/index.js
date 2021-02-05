@@ -45,12 +45,15 @@ createAuth0Client({
     console.log("XXX", err);
   });
 
-const fetchJsonFromEndpoint = async (endpoint) => {
+const fetchJsonFromEndpoint = async (endpoint, method, body) => {
+  if (!method) {
+    method = "POST";
+  }
   const accessToken = await auth0.getTokenSilently({
     audience: AUTH0_AUDIENCE,
   });
   const result = await fetch(endpoint, {
-    method: "POST",
+    method, body,
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -141,6 +144,18 @@ const addNetlifyTesterListeners = () => {
       debugOutput("loading");
       const data = await fetchJsonFromEndpoint(
         "/.netlify/functions/requestCall"
+      );
+      debugOutput(data);
+    });
+
+
+  document.getElementById("submitReportButton")
+    .addEventListener("click", async () => {
+      const body = document.getElementById("submitReportText").value;
+      debugOutput("loading");
+      const data = await fetchJsonFromEndpoint(
+        "/.netlify/functions/submitReport",
+        "POST", body
       );
       debugOutput(data);
     });

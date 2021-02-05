@@ -37,3 +37,27 @@ Gets a location for the user to call. 'Locks' the location for 10 minutes so it 
   "Affiliation": "Rite-Aid"
 }
 ```
+
+## submitReport
+
+Submits a report based on what the user found during a call.
+
+- **Path**: `/.netlify/functions/submitReport`
+- **Permissions**: Must have the `caller` permission.
+- **Req Type**: `POST`
+- **Req Body**: A single JSON object corresponding to the report to create. Fields match Airtable `Reports` column names.
+- **Response**: a JSON blob with `created: 1` on success, `error: "some string"` on error.
+- **Example**:
+```json
+Request:
+{
+  "Location": "recRPSSfimvslExuU",
+  "Vaccines available?": "No",
+  "Availability": ["No: not open to the public"],
+  "Notes": "just testing",
+  "Internal Notes": "just testing"
+}
+
+Response:
+{"created":1}
+```
