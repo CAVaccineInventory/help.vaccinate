@@ -87,11 +87,13 @@ const addScoobyListeners = () => {
   document
     .getElementById("requestCallButton")
     .addEventListener("click", async () => {
+      document.getElementById("call-to-action").classList.add('hidden');
       debugOutput("loading");
       const data = await fetchJsonFromEndpoint(
         "/.netlify/functions/requestCall"
       );
       fillScoobyTemplate(data);
+      document.getElementById("caller-tool").classList.remove('hidden');
     });
 
 }
