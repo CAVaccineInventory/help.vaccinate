@@ -158,3 +158,11 @@ select {
 .word-break {
   word-break: break-word;
 }
+
+#app-scooby #call-to-action {
+        border: 5px solid red;
+}
+
+#app-scooby .hidden {
+	display: none;
+}
