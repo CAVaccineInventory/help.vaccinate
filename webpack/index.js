@@ -83,12 +83,13 @@ window.addEventListener("load", async () => {
 });
 
 // wire up login/logout buttons
-document.addEventListener("DOMContentLoaded", function () {
+
+
+const addNetlifyTesterListeners = () => {
   document.getElementById("login").addEventListener("click", doLogin);
   document.getElementById("logout").addEventListener("click", doLogout);
 
-  document
-    .getElementById("secureButton")
+  document .getElementById("secureButton")
     .addEventListener("click", async () => {
       const data = await fetchJsonFromEndpoint(
         "/.netlify/functions/secure-test"
@@ -105,4 +106,11 @@ document.addEventListener("DOMContentLoaded", function () {
       );
       debugOutput(data);
     });
-});
+
+};
+
+
+document.addEventListener("DOMContentLoaded", function () {
+if (document.getElementById('app-netlify-tester')) {
+  addNetlifyTesterListeners();
+}}) ;

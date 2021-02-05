@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ page.lang | default: site.lang | default: 'en' }}">
   {% include head.html %}
-  <body class="min-h-screen w-screen">
+  <body class="min-h-screen w-screen" id="app-{{ page.app | default: 'unspecified' }}">
     {% include header.html %}
     <main
       class="lg:py-6 px-4 {% if include.with_container %} lg:container lg:px-0 md:mx-auto {% else %} md:px-8 {% endif %}"
