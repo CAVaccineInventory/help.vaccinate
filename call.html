@@ -3,27 +3,35 @@ layout: default_with_container
 title: titles.home
 add_to_nav: true
 homepage: true
+app: scooby
 ---
 <div class="flex flex-col">
 	<div class="mt-16 py-8 lg:flex lg:justify-center">
-		<div class="flex flex-col-reverse px-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-10 md:px-12 lg:container">
-			<div id="col1">
+		<div id="call-to-action">
 				<h1 class="text-xl font-bold leading-tight text-gray-900">
 				You've made 123 calls. 23 of them were today.</h1>
 				<h2>You've found 12 places with vaccines, 10 places with no vaccines and 88 places nobody ever has to call again.</h2>
+				<div>Inspirational message goes HERE</div>	
 				<hr class="my-4" /> 
+				<input type="button" id="requestCallButton" value="Make a call" />
+		</div>
+
+		<div id="caller-tool" class="hidden">
+		<div class="flex flex-col-reverse px-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-10 md:px-12 lg:container">
+			<div id="col1">
+
 				<div class="location">
 				<h1>Location</h1>
 				
-				COSTCO PHARMACY #441 in Riverside County
+				<span id="location-name">Location name nnot loaded</span>
 				
 				<h2>Address</h2>
 				
-				72800 DINAH SHORE DR, PALM DESERT, CA 92211
+				<span id="location-address">Location not loaded</span>
 				
 				<h2>Hours</h2>
 				
-				<div>Monday - Friday: 10:00 AM – 7:00 PM Saturday: 9:30 AM – 6:00 PM Sunday: Closed</div>
+				<div id="location-hours">Hours not loaded</div>
 				
 				If it's outside those hours <input type="button" value="Skip this call for now">.
 				
@@ -50,7 +58,8 @@ homepage: true
 
 
 				<h3>County info</h3>
-				<div>Riverside County: county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine
+				<div><span id="location-county-name">County not loaded</span>
+					 county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine
 				</div>
 				
 				
@@ -61,7 +70,7 @@ homepage: true
 				<div class="call-to-action">
 				Call this number on your phone or click to dial if your browser supports it.
 				
-				<div class="phone"><a href="tel:+17602021326">(760) 202-1362</a></div>
+				<div class="phone"><a id="location-phone-url" href=""><span id="location-phone">(212) 555-1234</span></a></div>
 				
 				
 				</div>
@@ -313,9 +322,14 @@ NB: this textarea should auto-grow to accomodate notes
 	This should auto-grow.
 Pharmacy awaiting vaccines until March
 </textarea>
+					</div>
 
 				</div> 
 			</div> 
 		</div>
 	</div>
 </div> 
+
+Debug:
+<div id="results"></div>
+
