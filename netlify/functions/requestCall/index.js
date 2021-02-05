@@ -69,7 +69,8 @@ const handler = requirePermission("caller", async (event, context) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify(locationToCall.fields)
+    body: JSON.stringify(Object.assign(
+      {id: locationToCall.id}, locationToCall.fields))
   };
 });
 
