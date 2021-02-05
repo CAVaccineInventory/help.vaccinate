@@ -81,6 +81,8 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   document.getElementById('requestCallButton').addEventListener('click', async () => {
+    document.getElementById('results').innerHTML = "loading";
+
     const accessToken = await auth0.getTokenSilently({
         audience: AUTH0_AUDIENCE
       });
