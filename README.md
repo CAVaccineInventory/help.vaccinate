@@ -27,3 +27,10 @@ We use GitHub Issues to track potential work. Please add to this list, whether y
 
 ### Running the linter
 The linter - [Prettier](https://prettier.io/) - runs on every PR automatically. If you'd like to run it locally, run `npm install` once to set up npm and then `npm run lint:fix` to run the linter. 
+
+### Using Docker
+
+To run an end-to-end stack using Docker:
+```
+docker build -t test . && docker run -it --rm  -p 8080:8080 test
+```

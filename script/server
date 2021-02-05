@@ -1,16 +1,15 @@
 #!/bin/bash
 set -e -u
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-bundle install
-npm install
+# first install
+"$DIR/install"
 
 # If webpack hasn't run yet, lets bootstrap that, otherwise Jekyll will be upset
 # on boot
-if [ ! -f $DIR/../assets/js/main.js ]; then
-  echo "Running initial JS compilation…"
-  npx webpack
+if [ ! -f "$DIR/../assets/js/main.js" ]; then
+  "$DIR/build"
 fi
 
+# now serve
 npx nf start
