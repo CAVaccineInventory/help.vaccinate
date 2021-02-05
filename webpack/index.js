@@ -46,7 +46,6 @@ createAuth0Client({
   });
 
 const fetchJsonFromEndpoint = async (endpoint) => {
-  console.log("grabbing endpoint", endpoint);
   const accessToken = await auth0.getTokenSilently({
     audience: AUTH0_AUDIENCE,
   });
