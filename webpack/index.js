@@ -127,16 +127,16 @@ const addNetlifyTesterListeners = () => {
   document.getElementById("login").addEventListener("click", doLogin);
   document.getElementById("logout").addEventListener("click", doLogout);
 
-  document .getElementById("secureButton")
+  document.getElementById("checkAuthButton")
     .addEventListener("click", async () => {
+      debugOutput("loading");
       const data = await fetchJsonFromEndpoint(
-        "/.netlify/functions/secure-test"
+        "/.netlify/functions/checkAuth"
       );
       debugOutput(data);
     });
 
-  document
-    .getElementById("requestCallButton")
+  document.getElementById("requestCallButton")
     .addEventListener("click", async () => {
       debugOutput("loading");
       const data = await fetchJsonFromEndpoint(
