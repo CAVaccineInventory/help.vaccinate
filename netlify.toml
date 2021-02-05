@@ -3,4 +3,4 @@
   publish = "/_site"
   command = "script/server"
 [build]
-  functions = "functions"
+  functions = "netlify/functions"
