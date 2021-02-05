@@ -18,7 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: VaccinateCA
+title: Help VaccinateCA
 email: media@vaccinateca.com
 description: >- # this means to ignore newlines until "baseurl:"
   Publishing up-to-date COVID-19 vaccine availability at hospitals and pharmacies across California.
@@ -31,8 +31,8 @@ github_username: CAVaccineInventory
 google_analytics_id: G-C1C9341MGL
 
 # Build settings
-plugins:
-  - jekyll-multiple-languages-plugin
+#plugins:
+#  - jekyll-multiple-languages-plugin
 
 ## Social media stuff supported by jekyll-seo-tag
 tagline: COVID-19 Vaccine Availability in California
