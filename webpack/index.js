@@ -80,4 +80,18 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('results').innerHTML = JSON.stringify(data); // XXX THE HORROR
   });
 
+  document.getElementById('requestCallButton').addEventListener('click', async () => {
+    const accessToken = await auth0.getTokenSilently({
+        audience: AUTH0_AUDIENCE
+      });
+    const result = await fetch('/.netlify/functions/requestCall', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    const data = await result.json();
+    console.log("RESULTS", data);
+    document.getElementById('results').innerHTML = JSON.stringify(data); // XXX THE HORROR
+  });
 });

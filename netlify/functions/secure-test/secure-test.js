@@ -1,13 +1,6 @@
 "use strict";
 
-const { NetlifyJwtVerifier } = require('@serverless-jwt/netlify');
-
-const verifyJwt = NetlifyJwtVerifier({
-  issuer: process.env.JWT_ISSUER || 'https://vaccinateca.us.auth0.com/',
-  audience: process.env.JWT_AUDIENCE || 'https://help.vaccinateca.com'
-});
-
-console.log("QQQ");
+const { requireAuth } = require("../../lib/auth.js");
 
 const handler = async (event, context) => {
   // The user information is available here.
@@ -27,4 +20,4 @@ const handler = async (event, context) => {
 };
 
 
-exports.handler = verifyJwt(handler);
+exports.handler = requireAuth(handler);

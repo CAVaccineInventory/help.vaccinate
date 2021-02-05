@@ -7,11 +7,16 @@ RUN npm install netlify-cli -g
 RUN mkdir -p /app/node_modules
 WORKDIR /app
 
-COPY *.json /app/
-RUN npm install
-COPY Gemfile* /app/
-RUN bundle install
+# don't copy everything so we don't rebuild all the time.
+COPY *.json Gemfile* /app/
+COPY script/* /app/script/
+RUN /app/script/install
+# stop builder from re-running this
+RUN touch /app/node_modules/.no-refresh
+
 
 COPY ./ /app/
+RUN /app/script/build
+
 
 CMD ["netlify", "dev"]
