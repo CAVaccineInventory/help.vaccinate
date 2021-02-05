@@ -30,7 +30,13 @@ The linter - [Prettier](https://prettier.io/) - runs on every PR automatically. 
 
 ### Using Docker
 
+Create a file called Makefile.local. It should contain only the line:
+
+```
+AIRTABLE_API_KEY=...your key here...
+```
+
 To run an end-to-end stack using Docker, pointed at the staging Base:
 ```
-docker build -t test . && docker run -it --rm  -p 8080:8080  -e AIRTABLE_API_KEY=key.YOUR.KEY. -e AIRTABLE_BASE=appB9VdNQI7wTFzDF  -v "$(pwd):/app" test
+make docker-run
 ```

@@ -3,3 +3,4 @@ _site
 .jekyll-cache
 .cache
 assets/js
+Makefile.local
