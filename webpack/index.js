@@ -45,55 +45,61 @@ createAuth0Client({
   console.log("XXX", err);
 });
 
-
-// handle login urls
-window.addEventListener('load', async () => {
-  const redirectResult = await auth0.handleRedirectCallback();
-  // XXX maybe remove url paramaters now?
-
-  const user = await auth0.getUser();
-  updateLogin(user);
-});
-
-// wire up login/logout buttons
-document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById('login').addEventListener('click', () => {
-    auth0.loginWithRedirect();
-  });
-
-  document.getElementById('logout').addEventListener('click', () => {
-    auth0.logout({returnTo: location.origin});
-  });
-
-  document.getElementById('secureButton').addEventListener('click', async () => {
+  const fetchJsonFromEndpoint = async (endpoint) => {
+	console.log("grabbing endpoint", endpoint);
     const accessToken = await auth0.getTokenSilently({
         audience: AUTH0_AUDIENCE
       });
-    const result = await fetch('/.netlify/functions/secure-test', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
-    const data = await result.json();
-    console.log("RESULTS", data);
-    document.getElementById('results').innerHTML = JSON.stringify(data); // XXX THE HORROR
-  });
-
-  document.getElementById('requestCallButton').addEventListener('click', async () => {
-    document.getElementById('results').innerHTML = "loading";
-
-    const accessToken = await auth0.getTokenSilently({
-        audience: AUTH0_AUDIENCE
-      });
-    const result = await fetch('/.netlify/functions/requestCall', {
+    const result = await fetch(endpoint, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
     });
     const data = await result.json();
+	console.log(data);
+    return data;
+  };
+
+const doLogin = () => {
+
+    auth0.loginWithRedirect();
+
+};
+
+ const doLogout = () => {
+    auth0.logout({returnTo: location.origin});
+  };
+
+  const debugOutput = (data) => {
     console.log("RESULTS", data);
-    document.getElementById('results').innerHTML = JSON.stringify(data); // XXX THE HORROR
+    const target = document.getElementById('results');
+	target.innerHTML = JSON.stringify(data); // XXX THE HORROR
+  };
+
+
+// handle login urls
+window.addEventListener('load', async () => {
+  const redirectResult = await auth0.handleRedirectCallback();
+  // XXX maybe remove url paramaters now?
+  const user = await auth0.getUser();
+  updateLogin(user);
+});
+
+// wire up login/logout buttons
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById('login').addEventListener('click', doLogin);
+  document.getElementById('logout').addEventListener('click', doLogout);
+
+  document.getElementById('secureButton').addEventListener('click', async () => {
+    const data = await fetchJsonFromEndpoint('/.netlify/functions/secure-test');
+    debugOutput(data);
+  });
+
+
+  document.getElementById('requestCallButton').addEventListener('click', async () => {
+    debugOutput('loading');
+    const data = await fetchJsonFromEndpoint('/.netlify/functions/requestCall');
+    debugOutput(data);
   });
 });
