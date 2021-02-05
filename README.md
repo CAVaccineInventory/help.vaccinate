@@ -30,7 +30,7 @@ The linter - [Prettier](https://prettier.io/) - runs on every PR automatically. 
 
 ### Using Docker
 
-To run an end-to-end stack using Docker:
+To run an end-to-end stack using Docker, pointed at the staging Base:
 ```
-docker build -t test . && docker run -it --rm  -p 8080:8080 test
+docker build -t test . && docker run -it --rm  -p 8080:8080  -e AIRTABLE_API_KEY=key.YOUR.KEY. -e AIRTABLE_BASE=appB9VdNQI7wTFzDF test
 ```
