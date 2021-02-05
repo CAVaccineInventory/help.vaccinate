@@ -82,9 +82,45 @@ window.addEventListener("load", async () => {
   updateLogin(user);
 });
 
-// wire up login/logout buttons
 
+const addScoobyListeners = () => {
+  document
+    .getElementById("requestCallButton")
+    .addEventListener("click", async () => {
+      debugOutput("loading");
+      const data = await fetchJsonFromEndpoint(
+        "/.netlify/functions/requestCall"
+      );
+      fillScoobyTemplate(data);
+    });
 
+}
+
+const el = (elementId, value) => {
+	const element = document.getElementById(elementId);
+	if (element !== null) {
+		element.innerHTML = value;
+	}	
+}
+
+const link_target = (elementId, value) => {
+	const element = document.getElementById(elementId);
+	if (element !== null) {
+		element.setAttribute('href',value);
+	}	
+}
+const fillScoobyTemplate = (data) => {
+	el('location-name', data.Name);
+	el('location-address', data.Address);
+	el('location-phone', data["Phone number"]);	
+	link_target('location-phone-url', "tel:" .concat( data["Phone number"]));	
+	el('location-county-name', data["County"]);	
+	el('location-type', data["Location Type"]);	
+	el('location-affiliation', data["Location Affiliation"]);	
+
+};
+
+ 
 const addNetlifyTesterListeners = () => {
   document.getElementById("login").addEventListener("click", doLogin);
   document.getElementById("logout").addEventListener("click", doLogout);
@@ -113,4 +149,9 @@ const addNetlifyTesterListeners = () => {
 document.addEventListener("DOMContentLoaded", function () {
 if (document.getElementById('app-netlify-tester')) {
   addNetlifyTesterListeners();
-}}) ;
+} else if (document.getElementById('app-scooby')) {
+  addScoobyListeners();
+}
+
+
+}) ;
