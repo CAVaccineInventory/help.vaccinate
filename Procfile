@@ -1,2 +1,2 @@
-webpack: npx webpack -w
-jekyll: bundle exec jekyll serve --livereload
+webpack: cd apps && npm run serve:webpack
+eleventy: cd apps && npm run serve:eleventy
