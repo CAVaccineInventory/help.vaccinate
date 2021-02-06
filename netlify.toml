@@ -6,3 +6,4 @@
   framework = "#custom"
 [build]
   functions = "netlify/functions"
+  command = "script/build"
