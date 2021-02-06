@@ -1,8 +1,9 @@
 module.exports = function (config) {
     return {
         dir: {
-            input: '.',
-            output: '_site'
+            input: 'pages',
+            output: '_site',
+            includes: '../_includes'
         },
     };
 };

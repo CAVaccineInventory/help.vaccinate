@@ -1,8 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-import "custom-event-polyfill";
-import "whatwg-fetch";
-
 const AUTH0_DOMAIN = "vaccinateca.us.auth0.com";
 const AUTH0_CLIENTID = "ZnpcUDelsgbXXXMTayxzdPWTX8wikGi5";
 const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
@@ -102,30 +97,30 @@ const addScoobyListeners = () => {
 }
 
 const el = (elementId, value) => {
-	const element = document.getElementById(elementId);
-	if (element !== null) {
-		element.innerHTML = value;
-	}	
+  const element = document.getElementById(elementId);
+  if (element !== null) {
+    element.innerHTML = value;
+  }
 }
 
 const link_target = (elementId, value) => {
-	const element = document.getElementById(elementId);
-	if (element !== null) {
-		element.setAttribute('href',value);
-	}	
+  const element = document.getElementById(elementId);
+  if (element !== null) {
+    element.setAttribute('href', value);
+  }
 }
 const fillScoobyTemplate = (data) => {
-	el('location-name', data.Name);
-	el('location-address', data.Address);
-	el('location-phone', data["Phone number"]);	
-	link_target('location-phone-url', "tel:" .concat( data["Phone number"]));	
-	el('location-county-name', data["County"]);	
-	el('location-type', data["Location Type"]);	
-	el('location-affiliation', data["Location Affiliation"]);	
+  el('location-name', data.Name);
+  el('location-address', data.Address);
+  el('location-phone', data["Phone number"]);
+  link_target('location-phone-url', "tel:".concat(data["Phone number"]));
+  el('location-county-name', data["County"]);
+  el('location-type', data["Location Type"]);
+  el('location-affiliation', data["Location Affiliation"]);
 
 };
 
- 
+
 const addNetlifyTesterListeners = () => {
   document.getElementById("login").addEventListener("click", doLogin);
   document.getElementById("logout").addEventListener("click", doLogout);
@@ -164,11 +159,11 @@ const addNetlifyTesterListeners = () => {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-if (document.getElementById('app-netlify-tester')) {
-  addNetlifyTesterListeners();
-} else if (document.getElementById('app-scooby')) {
-  addScoobyListeners();
-}
+  if (document.getElementById('app-netlify-tester')) {
+    addNetlifyTesterListeners();
+  } else if (document.getElementById('app-scooby')) {
+    addScoobyListeners();
+  }
+});
 
-
-}) ;
+export { addNetlifyTesterListeners, addScoobyListeners };

@@ -10,6 +10,7 @@ WORKDIR /app
 # don't copy everything so we don't rebuild all the time.
 COPY *.json Gemfile* /app/
 COPY script/* /app/script/
+COPY apps/* /app/apps/
 RUN /app/script/install
 # stop builder from re-running this
 RUN touch /app/node_modules/.no-refresh

@@ -12,4 +12,4 @@ if [ ! -f "$DIR/../assets/js/main.js" ]; then
 fi
 
 # now serve
-npx nf start
+cd apps && npm run serve

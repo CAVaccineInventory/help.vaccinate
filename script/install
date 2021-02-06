@@ -2,10 +2,6 @@
 set -e -u
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# bundle install
-
-cd apps && npm install && cd ..
-
 # docker builder places this file so stop npm install from re-running
 # all the time.
 if [ ! -f "$DIR/../node_modules/.no-refresh" ] ; then

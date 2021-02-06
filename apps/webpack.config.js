@@ -3,7 +3,8 @@ const path = require("path");
 module.exports = {
   "mode": "development",
   "entry": {
-    "main": "./assets/js/index.js",
+    "index": "./assets/js/index.js",
+    "scooby": "./assets/js/scooby.js",
   },
   "devtool": "source-map",
   "output": {
