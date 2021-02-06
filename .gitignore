@@ -4,3 +4,4 @@ _site
 .cache
 assets/js
 Makefile.local
+.DS_Store
