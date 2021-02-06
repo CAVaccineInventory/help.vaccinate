@@ -13,6 +13,7 @@ COPY script/* /app/script/
 RUN /app/script/install
 # stop builder from re-running this
 RUN touch /app/node_modules/.no-refresh
+RUN touch /app/apps/node_modules/.no-refresh
 
 
 COPY ./ /app/
