@@ -6,4 +6,4 @@
   framework = "#custom"
 [build]
   functions = "netlify/functions"
-  command = "script/install && script/build"
+  command = "script/build"
