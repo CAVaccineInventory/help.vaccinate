@@ -1,6 +1,6 @@
 [dev]
   port = 8080
-  publish = "/_site"
+  publish = "/apps/_site"
   command = "script/server"
 [build]
   functions = "netlify/functions"
