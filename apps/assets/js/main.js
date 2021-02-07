@@ -11,7 +11,7 @@ import countyTemplate from "./templates/county.handlebars";
 import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
 import callReportFormTemplate from "./templates/callReportForm.handlebars";
-
+import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
 
 
 
@@ -22,7 +22,7 @@ import callReportFormTemplate from "./templates/callReportForm.handlebars";
 let auth0 = null;
 
 const updateLogin = (user) => {
-  const e = document.getElementById("login-email");
+  const e = document.querySelector("#login-email");
   if (!e) {
     console.log("XXX dom not ready");
     return;
@@ -81,7 +81,7 @@ const doLogout = () => {
 
 const debugOutput = (data) => {
   console.log("RESULTS", data);
-  const target = document.getElementById("results");
+  const target = document.querySelector("#results");
   target.innerHTML = JSON.stringify(data); // XXX THE HORROR
 };
 
@@ -98,19 +98,36 @@ window.addEventListener("load", async () => {
 });
 
 
-const addScoobyListeners = () => {
+const hideScript = () => { 
+      document.querySelector("#caller-tool").classList.remove('hidden');
+}
+const showScript = (location) => {
+	document.querySelector("#nextCallPrompt").classList.add('hidden');
+        fillScoobyTemplate(location);
+	document.querySelector("#caller-tool").classList.remove('hidden');
+}
+
+
+const showNextCallPrompt = () => {
+const nextCallPrompt = nextCallPromptTemplate({});
+document.querySelector("#nextCallPrompt").innerHTML = nextCallPrompt;
   document
-    .getElementById("requestCallButton")
+    .querySelector("#requestCallButton")
     .addEventListener("click", async () => {
-      document.getElementById("call-to-action").classList.add('hidden');
       debugOutput("loading");
       const data = await fetchJsonFromEndpoint(
         "/.netlify/functions/requestCall"
       );
-      fillScoobyTemplate(data);
-      document.getElementById("caller-tool").classList.remove('hidden');
+	showScript(data);
     });
+	document.querySelector("#nextCallPrompt").classList.add('remove');
+	document.querySelector("#caller-tool").classList.remove('add');
+	
+}
 
+
+const addScoobyListeners = () => {
+	showNextCallPrompt();
 }
 
 const submitCallReport = async () => {
@@ -145,8 +162,8 @@ const fillScoobyTemplate = (data) => {
   const filledForm = callReportFormTemplate({
 	LocationId: data.id
   });
-  document.getElementById('locationInfo').innerHTML = previousReportLocation;
-  document.getElementById('callReportForm').innerHTML = filledForm;
+  document.querySelector('#locationInfo').innerHTML = previousReportLocation;
+  document.querySelector('#callReportForm').innerHTML = filledForm;
 
   const latestReport = latestReportTemplate({
     latestReportTime: data['Latest report'],
@@ -154,19 +171,19 @@ const fillScoobyTemplate = (data) => {
     latestReportPublicNotes: "Expect something",
     latestReportInternalNotes: "Call again tomorrow"
   });
-  document.getElementById("latestReport").innerHTML = latestReport;
+  document.querySelector("#latestReport").innerHTML = latestReport;
 
   const countyInfo = countyTemplate({
     countyName: data.County,
     countyInfo: "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine"
   });
-  document.getElementById("countyInfo").innerHTML = countyInfo;
+  document.querySelector("#countyInfo").innerHTML = countyInfo;
   document.querySelector("#scoobyRecordCall").addEventListener("click", submitCallReport);
 
   const cta = ctaTemplate({
     locationPhone: data["Phone number"],
   });
-  document.getElementById("cta").innerHTML = cta;
+  document.querySelector("#cta").innerHTML = cta;
 
 };
 
