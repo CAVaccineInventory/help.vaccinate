@@ -171,49 +171,6 @@ const fillScoobyTemplate = (data) => {
 };
 
 
-const addNetlifyTesterListeners = () => {
-  document.getElementById("login").addEventListener("click", doLogin);
-  document.getElementById("logout").addEventListener("click", doLogout);
-
-  document.getElementById("checkAuthButton")
-    .addEventListener("click", async () => {
-      debugOutput("loading");
-      const data = await fetchJsonFromEndpoint(
-        "/.netlify/functions/checkAuth"
-      );
-      debugOutput(data);
-    });
-
-  document.getElementById("requestCallButton")
-    .addEventListener("click", async () => {
-      debugOutput("loading");
-      const data = await fetchJsonFromEndpoint(
-        "/.netlify/functions/requestCall"
-      );
-      debugOutput(data);
-    });
 
 
-  document.getElementById("submitReportButton")
-    .addEventListener("click", async () => {
-      const body = document.getElementById("submitReportText").value;
-      debugOutput("loading");
-      const data = await fetchJsonFromEndpoint(
-        "/.netlify/functions/submitReport",
-        "POST", body
-      );
-      debugOutput(data);
-    });
-
-};
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  if (document.getElementById('app-netlify-tester')) {
-    addNetlifyTesterListeners();
-  } else if (document.getElementById('app-scooby')) {
-    addScoobyListeners();
-  }
-});
-
-export { addNetlifyTesterListeners, addScoobyListeners };
+export { doLogin, doLogout, addScoobyListeners };
