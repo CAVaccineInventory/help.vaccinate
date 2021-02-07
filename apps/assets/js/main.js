@@ -123,7 +123,6 @@ const fillScoobyTemplate = (data) => {
   });
   document.getElementById("latestReport").innerHTML = latestReport;
 
-  debugger;
   templateSource = document.querySelector("#countyInfoTemplate").innerHTML;
   const countyInfoTemplate = Handlebars.compile(templateSource);
   const countyInfo = countyInfoTemplate({
