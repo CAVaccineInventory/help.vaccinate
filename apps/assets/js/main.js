@@ -10,6 +10,12 @@ import locationTemplate from "./templates/location.handlebars";
 import countyTemplate from "./templates/county.handlebars";
 import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
+import callReportFormTemplate from "callReportForm.handlebars";
+
+
+
+
+
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
@@ -136,6 +142,10 @@ const fillScoobyTemplate = (data) => {
     locationPhone: data["Phone number"],
   });
   document.getElementById("cta").innerHTML = cta;
+
+  const callReportForm = callReportFormTemplate({});
+  document.getElementById("callReportForm").innerHTML = callReportForm;
+
 };
 
 
