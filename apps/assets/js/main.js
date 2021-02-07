@@ -126,7 +126,7 @@ const hideScript = () => {
 };
 const showScript = (location) => {
   hideElement("#nextCallPrompt");
-  fillScoobyTemplate(location);
+  prepareCallTemplate(location);
   showElement("#callerTool");
 };
 
@@ -189,7 +189,7 @@ const submitCallReport = async () => {
 	 }
 };
 
-const fillScoobyTemplate = (data) => {
+const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationName: data.Name,
     locationAddress: data.Address,
