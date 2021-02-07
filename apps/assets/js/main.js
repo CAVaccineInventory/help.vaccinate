@@ -2,10 +2,16 @@ const AUTH0_DOMAIN = "vaccinateca.us.auth0.com";
 const AUTH0_CLIENTID = "ZnpcUDelsgbXXXMTayxzdPWTX8wikGi5";
 const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 
-// https://auth0.com/docs/libraries/auth0-single-page-app-sdk
-import createAuth0Client from "@auth0/auth0-spa-js";
-import Handlebars from "handlebars";
 
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+import createAuth0Client from "@auth0/auth0-spa-js";
+import locationTemplate from "./templates/location.handlebars";
+import countyTemplate from "./templates/county.handlebars";
+import latestReportTemplate from "./templates/latestReport.handlebars";
+import ctaTemplate from "./templates/cta.handlebars";
+
+// https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
 let auth0 = null;
 
@@ -102,8 +108,6 @@ const addScoobyListeners = () => {
 }
 
 const fillScoobyTemplate = (data) => {
-  let templateSource = document.querySelector("#locationTemplate").innerHTML;
-  const locationTemplate = Handlebars.compile(templateSource);
   const previousReportLocation = locationTemplate({
     locationName: data.Name,
     locationAddress: data.Address,
@@ -113,8 +117,7 @@ const fillScoobyTemplate = (data) => {
   });
   document.getElementById('locationInfo').innerHTML = previousReportLocation;
 
-  templateSource = document.querySelector("#latestReportTemplate").innerHTML;
-  const latestReportTemplate = Handlebars.compile(templateSource);
+
   const latestReport = latestReportTemplate({
     latestReportTime: data['Latest report'],
     latestReportStatus: "❌ No vaccine inventory",
@@ -123,16 +126,12 @@ const fillScoobyTemplate = (data) => {
   });
   document.getElementById("latestReport").innerHTML = latestReport;
 
-  templateSource = document.querySelector("#countyInfoTemplate").innerHTML;
-  const countyInfoTemplate = Handlebars.compile(templateSource);
-  const countyInfo = countyInfoTemplate({
+  const countyInfo = countyTemplate({
     countyName: data.County,
     countyInfo: "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine"
   });
   document.getElementById("countyInfo").innerHTML = countyInfo;
 
-  templateSource = document.querySelector("#ctaTemplate").innerHTML;
-  const ctaTemplate = Handlebars.compile(templateSource);
   const cta = ctaTemplate({
     locationPhone: data["Phone number"],
   });

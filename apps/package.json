@@ -33,6 +33,11 @@
   "license": "MIT",
   "dependencies": {
     "@11ty/eleventy": "^0.11.1",
-    "handlebars": "^4.7.6"
+    "core-js": "^3.8.3",
+    "custom-event-polyfill": "^1.0.7",
+    "handlebars-loader": "^1.7.1",
+    "luxon": "^1.25.0",
+    "regenerator-runtime": "^0.13.7",
+    "whatwg-fetch": "^3.5.0"
   }
 }

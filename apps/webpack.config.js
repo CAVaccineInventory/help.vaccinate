@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  "mode": "development",
+  "mode": "production",
   "entry": {
     "index": "./assets/js/index.js",
     "scooby": "./assets/js/scooby.js",
@@ -27,6 +27,10 @@ module.exports = {
         use: {
           loader: "babel-loader",
         },
+      },
+      {
+        test: /\.handlebars$/,
+        loader: "handlebars-loader",
       },
     ],
   },
