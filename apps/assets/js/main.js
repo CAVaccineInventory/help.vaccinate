@@ -121,8 +121,11 @@ const fillScoobyTemplate = (data) => {
     locationType: data["Location Type"],
     locationAffiliation: data["Location Affiliation"]
   });
+  const filledForm = callReportFormTemplate({
+	LocationId: data.id
+  });
   document.getElementById('locationInfo').innerHTML = previousReportLocation;
-
+  document.getElementById('callReportForm').innerHTML = filledForm;
 
   const latestReport = latestReportTemplate({
     latestReportTime: data['Latest report'],
