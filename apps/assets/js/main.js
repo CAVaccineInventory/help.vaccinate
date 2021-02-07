@@ -11,22 +11,26 @@ import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
 import callReportFormTemplate from "./templates/callReportForm.handlebars";
 import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
+import loggedInAs from "./templates/loggedInAs.handlebars";
+import notLoggedIn from "./templates/notLoggedIn.handlebars";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
 let auth0 = null;
 
 const updateLogin = (user) => {
-  const e = document.querySelector("#login-email");
-  if (!e) {
-    console.log("XXX dom not ready");
-    return;
-  }
-
   if (user && user.email) {
-    e.innerHTML = user.email; // THE HORROR
+   fillTemplateIntoDom(loggedInAs, "#loggedInAs", { email: user.email});
+  document
+    .querySelector("#logoutButton")
+    .addEventListener("click",  doLogout);
   } else {
-    e.innerHTML = "not logged in";
+    fillTemplateIntoDom(notLoggedIn, "#loggedInAs", {});
+  document
+    .querySelector("#loginButton")
+    .addEventListener("click",  doLogin);
+
+	
   }
 };
 
@@ -34,7 +38,7 @@ createAuth0Client({
   domain: AUTH0_DOMAIN,
   client_id: AUTH0_CLIENTID,
   audience: AUTH0_AUDIENCE,
-  redirect_uri: location.origin,
+  redirect_uri: window.location.href,
 })
   .then((a0) => {
     console.log("Auth0 setup complete");
