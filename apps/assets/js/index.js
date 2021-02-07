@@ -1,5 +1,11 @@
-import { doLogin, doLogout, debugOutput, fetchJsonFromEndpoint } from "./main.js";
+import { doLogin, doLogout, fetchJsonFromEndpoint } from "./main.js";
 
+
+const debugOutput = (data) => {
+  console.log("RESULTS", data);
+  const target = document.querySelector("#results");
+  target.innerHTML = JSON.stringify(data); // XXX THE HORROR
+};
 
 
 

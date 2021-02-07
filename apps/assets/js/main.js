@@ -15,8 +15,6 @@ import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
 
 
 
-
-
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
 let auth0 = null;
@@ -79,12 +77,6 @@ const doLogout = () => {
   auth0.logout({ returnTo: location.origin });
 };
 
-const debugOutput = (data) => {
-  console.log("RESULTS", data);
-  const target = document.querySelector("#results");
-  target.innerHTML = JSON.stringify(data); // XXX THE HORROR
-};
-
 // handle login urls
 window.addEventListener("load", async () => {
   if (auth0) {
@@ -98,30 +90,48 @@ window.addEventListener("load", async () => {
 });
 
 
+const fillTemplateIntoDom = (template, selector, data) => {
+const filled = template(data);
+document.querySelector(selector).innerHTML = filled;
+
+}
+const logDebug = (msg) => {
+	console.log(msg);
+}
+const hideElement = (selector) =>{
+      logDebug("hiding "+selector);
+      document.querySelector(selector).classList.add('hidden');
+}
+
+const showElement = (selector) =>{
+      logDebug("showing "+selector);
+      document.querySelector(selector).classList.remove('hidden');
+}
+
+
 const hideScript = () => { 
-      document.querySelector("#caller-tool").classList.remove('hidden');
+	hideElement("#callerTool");
 }
 const showScript = (location) => {
-	document.querySelector("#nextCallPrompt").classList.add('hidden');
+	hideElement("#nextCallPrompt");
         fillScoobyTemplate(location);
-	document.querySelector("#caller-tool").classList.remove('hidden');
+	showElement("#callerTool");
 }
 
 
 const showNextCallPrompt = () => {
-const nextCallPrompt = nextCallPromptTemplate({});
-document.querySelector("#nextCallPrompt").innerHTML = nextCallPrompt;
+	fillTemplateIntoDom(nextCallPromptTemplate, '#nextCallPrompt', {});
   document
     .querySelector("#requestCallButton")
     .addEventListener("click", async () => {
-      debugOutput("loading");
+      logDebug("loading");
       const data = await fetchJsonFromEndpoint(
         "/.netlify/functions/requestCall"
       );
 	showScript(data);
     });
-	document.querySelector("#nextCallPrompt").classList.add('remove');
-	document.querySelector("#caller-tool").classList.remove('add');
+	showElement("#nextCallPrompt");
+	hideScript();
 	
 }
 
@@ -139,13 +149,16 @@ const submitCallReport = async () => {
 		"Internal Notes": document.querySelector('#report_InternalNotes').value
 	};
 
-      debugOutput("loading");
+      logDebug("loading");
 	console.log(report);
       const data = await fetchJsonFromEndpoint(
         "/.netlify/functions/submitReport",
         "POST", JSON.stringify(report)
       );
-      debugOutput(data);
+	logDebug("XXXXXXX HANDLE ERRORS!");
+showNextCallPrompt();
+
+      logDebug(data);
 
 
 }
@@ -190,4 +203,4 @@ const fillScoobyTemplate = (data) => {
 
 
 
-export { doLogin, doLogout, debugOutput, addScoobyListeners, fetchJsonFromEndpoint };
+export { doLogin, doLogout, addScoobyListeners, fetchJsonFromEndpoint };
