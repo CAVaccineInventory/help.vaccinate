@@ -1,4 +1,9 @@
-import { doLogin, doLogout, fetchJsonFromEndpoint } from "./main.js";
+import { doLogin, doLogout, fetchJsonFromEndpoint, handleAuth0Login } from "./main.js";
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  handleAuth0Login();
+});
 
 const debugOutput = (data) => {
   console.log("RESULTS", data);

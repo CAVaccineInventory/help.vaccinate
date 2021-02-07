@@ -75,11 +75,6 @@ const doLogout = () => {
   auth0.logout({ returnTo: location.origin });
 };
 
-// handle login urls
-window.addEventListener("load", async () => {
-  handleAuth0Login();
-});
-
 const handleAuth0Login = async () => {
   if (auth0) {
     const redirectResult = await auth0.handleRedirectCallback();
@@ -134,6 +129,7 @@ const showNextCallPrompt = () => {
 };
 
 const initScooby = () => {
+  handleAuth0Login();
   showNextCallPrompt();
 };
 
@@ -196,4 +192,4 @@ const fillScoobyTemplate = (data) => {
     .addEventListener("click", submitCallReport);
 };
 
-export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint };
+export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint , handleAuth0Login};
