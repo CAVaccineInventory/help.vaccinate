@@ -10,7 +10,7 @@ import locationTemplate from "./templates/location.handlebars";
 import countyTemplate from "./templates/county.handlebars";
 import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
-import callReportFormTemplate from "callReportForm.handlebars";
+import callReportFormTemplate from "./template/callReportForm.handlebars";
 
 
 
