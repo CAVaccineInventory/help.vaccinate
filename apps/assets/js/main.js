@@ -113,6 +113,27 @@ const addScoobyListeners = () => {
 
 }
 
+const submitCallReport = async () => {
+      var report = {
+		"Location": document.querySelector('#report_LocationId').value,
+		"Availability": Array.from( document.querySelector('#report_Availability').selectedOptions).map(el => el.value) ,
+		"Notes": document.querySelector('#report_Notes').value,
+		"Phone": document.querySelector('#report_Phone').value,
+		"Internal Notes": document.querySelector('#report_InternalNotes').value
+	};
+
+      debugOutput("loading");
+	console.log(report);
+      const data = await fetchJsonFromEndpoint(
+        "/.netlify/functions/submitReport",
+        "POST", JSON.stringify(report)
+      );
+      debugOutput(data);
+
+
+}
+
+
 const fillScoobyTemplate = (data) => {
   const previousReportLocation = locationTemplate({
     locationName: data.Name,
@@ -140,14 +161,12 @@ const fillScoobyTemplate = (data) => {
     countyInfo: "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine"
   });
   document.getElementById("countyInfo").innerHTML = countyInfo;
+  document.querySelector("#scoobyRecordCall").addEventListener("click", submitCallReport);
 
   const cta = ctaTemplate({
     locationPhone: data["Phone number"],
   });
   document.getElementById("cta").innerHTML = cta;
-
-  const callReportForm = callReportFormTemplate({});
-  document.getElementById("callReportForm").innerHTML = callReportForm;
 
 };
 
