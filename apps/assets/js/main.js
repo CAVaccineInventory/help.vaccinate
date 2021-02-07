@@ -14,6 +14,7 @@ import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/dialResult.handlebars";
+import callLogTemplate from "./templates/callLog.handlebars";
 
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
@@ -30,6 +31,7 @@ const updateLogin = (user) => {
   }
 };
 
+const initAuth0 = () => {
 createAuth0Client({
   domain: AUTH0_DOMAIN,
   client_id: AUTH0_CLIENTID,
@@ -47,6 +49,8 @@ createAuth0Client({
   .catch((err) => {
     console.log("XXX", err);
   });
+
+}
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
   if (!method) {
@@ -88,11 +92,21 @@ const handleAuth0Login = async () => {
 };
 
 const bindClick = (selector, handler) => {
-	document.querySelector(selector).addEventListener("click", handler);
+  const  el = document.querySelector(selector);
+  if (el !== null) {
+	el.addEventListener("click", handler);
+  } else {
+	logDebug ("Could not find element with selector " + selector);
+	}
 }
 const fillTemplateIntoDom = (template, selector, data) => {
+  const  el = document.querySelector(selector);
+  if (el !== null) {
   const filled = template(data);
-  document.querySelector(selector).innerHTML = filled;
+  el.innerHTML = template(data);
+  } else {
+	logDebug ("Could not find element with selector " + selector);
+}
 };
 const logDebug = (msg) => {
   console.log(msg);
@@ -133,9 +147,26 @@ const showNextCallPrompt = () => {
 };
 
 const initScooby = () => {
+  initAuth0();
   handleAuth0Login();
   showNextCallPrompt();
 };
+
+
+const recordCall = async ( callReport) => {
+  console.log(callReport);
+  const data = await fetchJsonFromEndpoint(
+    "/.netlify/functions/submitReport",
+    "POST",
+    JSON.stringify(callReport)
+  );
+  if (data.created) {
+	logDebug("Created a call");
+	logDebug(data.created[0]);	
+  }
+  return data.created;
+}
+
 
 const submitCallReport = async () => {
   const report = {
@@ -150,15 +181,12 @@ const submitCallReport = async () => {
 
   logDebug("loading");
   console.log(report);
-  const data = await fetchJsonFromEndpoint(
-    "/.netlify/functions/submitReport",
-    "POST",
-    JSON.stringify(report)
-  );
-  logDebug("XXXXXXX HANDLE ERRORS!");
+  const callId = await recordCall(report);
+  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId});
+  
+  if (callId) {
   showNextCallPrompt();
-
-  logDebug(data);
+	 }
 };
 
 const fillScoobyTemplate = (data) => {
@@ -201,4 +229,4 @@ const fillScoobyTemplate = (data) => {
 
 
 
-export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint , handleAuth0Login};
+export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint , handleAuth0Login, initAuth0};

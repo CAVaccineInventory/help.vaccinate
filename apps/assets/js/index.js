@@ -1,7 +1,8 @@
-import { doLogin, doLogout, fetchJsonFromEndpoint, handleAuth0Login } from "./main.js";
+import { doLogin, doLogout, fetchJsonFromEndpoint,initAuth0, handleAuth0Login } from "./main.js";
 
 
 document.addEventListener("DOMContentLoaded", function () {
+initAuth0();
   handleAuth0Login();
 });
 
