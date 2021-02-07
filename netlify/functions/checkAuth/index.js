@@ -6,7 +6,6 @@ const handler = async (event, context) => {
   // The user information is available here.
   const { claims } = context.identityContext;
 
-  console.log(claims);
   const authorizedCaller = !!(
     claims && claims.permissions &&
       claims.permissions.indexOf("caller") !== -1);
