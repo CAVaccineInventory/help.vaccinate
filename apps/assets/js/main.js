@@ -16,15 +16,16 @@ import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
 
-
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
 let auth0 = null;
 
 const updateLogin = (user) => {
   if (user && user.email) {
-   fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", { email: user.email});
-   bindClick("#logoutButton", doLogout);
+    fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
+      email: user.email,
+    });
+    bindClick("#logoutButton", doLogout);
   } else {
     fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
     bindClick("#loginButton", doLogin);
@@ -32,25 +33,24 @@ const updateLogin = (user) => {
 };
 
 const initAuth0 = () => {
-createAuth0Client({
-  domain: AUTH0_DOMAIN,
-  client_id: AUTH0_CLIENTID,
-  audience: AUTH0_AUDIENCE,
-  redirect_uri: window.location.href,
-})
-  .then((a0) => {
-    console.log("Auth0 setup complete");
-    auth0 = a0;
-
-    auth0.getUser().then((user) => {
-      updateLogin(user);
-    });
+  createAuth0Client({
+    domain: AUTH0_DOMAIN,
+    client_id: AUTH0_CLIENTID,
+    audience: AUTH0_AUDIENCE,
+    redirect_uri: window.location.href,
   })
-  .catch((err) => {
-    console.log("XXX", err);
-  });
+    .then((a0) => {
+      console.log("Auth0 setup complete");
+      auth0 = a0;
 
-}
+      auth0.getUser().then((user) => {
+        updateLogin(user);
+      });
+    })
+    .catch((err) => {
+      console.log("XXX", err);
+    });
+};
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
   if (!method) {
@@ -92,21 +92,20 @@ const handleAuth0Login = async () => {
 };
 
 const bindClick = (selector, handler) => {
-  const  el = document.querySelector(selector);
+  const el = document.querySelector(selector);
   if (el !== null) {
-	el.addEventListener("click", handler);
+    el.addEventListener("click", handler);
   } else {
-	logDebug ("Could not find element with selector " + selector);
-	}
-}
+    logDebug("Could not find element with selector " + selector);
+  }
+};
 const fillTemplateIntoDom = (template, selector, data) => {
-  const  el = document.querySelector(selector);
+  const el = document.querySelector(selector);
   if (el !== null) {
-  const filled = template(data);
-  el.innerHTML = template(data);
+    el.innerHTML = template(data);
   } else {
-	logDebug ("Could not find element with selector " + selector);
-}
+    logDebug("Could not find element with selector " + selector);
+  }
 };
 const logDebug = (msg) => {
   console.log(msg);
@@ -130,13 +129,10 @@ const showScript = (location) => {
   showElement("#callerTool");
 };
 
-
-const  loadAndFillCall = async () => {
-      logDebug("loading");
-      const data = await fetchJsonFromEndpoint(
-        "/.netlify/functions/requestCall"
-      );
-      showScript(data);
+const loadAndFillCall = async () => {
+  logDebug("loading");
+  const data = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+  showScript(data);
 };
 
 const showNextCallPrompt = () => {
@@ -152,8 +148,7 @@ const initScooby = () => {
   showNextCallPrompt();
 };
 
-
-const recordCall = async ( callReport) => {
+const recordCall = async (callReport) => {
   console.log(callReport);
   const data = await fetchJsonFromEndpoint(
     "/.netlify/functions/submitReport",
@@ -161,12 +156,11 @@ const recordCall = async ( callReport) => {
     JSON.stringify(callReport)
   );
   if (data.created) {
-	logDebug("Created a call");
-	logDebug(data.created[0]);	
+    logDebug("Created a call");
+    logDebug(data.created[0]);
   }
   return data.created;
-}
-
+};
 
 const submitCallReport = async () => {
   const report = {
@@ -182,11 +176,11 @@ const submitCallReport = async () => {
   logDebug("loading");
   console.log(report);
   const callId = await recordCall(report);
-  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId});
-  
+  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId });
+
   if (callId) {
-  showNextCallPrompt();
-	 }
+    showNextCallPrompt();
+  }
 };
 
 const prepareCallTemplate = (data) => {
@@ -198,10 +192,7 @@ const prepareCallTemplate = (data) => {
     locationAffiliation: data["Location Affiliation"],
   });
 
-  fillTemplateIntoDom(dialResultTemplate,"#dialResult", {});
-  
-
-
+  fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
 
   fillTemplateIntoDom(callReportFormTemplate, "#callReportForm", {
     LocationId: data.id,
@@ -227,6 +218,11 @@ const prepareCallTemplate = (data) => {
   bindClick("#scoobyRecordCall", submitCallReport);
 };
 
-
-
-export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint , handleAuth0Login, initAuth0};
+export {
+  doLogin,
+  doLogout,
+  initScooby,
+  fetchJsonFromEndpoint,
+  handleAuth0Login,
+  initAuth0,
+};
