@@ -1,28 +1,25 @@
 import { doLogin, doLogout, fetchJsonFromEndpoint } from "./main.js";
 
-
 const debugOutput = (data) => {
   console.log("RESULTS", data);
   const target = document.querySelector("#results");
   target.innerHTML = JSON.stringify(data); // XXX THE HORROR
 };
 
-
-
 const addNetlifyTesterListeners = () => {
   document.querySelector("#login").addEventListener("click", doLogin);
   document.querySelector("#logout").addEventListener("click", doLogout);
 
-  document.querySelector("#checkAuthButton")
+  document
+    .querySelector("#checkAuthButton")
     .addEventListener("click", async () => {
       debugOutput("loading");
-      const data = await fetchJsonFromEndpoint(
-        "/.netlify/functions/checkAuth"
-      );
+      const data = await fetchJsonFromEndpoint("/.netlify/functions/checkAuth");
       debugOutput(data);
     });
 
-  document.querySelector("#requestCallButton")
+  document
+    .querySelector("#requestCallButton")
     .addEventListener("click", async () => {
       debugOutput("loading");
       const data = await fetchJsonFromEndpoint(
@@ -31,21 +28,20 @@ const addNetlifyTesterListeners = () => {
       debugOutput(data);
     });
 
-
-  document.querySelector("#submitReportButton")
+  document
+    .querySelector("#submitReportButton")
     .addEventListener("click", async () => {
       const body = document.querySelector("#submitReportText").value;
       debugOutput("loading");
       const data = await fetchJsonFromEndpoint(
         "/.netlify/functions/submitReport",
-        "POST", body
+        "POST",
+        body
       );
       debugOutput(data);
     });
-
 };
 
-
 document.addEventListener("DOMContentLoaded", function () {
-    addNetlifyTesterListeners();
+  addNetlifyTesterListeners();
 });
