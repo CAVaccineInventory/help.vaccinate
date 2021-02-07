@@ -17,61 +17,21 @@ layout: base.html
 		<div id="caller-tool" class="hidden">
 		<div class="flex flex-col-reverse px-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-10 md:px-12 lg:container">
 			<div id="col1">
-
-				<div class="location">
-				<h1>Location</h1>
-				
-				<span id="location-name">Location name nnot loaded</span>
-				
-				<h2>Address</h2>
-				
-				<span id="location-address">Location not loaded</span>
-				
-				<h2>Hours</h2>
-				
-				<div id="location-hours">Hours not loaded</div>
-				
-				If it's outside those hours <input type="button" value="Skip this call for now">.
-				
-				</div>
-
+				<div id="locationInfo"></div> 
 
 				<div class="request-correction">Any of that look wrong? <a href="">(report a correction)</a></div>
 				
-				<div class="latest-report">
-				
-				<h2>Latest report</h2>
-				
-				5 days ago at 7:19pm.
-				
-				
-				❌ No vaccine inventory
-				
-				<h3>Public Notes</h3>
-				<div>Expect to stock vaccine in March.</div>
-				<h3>Internal notes</h3>
-				<div>Pharmacy awaiting vaccines until March</div>
-				
-				</div>
+				<div id="latestReport"></div>
 
+				<div id="countyInfo"></div>
 
-				<h3>County info</h3>
-				<div><span id="location-county-name">County not loaded</span>
-					 county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine
-				</div>
 				
 				
 				<h2>Make the call</h2>
 				
 				
 				<hr class="my-4" /> 
-				<div class="call-to-action">
-				Call this number on your phone or click to dial if your browser supports it.
-				
-				<div class="phone"><a id="location-phone-url" href=""><span id="location-phone">(212) 555-1234</span></a></div>
-				
-				
-				</div>
+				<div id="cta" class="call-to-action"></div>
 
 				<div>
 				<input class="rounded-full bg-green-400 text-white hover:bg-green-500 px-10 md:px-5 ml-2" type="button" value="Wrong number / Disconnected">
@@ -331,4 +291,49 @@ NB: this textarea should auto-grow to accomodate notes
 Debug:
 <div id="results"></div>
 
+{% raw %}
+<script id="locationTemplate" type="text/x-handlebars-template">
+	<div class="location">
+	<h1>Location</h1>
+	
+	<span id="location-name">{{locationName}}</span>
+	
+	<h2>Address</h2>
+	
+	<span id="location-address">{{locationAddress}}</span>
+	
+	<h2>Hours</h2>
+	
+	<div id="location-hours">{{locationHours}}</div>
+	
+	If it's outside those hours <input type="button" value="Skip this call for now">.
+	</div>
+</script>
+
+<script id="latestReportTemplate" type="text/x-handlebars-template">
+	<h2>Latest report</h2>
+	{{latestReportTime}}
+	
+	<p>{{latestReportStatus}}</p>
+	
+	<h3>Public Notes</h3>
+	<div>{{latestReportPublicNotes}}</div>
+	<h3>Internal notes</h3>
+	<div>{{latestReportInternalNotes}}</div>
+</script>
+
+<script id="countyInfoTemplate" type="text/x-handlebars-template">
+	<h3>County info</h3>
+	<div><span id="locationCountyName">{{countyName}}</span>
+		{{countyInfo}}
+	</div>
+</script>
+
+<script id="ctaTemplate" type="text/x-handlebars-template">
+	Call this number on your phone or click to dial if your browser supports it.
+	<div class="phone"><a id="location-phone-url" href="tel:{{locationPhone}}"><span id="location-phone">{{locationPhone}}</span></a></div>	
+</script>
+{% endraw %}
+
 <script src="/assets/js/scooby.js"></script>
+

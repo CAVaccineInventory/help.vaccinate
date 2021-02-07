@@ -4,6 +4,7 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 import createAuth0Client from "@auth0/auth0-spa-js";
+import Handlebars from "handlebars";
 
 // global auth0 object. probably a better way to do this
 let auth0 = null;
@@ -75,13 +76,13 @@ const debugOutput = (data) => {
 // handle login urls
 window.addEventListener("load", async () => {
   if (auth0) {
-  const redirectResult = await auth0.handleRedirectCallback();
-  // XXX maybe remove url paramaters now?
-  const user = await auth0.getUser();
-  if (user) {
-  updateLogin(user);
-	}
-}
+    const redirectResult = await auth0.handleRedirectCallback();
+    // XXX maybe remove url paramaters now?
+    const user = await auth0.getUser();
+    if (user) {
+      updateLogin(user);
+    }
+  }
 });
 
 
@@ -100,28 +101,43 @@ const addScoobyListeners = () => {
 
 }
 
-const el = (elementId, value) => {
-  const element = document.getElementById(elementId);
-  if (element !== null) {
-    element.innerHTML = value;
-  }
-}
-
-const link_target = (elementId, value) => {
-  const element = document.getElementById(elementId);
-  if (element !== null) {
-    element.setAttribute('href', value);
-  }
-}
 const fillScoobyTemplate = (data) => {
-  el('location-name', data.Name);
-  el('location-address', data.Address);
-  el('location-phone', data["Phone number"]);
-  link_target('location-phone-url', "tel:".concat(data["Phone number"]));
-  el('location-county-name', data["County"]);
-  el('location-type', data["Location Type"]);
-  el('location-affiliation', data["Location Affiliation"]);
+  let templateSource = document.querySelector("#locationTemplate").innerHTML;
+  const locationTemplate = Handlebars.compile(templateSource);
+  const previousReportLocation = locationTemplate({
+    locationName: data.Name,
+    locationAddress: data.Address,
+    locationHours: "9am to 6m , lunch 12-1",
+    locationType: data["Location Type"],
+    locationAffiliation: data["Location Affiliation"]
+  });
+  document.getElementById('locationInfo').innerHTML = previousReportLocation;
 
+  templateSource = document.querySelector("#latestReportTemplate").innerHTML;
+  const latestReportTemplate = Handlebars.compile(templateSource);
+  const latestReport = latestReportTemplate({
+    latestReportTime: data['Latest report'],
+    latestReportStatus: "❌ No vaccine inventory",
+    latestReportPublicNotes: "Expect something",
+    latestReportInternalNotes: "Call again tomorrow"
+  });
+  document.getElementById("latestReport").innerHTML = latestReport;
+
+  debugger;
+  templateSource = document.querySelector("#countyInfoTemplate").innerHTML;
+  const countyInfoTemplate = Handlebars.compile(templateSource);
+  const countyInfo = countyInfoTemplate({
+    countyName: data.County,
+    countyInfo: "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine"
+  });
+  document.getElementById("countyInfo").innerHTML = countyInfo;
+
+  templateSource = document.querySelector("#ctaTemplate").innerHTML;
+  const ctaTemplate = Handlebars.compile(templateSource);
+  const cta = ctaTemplate({
+    locationPhone: data["Phone number"],
+  });
+  document.getElementById("cta").innerHTML = cta;
 };
 
 
