@@ -79,6 +79,10 @@ const doLogout = () => {
 
 // handle login urls
 window.addEventListener("load", async () => {
+	handleAuth0Login();
+});
+
+const  handleAuth0Login = async () => {
   if (auth0) {
     const redirectResult = await auth0.handleRedirectCallback();
     // XXX maybe remove url paramaters now?
@@ -87,8 +91,7 @@ window.addEventListener("load", async () => {
       updateLogin(user);
     }
   }
-});
-
+	}
 
 const fillTemplateIntoDom = (template, selector, data) => {
 const filled = template(data);
@@ -136,7 +139,7 @@ const showNextCallPrompt = () => {
 }
 
 
-const addScoobyListeners = () => {
+const initScooby = () => {
 	showNextCallPrompt();
 }
 
@@ -165,42 +168,42 @@ showNextCallPrompt();
 
 
 const fillScoobyTemplate = (data) => {
-  const previousReportLocation = locationTemplate({
+
+fillTemplateIntoDom(locationTemplate, "#locationInfo",
+{
     locationName: data.Name,
     locationAddress: data.Address,
     locationHours: "9am to 6m , lunch 12-1",
     locationType: data["Location Type"],
     locationAffiliation: data["Location Affiliation"]
   });
-  const filledForm = callReportFormTemplate({
+
+
+  fillTemplateIntoDom(callReportFormTemplate, "#callReportForm", {
 	LocationId: data.id
   });
-  document.querySelector('#locationInfo').innerHTML = previousReportLocation;
-  document.querySelector('#callReportForm').innerHTML = filledForm;
 
-  const latestReport = latestReportTemplate({
+  fillTemplateIntoDom( latestReportTemplate, "#latestReport", {
     latestReportTime: data['Latest report'],
     latestReportStatus: "❌ No vaccine inventory",
     latestReportPublicNotes: "Expect something",
     latestReportInternalNotes: "Call again tomorrow"
   });
-  document.querySelector("#latestReport").innerHTML = latestReport;
 
-  const countyInfo = countyTemplate({
+ fillTemplateIntoDom( countyTemplate, "#countyInfo", {
     countyName: data.County,
     countyInfo: "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine"
   });
-  document.querySelector("#countyInfo").innerHTML = countyInfo;
-  document.querySelector("#scoobyRecordCall").addEventListener("click", submitCallReport);
-
-  const cta = ctaTemplate({
+  
+ 
+ fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
-  document.querySelector("#cta").innerHTML = cta;
 
+  document.querySelector("#scoobyRecordCall").addEventListener("click", submitCallReport);
 };
 
 
 
 
-export { doLogin, doLogout, addScoobyListeners, fetchJsonFromEndpoint };
+export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint };

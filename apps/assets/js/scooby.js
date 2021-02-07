@@ -1,5 +1,5 @@
-import { addScoobyListeners } from "./main.js";
+import { initScooby } from "./main.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-    addScoobyListeners();
+    initScooby();
 });
