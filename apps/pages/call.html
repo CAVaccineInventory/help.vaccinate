@@ -43,244 +43,52 @@ layout: base.html
 
 
 				<hr class="my-4" /> 
-				<h2 class="instructions text-lg font-extrabold">What to do</h2>
-				<div class="instructions">
-				Please keep in mind that the person you're calling is working very hard to help people and may be fairly stressed out. Be friendly, kind, and compassionate.
-				</div>
-				<div class="instructions important">
-				
-				Try to talk to a human!
-				</div>
-				<div class="instructions">
-				
-				Many sites have out of date recorded messages. You should do your best to get through to a human even if the recording says that vaccines are not available.
-				</div>
 
-				<h2 class="text-lg font-extrabold">Call script</h2>
-				<!-- this script changes for different entity types around here -->
-				
-				<div class="yousay">"Hi, I’m calling to ask about getting the covid vaccine for a person over 65.
-				
-				Can you please direct me to the pharmacist on duty?
-				</div>
-
-
-				<div>
-					<p>
-					❌ NO
-						I'm sorry to bother you. Could you point me towards the right person to talk to?
-						If no, click <input type="button" value='unable to contact'>, otherwise wait to be redirected
-					</p>
-					<p>
-					✅ YES	
-						Thank you!
-						Wait to be redirected
-					</p>
-				<div>
-
-				<div class="instructions">Once you reach the right person</div>
-				
-				
-				<div class="yousay">If I am 65 or older, can I get a covid vaccine at this location today?</div>
-				
-				<p>
-					❌ NO	
-					<!-- this should be a button that folds up the script. toggling it again should unfold the script -->
-					<a  href="#script-always-say">Skip to '🔁 Always say'</a>
-					Click 'No' below
-				</p>
-
-
-				<p>
-				✅ YES (even if caveats)	Skip to next section	
-				Note: Please note the caveats.
-				</p>
-				
-				Once you get a "yes" answer
-
-<div classx="yousay">Thank you! Are appointments required</div>
-
-Answer	Script	Action
-❌ NO	Skip to '📝 Documentation'	Click 'Yes - walk ins accepted'
-✅ YES (even if caveats)	skip to next section	Click 'Yes - appointment required'
-
-<h3>Appointments</h3>
-<div class="yousay">What's the right way to schedule one?</div>
-
-Answer	Script	Action
-Call (the number you just called)	
-	Skip to next section	
-	Click '📞 Appointments by calling (the number you just called)'
-
-Something else	
-	Skip to next section	
-	Click 'Appointments by something else' and fill it in
-
-Address confirmation
-
-<div class="yousay">And you're at <span class="replace full-address">72800 DINAH SHORE DR, PALM DESERT, CA 92211?"</span></div>
-
-
-Answer	Script	Action
-✅ That's correct.	
-	Thanks for confirming!	
-	Continue to the next section
-❌ That's wrong. 
-	Our address is...	
-	<div class="instructions">Type in the new address here:</div>
-	<textarea>
-	</textarea>
-		
-	<div class="yousay">Thanks so much for the correction! To confirm, that's <span class="instructions">read address back</div>	
-</div>	
-	
-
-<h3>📝 Documentation</h3>
-Click any other Yes buttons relevant to the caveats you have been told.
-
-"What documentation should I bring with me?"
-
-Add any details, and any other caveats in the notes section.
-
-<h3>☎️ Call interest</h3>
-
-<div class="instructions">Ask this in a friendly way. We only want to know if they want to share it.</div>
-<div class="yousay">Out of curiosity, are you seeing a lot of interest in your COVID vaccine appointments?</div>
-
-Answer	Script	Action
-I don't know	
-	That's okay, thank you.	
-	Click <input type=button value='Not sure' /> and move to the next section
-	<!-- on click hide other options. another click unhides -->
-	
-Yes, we're booked solid.	Good to know! Glad that vaccines are getting to people.	Mark 'Yes, lots' and move to the next section
-Yes, some	Good to know, thanks!	Mark 'Yes, some' and move to the next section
-No, people don't seem interested.	Hmmm, that's funny. Any ideas for why?	Mark 'No, not much'. Write down anything they tell you in 'Vaccine demand notes'.
-
-<h3><a name="script-always-say">🔁 Always say:</a></h3>
-"Do you know of anywhere else I can go to get the vaccine?"
-
-Quick search our database for locations<input type="text">
-<a href="">Link to the place to report a new site</a>
-
-<div class="yousay">Thank you for your time! Have a great day."</div>
-
-FAQ
-If you learn about a new location, fill out this form
-If vaccines are available only for folks over 75 or an appointment is required, select "Yes, with appointment only" and explain further in the notes box below.
-</div>
-
-</div>
-
-<div id="col2">
-
-
-<h1>Call report</h1>
-
-
-<div><input type="checkbox"> Skip: call back later</div>
-
-
-Are vaccines available to the general public?
-
-<table>
-<tr>
-	<th>
-		No
-	</th>
-	<th>
-		Yes
-	</th>
-	</tr>
-<tr>
-	
-<td><div><input type="checkbox">
-
- incorrect contact information
-
-</div><div><input type="checkbox">
- location permanently closed
-</div><div><input type="checkbox">
-
-
- no vaccine inventory
-</div><div><input type="checkbox">
-
-
- not open to the public
-</div><div><input type="checkbox">
-
-
- only vaccinating health care workers
-</div><div><input type="checkbox">
-
-
- only vaccinating staff
-</div><div><input type="checkbox">
-
-
- will never be a vaccination site
- </div>
-</td>
-
-<td>
-<div><input type="checkbox">
-
-appointment calendar currently full
-</div><div><input type="checkbox">
-
-
-appointment required
-
-</div><div><input type="checkbox">
-
-coming soon
-
-</div><div><input type="checkbox">
-
-must be a current patient
-
-</div><div><input type="checkbox">
-
-must be a veteran
-</div><div><input type="checkbox">
-
-
-restricted to county residents
-
-</div><div><input type="checkbox">
-
-vaccinating 65+
-
-</div><div><input type="checkbox">
-
-vaccinating 75+
-</div><div><input type="checkbox">
-
-
-vaccinating 85+
-
-</div><div><input type="checkbox">
-
-walk-ins accepted
-</div> 
-</td>
-</tr>
-</table>
-
+<form>
 <h3>Notes</h3>
-<div>Is there anything else the person you spoke to told you that would help someone figure out if this is the right vaccination site for them right now? <b>Notes are public on the web.</b></div>
-<textarea>
-NB: this textarea should auto-grow to accomodate notes
-</textarea>
+location <input name="report.LocationId" value="" /> <br/>
 
-					<h3>Internal Notes</h3>
-					<div>What should team members know about this call or location. We won't publish this information.</div>
-					<textarea>
-						This should auto-grow.
-					Pharmacy awaiting vaccines until March
-					</textarea>
-					</div>
+<input type="checkbox" name="Appointments by phone?"
+<textarea name="report.Notes">
+</textarea>
+				
+
+<select name="report.Availability" multiple=1>
+<option>"No: will never be a vaccination site"</option>
+<option>"No: not open to the public"</option>
+<option>"Yes: appointment required"</option>
+<option>"Yes: walk-ins accepted"</option>
+<option>"No: no vaccine inventory"</option>
+<option>"No: only vaccinating health care workers"</option>
+<option>"Yes: vaccinating 75+"</option>
+<option>"Yes: vaccinating 65+"</option>
+<option>"Yes: restricted to county residents"</option>
+<option>"No: incorrect contact information"</option>
+<option>"No: location permanently closed"</option>
+<option>"Skip: call back later"</option>
+<option>"Yes: must be a current patient"</option>
+<option>"Yes: must be a veteran"</option>
+<option>"Yes: vaccinating 85+"</option>
+<option>"Yes: appointment calendar currently full"</option>
+<option>"No: only vaccinating staff"</option>
+<option>"Yes: coming soon"</option>
+<option>"Yes: vaccinating 80+"</option>
+</select>
+
+<textarea name="report.Internal Notes">
+					
+</textarea>
+<textarea name="report.Vaccine Demand Notes">
+					
+</textarea>
+<textarea name="report.Appointment scheduling instructions"></textarea>
+<select name="report.Vaccine Demand">
+    "Yes, lots",
+    "Yes, some",
+    "No, very little",
+    "Not sure"
+</select>
+</form>
 
 				</div> 
 			</div> 
