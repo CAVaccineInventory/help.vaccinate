@@ -11,8 +11,10 @@ import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
 import callReportFormTemplate from "./templates/callReportForm.handlebars";
 import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
-import loggedInAs from "./templates/loggedInAs.handlebars";
-import notLoggedIn from "./templates/notLoggedIn.handlebars";
+import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
+import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
+import dialResultTemplate from "./templates/dialResult.handlebars";
+
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
@@ -20,17 +22,11 @@ let auth0 = null;
 
 const updateLogin = (user) => {
   if (user && user.email) {
-   fillTemplateIntoDom(loggedInAs, "#loggedInAs", { email: user.email});
-  document
-    .querySelector("#logoutButton")
-    .addEventListener("click",  doLogout);
+   fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", { email: user.email});
+   bindClick("#logoutButton", doLogout);
   } else {
-    fillTemplateIntoDom(notLoggedIn, "#loggedInAs", {});
-  document
-    .querySelector("#loginButton")
-    .addEventListener("click",  doLogin);
-
-	
+    fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
+    bindClick("#loginButton", doLogin);
   }
 };
 
@@ -91,6 +87,9 @@ const handleAuth0Login = async () => {
   }
 };
 
+const bindClick = (selector, handler) => {
+	document.querySelector(selector).addEventListener("click", handler);
+}
 const fillTemplateIntoDom = (template, selector, data) => {
   const filled = template(data);
   document.querySelector(selector).innerHTML = filled;
@@ -117,17 +116,18 @@ const showScript = (location) => {
   showElement("#callerTool");
 };
 
-const showNextCallPrompt = () => {
-  fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
-  document
-    .querySelector("#requestCallButton")
-    .addEventListener("click", async () => {
+
+const  loadAndFillCall = async () => {
       logDebug("loading");
       const data = await fetchJsonFromEndpoint(
         "/.netlify/functions/requestCall"
       );
       showScript(data);
-    });
+};
+
+const showNextCallPrompt = () => {
+  fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
+  bindClick("#requestCallButton", loadAndFillCall);
   showElement("#nextCallPrompt");
   hideScript();
 };
@@ -170,6 +170,11 @@ const fillScoobyTemplate = (data) => {
     locationAffiliation: data["Location Affiliation"],
   });
 
+  fillTemplateIntoDom(dialResultTemplate,"#dialResult", {});
+  
+
+
+
   fillTemplateIntoDom(callReportFormTemplate, "#callReportForm", {
     LocationId: data.id,
   });
@@ -191,9 +196,9 @@ const fillScoobyTemplate = (data) => {
     locationPhone: data["Phone number"],
   });
 
-  document
-    .querySelector("#scoobyRecordCall")
-    .addEventListener("click", submitCallReport);
+  bindClick("#scoobyRecordCall", submitCallReport);
 };
+
+
 
 export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint , handleAuth0Login};

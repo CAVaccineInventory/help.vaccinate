@@ -8,10 +8,6 @@ layout: base.html
     <div id="nextCallPrompt"></div>
 
     <div id="callerTool" class="hidden">
-      <div
-        class="flex flex-col-reverse px-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-10 md:px-12 lg:container"
-      >
-        <div id="col1">
           <div id="locationInfo"></div>
 
           <div class="request-correction">
@@ -24,25 +20,7 @@ layout: base.html
 
           <div id="cta" class="call-to-action"></div>
 
-          <div>
-            <input
-              class="rounded-full bg-green-400 text-white hover:bg-green-500 px-10 md:px-5 ml-2"
-              type="button"
-              value="Wrong number / Disconnected"
-            />
-            <input
-              class="rounded-full bg-green-400 text-white hover:bg-green-500 px-10 md:px-5 ml-2"
-              type="button"
-              value="Busy"
-            />
-            <input
-              class="rounded-full bg-green-400 text-white hover:bg-green-500 px-10 md:px-5 ml-2"
-              type="button"
-              value="On hold for more than 2 minutes"
-            />
-            (these buttons should have a confirm, i think?)
-            <!-- clicking them should short-circuit the whole script-->
-          </div>
+	  <div id="dialResult"></div>
 
           <div id="callReportForm"></div>
         </div>
