@@ -46,7 +46,7 @@ Submits a report based on what the user found during a call.
 - **Permissions**: Must have the `caller` permission.
 - **Req Type**: `POST`
 - **Req Body**: A single JSON object corresponding to the report to create. Fields match Airtable `Reports` column names.
-- **Response**: a JSON blob with `created: 1` on success, `error: "some string"` on error.
+- **Response**: a JSON blob with `created: ["ID_OF_NEW_ROW"]` on success, `error: "some string"` on error.
 - **Example**:
 ```json
 Request:
@@ -59,5 +59,5 @@ Request:
 }
 
 Response:
-{"created":1}
+{"created":["recFhKLYJku2jiQyM"]}
 ```

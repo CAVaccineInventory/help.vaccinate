@@ -47,9 +47,10 @@ const handler = requirePermission("caller", async (event, context) => {
 
   try {
     const result = await base('Reports').create([{fields: input}]);
+    const resultIds = result && result.map((r) => r.id) || [];
     return {
       statusCode: 200,
-      body: JSON.stringify({created: result && result.length})
+      body: JSON.stringify({created: resultIds})
     };
   } catch (err) {
     console.log("Failed to insert to airtable", err); // XXX
