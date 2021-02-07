@@ -6,5 +6,5 @@
   framework = "#custom"
 [build]
   functions = "netlify/functions"
-  command = "script/install && script/build && rm -rf apps/node_modules/hamljs/test/"
+  command = "script/install && script/build"
   publish = "apps/_site"
