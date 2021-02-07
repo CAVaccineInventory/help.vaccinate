@@ -190,4 +190,4 @@ const fillScoobyTemplate = (data) => {
 
 
 
-export { doLogin, doLogout, addScoobyListeners };
+export { doLogin, doLogout, debugOutput, addScoobyListeners, fetchJsonFromEndpoint };
