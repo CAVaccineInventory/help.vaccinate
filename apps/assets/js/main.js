@@ -74,10 +74,14 @@ const debugOutput = (data) => {
 
 // handle login urls
 window.addEventListener("load", async () => {
+  if (auth0) {
   const redirectResult = await auth0.handleRedirectCallback();
   // XXX maybe remove url paramaters now?
   const user = await auth0.getUser();
+  if (user) {
   updateLogin(user);
+	}
+}
 });
 
 
