@@ -28,13 +28,52 @@ Gets a location for the user to call. 'Locks' the location for 10 minutes so it 
 - **Example response**:
 ```json
 {
-  "id": "recRPSSfimvslExuU",
-  "Name": "RITE AID PHARMACY 05463",
-  "Phone number": "310-837-2122",
-  "Address": "3802 CULVER CENTER STREET CULVER CENTER, CULVER CITY, CA 90232",
-  "County": "Los Angeles County",
+{
+  "id": "recRd4p2FWgJJbLc1",
+  "Name": "SAVE MART PHARMACY - STANDIFORD #49",
+  "Phone number": "209-577-1350",
+  "Address": "2100 STANDIFORD AVE, MODESTO, CA 95350",
+  "Internal notes": "...",
+  "Hours": "Monday - Sunday: 6:00 AM – 10:00 PM",
+  "County": "Stanislaus County",
   "Location Type": "Pharmacy",
-  "Affiliation": "Rite-Aid"
+  "Affiliation": "Save Mart Pharmacy",
+  "Latest report": "2021-01-26T01:00:58.000Z",
+  "Latest report notes": [
+    "Expecting to have doses around February 1st"
+  ],
+  "County vaccine info URL": [
+    "http://schsa.org/coronavirus/vaccine/"
+  ],
+  "County Vaccine locations URL": [
+    "http://schsa.org/coronavirus/vaccine/pdf/approved-providers.pdf"
+  ],
+  "Latest Internal Notes": [
+    null
+  ],
+  "Availability Info": [
+    "No: no vaccine inventory"
+  ],
+  "Number of Reports": 7,
+  "county_record": {
+    "id": "recOaUFuQI8CnfiCP",
+    "County": "Stanislaus County",
+    "Vaccine info URL": "http://schsa.org/coronavirus/vaccine/",
+    "Vaccine locations URL": "http://schsa.org/coronavirus/vaccine/pdf/approved-providers.pdf",
+    "Notes": "# ..."
+  },
+  "provider_record": {
+    "id": "recnRg7E8Yi7YbX61",
+    "Provider": "Save Mart Pharmacy",
+    "Vaccine info URL": "https://www.savemart.com/covid-19-vaccine",
+    "Public Notes": "...",
+    "Phase": [
+      "Not currently vaccinating"
+    ],
+    "Provider network type": "Pharmacy",
+    "Last Updated": "2021-02-08"
+  }
+}
 }
 OR
 {

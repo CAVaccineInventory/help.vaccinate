@@ -12,8 +12,8 @@ const LOCATION_FIELDS_TO_LOAD = [
   "Latest report",
   "Latest report notes",
   "Latest Internal Notes",
-  "County vaccine info URL",
-  "County Vaccine locations URL",
+  "County vaccine info URL", // retire this now that county is fetched
+  "County Vaccine locations URL", // retire this now that county is fetched
   "Availability Info",
   "Address",
   "Website",
@@ -28,6 +28,18 @@ const COUNTIES_FIELDS_TO_LOAD = [
   "Vaccine info URL",
   "Vaccine locations URL",
   "Notes",
+];
+
+const PROVIDER_FIELDS_TO_LOAD = [
+  "Provider",
+  "Vaccine info URL",
+  "Vaccine locations URL",
+  "Public Notes",
+  "Phase",
+  "Appointments URL",
+  "Provider network type",
+  "Last Updated",
+  "Internal notes",
 ];
 
 
@@ -108,15 +120,41 @@ const handler = requirePermission("caller", async (event, context) => {
     try {
       const countyRecords = await base('Counties').select({
         fields: COUNTIES_FIELDS_TO_LOAD,
-        filterByFormula: `{County enum} = '${county}'`,
+        filterByFormula: `{County enum} = "${county}"`,
         maxRecords: 1
       }).firstPage();
       if (countyRecords && countyRecords.length) {
         output.county_record = Object.assign(
           {id: countyRecords[0].id}, countyRecords[0].fields);
+      } else {
+        console.log("No county found for location",
+                    locationToCall.id, county);
       }
     } catch (err) {
       console.log("Failure getting county for location", locationToCall.id, err);
+    }
+  }
+
+  // try to fetch provider record
+  const aff = locationToCall.get('Affiliation');
+  if (aff && aff !== "None / Unknown / Unimportant") {
+    try {
+      const providerRecords = await base('Provider networks').select({
+        fields: PROVIDER_FIELDS_TO_LOAD,
+        // XXX there are single quotes in some names, so we use "
+        // here. Add real escaping before we add " to names.
+        filterByFormula: `{Provider} = "${aff}"`,
+        maxRecords: 1
+      }).firstPage();
+      if (providerRecords && providerRecords.length) {
+        output.provider_record = Object.assign(
+          {id: providerRecords[0].id}, providerRecords[0].fields);
+      } else {
+        console.log("No affiliation found for location",
+                    locationToCall.id, aff);
+      }
+    } catch (err) {
+      console.log("Failure getting provider for location", locationToCall.id, err);
     }
   }
 
