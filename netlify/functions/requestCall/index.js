@@ -46,7 +46,7 @@ const handler = requirePermission("caller", async (event, context) => {
   // Can't find anyone to call?
   if (locationsToCall.length === 0) {
     return {
-      statusCode: 404,
+      statusCode: 200,
       body: JSON.stringify({
         error: "Couldn't find somewhere to call"
       })

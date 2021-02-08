@@ -24,7 +24,7 @@ Gets a location for the user to call. 'Locks' the location for 10 minutes so it 
 - **Permissions**: Must have the `caller` permission.
 - **Req Type**: `POST`
 - **Req Body**: _none_
-- **Response**: A single JSON object corresponding to the location to call.
+- **Response**: A single JSON object corresponding to the location to call. If there are no places to call, or some other error, the result will not contain an `id` field and instead will contain an `error` field.
 - **Example response**:
 ```json
 {
@@ -35,6 +35,10 @@ Gets a location for the user to call. 'Locks' the location for 10 minutes so it 
   "County": "Los Angeles County",
   "Location Type": "Pharmacy",
   "Affiliation": "Rite-Aid"
+}
+OR
+{
+  "error": "Couldn't find somewhere to call"
 }
 ```
 
