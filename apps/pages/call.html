@@ -4,32 +4,36 @@ layout: base.html
 ---
 
 <div class="flex flex-col">
-  <div id="loadingScreen"></div>
-  <div id="loggedInAs"></div>
-  <div id="nextCallPrompt"></div>
+  <div class="absolute top-0 right-0" id="loggedInAs"></div>
+
+  <div class="flex items-center justify-center h-screen">
+    
+	
+
+
+	<div class="font-bold rounded-lg border shadow-lg p-10" id="nextCallPrompt">
+	</div>
 
   <div id="callerTool" class="hidden">
     <div id="undoCall"></div>
     <div id="locationInfo"></div>
 
-    <div class="request-correction">
-      Any of that look wrong? <a href="">(report a correction)</a>
-    </div>
-
     <div id="latestReport"></div>
 
+    <div id="affiliationNotes"></div>
     <div id="countyInfo"></div>
 
     <div id="cta" class="call-to-action"></div>
 
     <div id="dialResult"></div>
-    <div id="affiliationNotes"></div>
+    <div id="callScript"></div>
+
     <div id="callReportForm"></div>
   </div>
 </div>
 
 <div id="callLog"></div>
-Debug:
-<div id="results"></div>
 
+<div id="loadingScreen"></div>
+  </div>
 <script src="/assets/js/scooby.js"></script>
