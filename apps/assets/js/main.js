@@ -15,8 +15,8 @@ import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
-import loadingScreenTemplate from "./templates/loadingScreen.handlebars";
 import undoCallTemplate from "./templates/undoCall.handlebars";
+import loadingScreenTemplate from "./templates/loadingScreen.handlebars";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
@@ -136,7 +136,7 @@ const loadAndFillCall = async () => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null ) {
   	fillTemplateIntoDom(undoCallTemplate, "#undoCall", { locationName: previousLocation.Name });
-  	bindClick("#replaceReport", loadAndFillPreviousCall());
+  	bindClick("#replaceReport", loadAndFillPreviousCall);
   }
   currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   loadAndFill(currentLocation);
