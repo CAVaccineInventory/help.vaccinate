@@ -1,123 +1,159 @@
-
 <div class="instructions">Your goal is to talk to a human.</div>
 
 <div class="instructions">
-Many sites have out of date recorded messages. If you can't get through to a person, click <b>No answer</b>.
+      Many sites have out of date recorded messages. If you can't get through to a person, click <b>No answer</b>.
 </div>
 
-<div class="instructions">Please keep in mind that the person you're calling is working very hard to help people and may be fairly stressed out. Be friendly, kind, and compassionate.</div>
+<div class="instructions">Please keep in mind that the person you're calling is working very hard to help people and may
+      be fairly stressed out. Be friendly, kind, and compassionate.</div>
 
 
 <div class="yousay">
-"Hi, I’m calling to ask about getting the covid vaccine for a person over 65."
+      "Hi, I’m calling to ask about getting the covid vaccine for a person over 65."
 </div>
 <div class="yousay">
-"Could I please speak to the pharmacist on duty?"
+      "Could I please speak to the pharmacist on duty?"
 </div>
 
 <div class="instructions">If you can't reach the pharmacist, say</div>
 <div class="yousay">Thank you. Have a good day</div>
-<div class="instructions">then click  TODO BUTTON </div>
+<div class="instructions">then click TODO BUTTON </div>
 
 
 <div class="instructions">Once you reach the right person, ask</div>
 <div class="yousay">Are you currently offering COVID-19 vaccines to seniors</div>
 
-<div>No</div>
+<form id="callScriptForm">
+      <div>No</div>
+      <div id="noOptions">
+            <label
+                  class="inline-flex items-center bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded">
+                  <input type="radio" name="noSelect" value="No: will never be a vaccination site">
+                  Will never offer
+                  </input>
+            </label>
 
-<div>
-<button id="neverVaccinating" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded">
-Will never offer
-</button>
+            <label
+                  class="inline-flex items-center bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded">
+                  <input type="radio" name="noSelect" value="No: not open to the public">
+                  Not open to the public
+                  </input>
+            </label>
 
-<button id="neverVaccinating" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded">
-Not open to the public
-</button>
+            <label
+                  class="inline-flex items-center bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded">
+                  <input type="radio" name="noSelect" value="No: only vaccinating staff">
+                  Only vaccinating staff
+                  </input>
+            </label>
 
-<button id="neverVaccinating" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded">
-Only vaccinating staff
-</button>
-
-<button id="neverVaccinating" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded">
-Only vaccinating health care workers
-</button>
-
-
-<div>Yes</div>
-
-      <label class="inline-flex items-center  bg-green-300 checked:bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 border border-green-700 rounded">
-<input type="radio"  name="yesSelect" value="Yes">
-Yes we are
-</input>
-</label>
-<label class="inline-flex items-center  bg-green-300 checked:bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 border border-green-700 rounded">
-<input type="radio"  name="yesSelect" value="Soon">
-We will be soon
-</input>
-</label>
-
+            <label
+                  class="inline-flex items-center bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-red-700 rounded">
+                  <input type="radio" name="noSelect" value="No: only vaccinating health care workers">
+                  Only vaccinating health care workers
+                  </input>
+            </label>
+      </div>
 
 
-<div class="yousay">How old do they need to be?</div>
+      <div>Yes</div>
+      <div id="yesOptions">
+            <label
+                  class="inline-flex items-center  bg-green-300 checked:bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 border border-green-700 rounded">
+                  <input type="radio" name="yesSelect" value="Yes">
+                  Yes we are
+                  </input>
+            </label>
+            <label
+                  class="inline-flex items-center  bg-green-300 checked:bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 border border-green-700 rounded">
+                  <input type="radio" name="yesSelect" value="Yes: coming soon">
+                  We will be soon
+                  </input>
+            </label>
+      </div>
 
-      <label class="inline-flex items-center  bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
-<input type="radio"  name="ageSelect" value="65">
-65
-</input>
-</label>
-      <label class="inline-flex items-center  bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
-<input type="radio"  name="ageSelect" value="75" class=" bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
-75
-</input>
-</label>
-      <label class="inline-flex items-center  bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
-<input type="radio"  name="ageSelect" value="80" class=" bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
-80
-</input>
-</label>
-      <label class="inline-flex items-center  bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
-<input type="radio"  name="ageSelect" value="85" class=" bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
-85
-</input>
-</label>
-</div>
 
-<div class="yousay">Thanks! Do they need an appointment</div>
 
-<div>
-<label> <input type="radio" name="appointment" value="walkinsWelcome">Walkins are welcome </label>
-<label> <input type="radio" name="appointment" value="appointmentRequired">Appointments are required</label>
-<label> <input type="radio" name="appointment" value="appointmentRequired">Appointments are required and the schedule is full</label>
-</div>
+      <div class="yousay">How old do they need to be?</div>
 
-<div class="yousay">How should they make the appointment</div>
-<div>
-<label> <input type="radio" name="appointmentMethod" value="web">On the web</label>
-<label> <input type="radio" name="appointmentMethod" value="county">Through the county</label>
-<label> <input type="radio" name="appointmentMethod" value="myturn">Through myturn.ca.gov</label>
-<label> <input type="radio" name="appointmentMethod" value="phone">by phone</label>
-Phone number <input type="text" id="appointmentByPhone">
-<label> <input type="radio" name="appointmentMethod" value="other">Some other way</label>
-<textara id="otherWay">
-</textarea>
-</div>
+      <label
+            class="inline-flex items-center  bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+            <input type="radio" name="ageSelect" value="Yes: vaccinating 65+">
+            65
+            </input>
+      </label>
+      <label
+            class="inline-flex items-center  bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+            <input type="radio" name="ageSelect" value="Yes: vaccinating 75+"
+                  class=" bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+            75
+            </input>
+      </label>
+      <label
+            class="inline-flex items-center  bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+            <input type="radio" name="ageSelect" value="Yes: vaccinating 80+"
+                  class=" bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+            80
+            </input>
+      </label>
+      <label
+            class="inline-flex items-center  bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+            <input type="radio" name="ageSelect" value="Yes: vaccinating 85+"
+                  class=" bg-blue-300 checked:bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+            85
+            </input>
+      </label>
+      </div>
 
-<div class="yousay">Are you folks vaccinating all Californians or are there limits on who you can vaccinate</div>
-<div class="instructions">Click on any of the limitations. If they say anything that's not on the list, mention it in the public notes</div>
-<div><checkbox id="veteransOnly" label="Veterans only" /></div>
-<div><checkbox id="veteransOnly" label="Current patients only" /></div>
-<div><checkbox id="veteransOnly" label="County residents only" /></div>
+      <div class="yousay">Thanks! Do they need an appointment</div>
 
-<div class="yousay">Can you confirm that your address is {{ locationAddress }}</div>
-<div class="instructions">If that's wrong, DO THE THING TO CORRECT IT</div>
+      <div>
+            <label> <input type="radio" name="appointment" value="Yes: walk-ins accepted">Walkins are welcome</label>
+            <label> <input type="radio" name="appointment" value="Yes: appointment required">Appointment
+                  Required</label>
+            <label> <input type="radio" name="appointment" value="appointmentRequired">Appointments are required and the
+                  schedule is full</label>
+      </div>
 
-<div>
-<div>Public notes</div>
-<textarea class="mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"></textarea>
-</div>
+      <div class="yousay">How should they make the appointment</div>
+      <div>
+            <label> <input type="radio" name="appointmentMethod" value="web">On the web</label>
+            <label> <input type="radio" name="appointmentMethod" value="county">Through the county</label>
+            <label> <input type="radio" name="appointmentMethod" value="myturn">Through myturn.ca.gov</label>
+            <label> <input type="radio" name="appointmentMethod" value="phone">by phone</label>
+            Phone number <input type="text" id="appointmentByPhone">
+            <label> <input type="radio" name="appointmentMethod" value="other">Some other way</label>
+            <textara id="otherWay">
+                  </textarea>
+      </div>
 
-<div>
-<div>Private notes</div>
-<textarea class="mt-1 block w-full rounded-md bg-red-100 border-transparent focus:border-gray-500 focus:bg-red-200 focus:ring-0"></textarea>
-</div>
+      <div class="yousay">Are you folks vaccinating all Californians or are there limits on who you can vaccinate</div>
+      <div class="instructions">Click on any of the limitations. If they say anything that's not on the list, mention it
+            in
+            the public notes</div>
+      <div>
+            <checkbox id="veteransOnly" label="Veterans only" value="Yes: must be a veteran" />
+      </div>
+      <div>
+            <checkbox id="patientsOnly" label="Current patients only" value=" Yes: must be a current patient" />
+      </div>
+      <div>
+            <checkbox id="countyOnly" label="County residents only" value="Yes: restricted to county residents" />
+      </div>
 
+      <div class="yousay">Can you confirm that your address is {{ locationAddress }}</div>
+      <div class="instructions">If that's wrong, DO THE THING TO CORRECT IT</div>
+
+      <div>
+            <div id="callScriptPublicNotes">Public notes</div>
+            <textarea
+                  class="mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"></textarea>
+      </div>
+
+      <div>
+            <div id="callScriptPrivateNotes">Private notes</div>
+            <textarea
+                  class="mt-1 block w-full rounded-md bg-red-100 border-transparent focus:border-gray-500 focus:bg-red-200 focus:ring-0"></textarea>
+      </div>
+      <input type="button" id="scoobyRecordCall" value="Send report" />
+</form>

@@ -28,7 +28,6 @@ let auth0 = null;
 const currentReport = {};
 let currentLocation = null;
 let previousLocation = null;
-const previousReport = {};
 
 const updateLogin = (user) => {
   if (user && user.email) {
@@ -134,7 +133,7 @@ const showElement = (selector) => {
 
 const loadAndFillCall = async () => {
   showLoadingScreen();
-  previousLocation= currentLocation;
+  previousLocation = currentLocation;
   currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   loadAndFill(currentLocation);
 };
@@ -149,12 +148,12 @@ const loadAndFillPreviousCall = () => {
 
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
-  if (previousLocation !== null ) {
-  	fillTemplateIntoDom(rewindCallTemplate, "#undoCall", { locationName: previousLocation.Name });
-  	bindClick("#replaceReport", loadAndFillPreviousCall);
+  if (previousLocation !== null) {
+    fillTemplateIntoDom(rewindCallTemplate, "#undoCall", { locationName: previousLocation.Name });
+    bindClick("#replaceReport", loadAndFillPreviousCall);
   } else {
-  	fillTemplateIntoDom(emptyTemplate, "#undoCall", { });
-	
+    fillTemplateIntoDom(emptyTemplate, "#undoCall", {});
+
   }
   initializeReport(place["id"]);
   hideLoadingScreen();
@@ -173,9 +172,9 @@ const showNextCallPrompt = () => {
 const initScooby = () => {
   fillTemplateIntoDom(loadingScreenTemplate, "#loadingScreen", {});
   showLoadingScreen();
-  initAuth0( function () {
+  initAuth0(function () {
     hideLoadingScreen(); showNextCallPrompt();
-  } );
+  });
   handleAuth0Login();
 };
 
@@ -208,13 +207,17 @@ const initializeReport = (locationId) => {
 };
 
 const fillReportFromDom = () => {
-  currentReport["Availability"] = Array.from(
-    document.querySelector("#report_Availability").selectedOptions
-  ).map((el) => el.value);
-  currentReport["Notes"] = document.querySelector("#report_Notes").value;
-  currentReport["Phone"] = document.querySelector("#report_Phone").value;
+  var data = new FormData(document.querySelector("#callScriptForm"));
+  let answers = [];
+  for (const entry of data) {
+    answers.push(entry[1]);
+  };
+  logDebug(answers)
+  currentReport["Availability"] = answers;
+  currentReport["Notes"] = document.querySelector("#callScriptPublicNotes").value;
+  // currentReport["Phone"] = document.querySelector("#report_Phone").value;
   currentReport["Internal Notes"] = document.querySelector(
-    "#report_InternalNotes"
+    "#callScriptPrivateNotes"
   ).value;
 };
 
@@ -316,25 +319,25 @@ const prepareCallTemplate = (data) => {
 
   console.log(data);
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
-  fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes",{});
+  fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
-    let affiliation = data.Affiliation;
-    affiliation = affiliation.replace(/\W/g, '').toLowerCase();
+  let affiliation = data.Affiliation;
+  affiliation = affiliation.replace(/\W/g, '').toLowerCase();
   console.log(affiliation);
 
-    var affs = document.querySelectorAll("#affiliationNotes .provider");
-if (affs !== null ) {
-	affs.forEach((e) => {
-	e.classList.add("hidden");
-	});
-}
+  var affs = document.querySelectorAll("#affiliationNotes .provider");
+  if (affs !== null) {
+    affs.forEach((e) => {
+      e.classList.add("hidden");
+    });
+  }
 
-    var af = document.querySelector("#affiliationNotes .provider."+affiliation);
-    if (af !== null) {
-	af.classList.remove("hidden");
- } 
+  var af = document.querySelector("#affiliationNotes .provider." + affiliation);
+  if (af !== null) {
+    af.classList.remove("hidden");
+  }
 
- 
+
   fillTemplateIntoDom(callReportFormTemplate, "#callReportForm", {
     LocationId: data.id,
   });
@@ -355,7 +358,7 @@ if (affs !== null ) {
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
-  fillTemplateIntoDom(callScriptTemplate, "#callScript",{});
+  fillTemplateIntoDom(callScriptTemplate, "#callScript", {});
 
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
