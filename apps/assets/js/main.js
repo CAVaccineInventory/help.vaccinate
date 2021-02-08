@@ -315,7 +315,24 @@ const prepareCallTemplate = (data) => {
   console.log(data);
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes",{});
-  
+
+    let affiliation = data.Affiliation;
+    affiliation = affiliation.replace(' Pharmacy','').replaceAll(' ','-').replaceAll('/','').toLowerCase();
+  console.log(affiliation);
+
+    var affs = document.querySelectorAll("#affiliationNotes .provider");
+if (affs !== null ) {
+	affs.forEach((e) => {
+	e.classList.add("hidden");
+	});
+}
+
+    var af = document.querySelector("#affiliationNotes .provider."+affiliation);
+    if (af !== null) {
+	af.classList.remove("hidden");
+ } 
+
+ 
   fillTemplateIntoDom(callReportFormTemplate, "#callReportForm", {
     LocationId: data.id,
   });
