@@ -5,6 +5,7 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import createAuth0Client from "@auth0/auth0-spa-js";
+import emptyTemplate from "./templates/empty.handlebars";
 import locationTemplate from "./templates/location.handlebars";
 import countyTemplate from "./templates/county.handlebars";
 import latestReportTemplate from "./templates/latestReport.handlebars";
@@ -17,6 +18,7 @@ import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
 import undoCallTemplate from "./templates/undoCall.handlebars";
 import loadingScreenTemplate from "./templates/loadingScreen.handlebars";
+import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
@@ -132,12 +134,6 @@ const showElement = (selector) => {
 const loadAndFillCall = async () => {
   showLoadingScreen();
   previousLocation= currentLocation;
-
-  // It is not a true "undo", but a "record a new call on this site"
-  if (previousLocation !== null ) {
-  	fillTemplateIntoDom(undoCallTemplate, "#undoCall", { locationName: previousLocation.Name });
-  	bindClick("#replaceReport", loadAndFillPreviousCall);
-  }
   currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   loadAndFill(currentLocation);
 };
@@ -145,10 +141,20 @@ const loadAndFillCall = async () => {
 const loadAndFillPreviousCall = () => {
   logDebug("loading previous location");
   logDebug("it was " + previousLocation.Name);
-	 loadAndFill(previousLocation);
+  currentLocation = previousLocation;
+  previousLocation = null;
+  loadAndFill(currentLocation);
 };
 
 const loadAndFill = (place) => {
+  // It is not a true "undo", but a "record a new call on this site"
+  if (previousLocation !== null ) {
+  	fillTemplateIntoDom(undoCallTemplate, "#undoCall", { locationName: previousLocation.Name });
+  	bindClick("#replaceReport", loadAndFillPreviousCall);
+  } else {
+  	fillTemplateIntoDom(emptyTemplate, "#undoCall", { });
+	
+  }
   initializeReport(place["id"]);
   hideLoadingScreen();
   hideElement("#nextCallPrompt");
@@ -306,8 +312,10 @@ const prepareCallTemplate = (data) => {
     locationAffiliation: data["Location Affiliation"],
   });
 
+  console.log(data);
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
-
+  fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes",{});
+  
   fillTemplateIntoDom(callReportFormTemplate, "#callReportForm", {
     LocationId: data.id,
   });
