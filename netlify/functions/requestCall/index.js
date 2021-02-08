@@ -24,30 +24,35 @@ const LOCATION_FIELDS_TO_LOAD = [
 ];
 
 
-const handler = requirePermission("caller", async (event, context) => {
 
+// someday soon we might load this dynamically from airtable.
+const VIEWS_TO_LOAD = [
+  "To-call from Eva reports list (internal)",
+  "To-call priority list (internal)",
+  "To-call list (internal)",
+];
+
+const handler = requirePermission("caller", async (event, context) => {
   // logic copied from:
   // https://github.com/CAVaccineInventory/airtableApps/blob/main/caller/frontend/index.tsx
 
   // NOTE: there is a race condition here where two callers could get the same location.
   // this is no worse than the current app, though.
-  const getView = (view) => (
-    base('Locations').select({
-      view, fields: LOCATION_FIELDS_TO_LOAD,
-    }).firstPage()
-  );
 
-  const evaLocations = await getView("To-call from Eva reports list (internal)");
-  let locationsToCall = evaLocations;
+  let locationsToCall = [];
 
-  if (locationsToCall.length === 0) {
-    const locationsToPrioritize = await getView("To-call priority list (internal)");
-    locationsToCall = locationsToPrioritize;
-  }
-
-  if (locationsToCall.length === 0) {
-    const locationsToCallNormally = await getView("To-call list (internal)");
-    locationsToCall = locationsToCallNormally;
+  for (const view of VIEWS_TO_LOAD) {
+    try {
+      const locs = await base('Locations').select({
+        view, fields: LOCATION_FIELDS_TO_LOAD,
+      }).firstPage();
+      if (locs.length > 0) {
+        locationsToCall = locs;
+        break;
+      }
+    } catch (err) {
+      console.log("Failed to load location view", view, err);
+    }
   }
 
   // Can't find anyone to call?
@@ -68,10 +73,23 @@ const handler = requirePermission("caller", async (event, context) => {
   const today = new Date();
   today.setMinutes(today.getMinutes() + 10);
 
-  const updated = await base('Locations').update([{
-    id: locationToCall.id,
-    fields: { "Next available to app flow": today }
-  }]);
+  try {
+    const updated = await base('Locations').update([{
+      id: locationToCall.id,
+      fields: { "Next available to app flow": today }
+    }]);
+  } catch (err) {
+    // this is unexpected. return an error to the client.
+    console.log("Failed to update location for locking",
+                locationToCall.id, err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: "Failed to update location for locking",
+        message: err.message
+      })
+    };
+  }
 
 
   return {
