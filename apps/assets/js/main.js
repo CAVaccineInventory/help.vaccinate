@@ -16,7 +16,7 @@ import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
-import undoCallTemplate from "./templates/undoCall.handlebars";
+import rewindCallTemplate from "./templates/rewindCall.handlebars";
 import loadingScreenTemplate from "./templates/loadingScreen.handlebars";
 import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
@@ -150,7 +150,7 @@ const loadAndFillPreviousCall = () => {
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null ) {
-  	fillTemplateIntoDom(undoCallTemplate, "#undoCall", { locationName: previousLocation.Name });
+  	fillTemplateIntoDom(rewindCallTemplate, "#undoCall", { locationName: previousLocation.Name });
   	bindClick("#replaceReport", loadAndFillPreviousCall);
   } else {
   	fillTemplateIntoDom(emptyTemplate, "#undoCall", { });
@@ -319,7 +319,7 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes",{});
 
     let affiliation = data.Affiliation;
-    affiliation = affiliation.replace(' Pharmacy','').replaceAll(' ','-').replaceAll('/','').toLowerCase();
+    affiliation = affiliation.replace(/\W/g, '').toLowerCase();
   console.log(affiliation);
 
     var affs = document.querySelectorAll("#affiliationNotes .provider");
