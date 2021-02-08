@@ -39,7 +39,7 @@ const handler = requirePermission("caller", async (event, context) => {
   }
 
   if (locationsToCall.length === 0) {
-    const locationsToCallNormally = await getView("To-call priority list (internal)");
+    const locationsToCallNormally = await getView("To-call list (internal)");
     locationsToCall = locationsToCallNormally;
   }
 
