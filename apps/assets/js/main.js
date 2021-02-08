@@ -15,10 +15,17 @@ import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
+import loadingScreenTemplate from "./templates/loadingScreen.handlebars";
+import undoCallTemplate from "./templates/undoCall.handlebars";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
 let auth0 = null;
+
+let currentReport = {};
+let currentLocation = null;
+let previousLocation = null;
+let previousReport = {};
 
 const updateLogin = (user) => {
   if (user && user.email) {
@@ -32,7 +39,7 @@ const updateLogin = (user) => {
   }
 };
 
-const initAuth0 = () => {
+const initAuth0 = (cb) => {
   createAuth0Client({
     domain: AUTH0_DOMAIN,
     client_id: AUTH0_CLIENTID,
@@ -45,6 +52,7 @@ const initAuth0 = () => {
 
       auth0.getUser().then((user) => {
         updateLogin(user);
+        cb();
       });
     })
     .catch((err) => {
@@ -120,34 +128,61 @@ const showElement = (selector) => {
   document.querySelector(selector).classList.remove("hidden");
 };
 
-const hideScript = () => {
-  hideElement("#callerTool");
-};
-const showScript = (location) => {
-  hideElement("#nextCallPrompt");
-  prepareCallTemplate(location);
-  showElement("#callerTool");
-};
 
 const loadAndFillCall = async () => {
-  logDebug("loading");
-  const data = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
-  initializeReport(data["id"]);
-  showScript(data);
+  showLoadingScreen();
+  previousLocation= currentLocation;
+
+  // It is not a true "undo", but a "record a new call on this site"
+  if (previousLocation !== null ) {
+  	fillTemplateIntoDom(undoCallTemplate, "#undoCall", {locationName: previousLocation.Name });
+  	bindClick("#replaceReport", loadAndFillPreviousCall());
+  }
+  currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+  loadAndFill(currentLocation);
 };
+
+const loadAndFillPreviousCall = () => {
+	logDebug("loading previous location");
+	logDebug("it was " + previousLocation.Name);
+	 loadAndFill(previousLocation);
+}
+
+const loadAndFill = (place) => {
+  initializeReport(place["id"]);
+  hideLoadingScreen();
+  hideElement("#nextCallPrompt");
+  prepareCallTemplate(place);
+  showElement("#callerTool");
+
+}
 
 const showNextCallPrompt = () => {
   fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
   bindClick("#requestCallButton", loadAndFillCall);
   showElement("#nextCallPrompt");
-  hideScript();
+  hideElement("#callerTool");
 };
 
 const initScooby = () => {
-  initAuth0();
+
+  fillTemplateIntoDom(loadingScreenTemplate, "#loadingScreen", {});
+  showLoadingScreen();
+  initAuth0( function() { hideLoadingScreen(); showNextCallPrompt();} );
   handleAuth0Login();
-  showNextCallPrompt();
 };
+
+const showLoadingScreen = () => {
+
+  showElement("#loading");
+
+}
+
+const hideLoadingScreen = () => {
+  hideElement("#loading");
+
+}
+
 
 const recordCall = async (callReport) => {
   console.log(callReport);
@@ -163,10 +198,6 @@ const recordCall = async (callReport) => {
   return data.created;
 };
 
-const currentReport = {};
-const currentLocation = null;
-const previousLocation = null;
-const previousReport = null;
 
 const initializeReport = (locationId) => {
   currentReport["Location"] = locationId;
@@ -262,7 +293,7 @@ const submitCallReport = async () => {
   logCallLocally(callId);
 
   if (callId) {
-    showNextCallPrompt();
+	loadAndFillCall();
   }
 };
 
