@@ -22,10 +22,10 @@ import undoCallTemplate from "./templates/undoCall.handlebars";
 // global auth0 object. probably a better way to do this
 let auth0 = null;
 
-let currentReport = {};
+const currentReport = {};
 let currentLocation = null;
 let previousLocation = null;
-let previousReport = {};
+const previousReport = {};
 
 const updateLogin = (user) => {
   if (user && user.email) {
@@ -135,7 +135,7 @@ const loadAndFillCall = async () => {
 
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null ) {
-  	fillTemplateIntoDom(undoCallTemplate, "#undoCall", {locationName: previousLocation.Name });
+  	fillTemplateIntoDom(undoCallTemplate, "#undoCall", { locationName: previousLocation.Name });
   	bindClick("#replaceReport", loadAndFillPreviousCall());
   }
   currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
@@ -143,10 +143,10 @@ const loadAndFillCall = async () => {
 };
 
 const loadAndFillPreviousCall = () => {
-	logDebug("loading previous location");
-	logDebug("it was " + previousLocation.Name);
+  logDebug("loading previous location");
+  logDebug("it was " + previousLocation.Name);
 	 loadAndFill(previousLocation);
-}
+};
 
 const loadAndFill = (place) => {
   initializeReport(place["id"]);
@@ -154,8 +154,7 @@ const loadAndFill = (place) => {
   hideElement("#nextCallPrompt");
   prepareCallTemplate(place);
   showElement("#callerTool");
-
-}
+};
 
 const showNextCallPrompt = () => {
   fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
@@ -165,23 +164,21 @@ const showNextCallPrompt = () => {
 };
 
 const initScooby = () => {
-
   fillTemplateIntoDom(loadingScreenTemplate, "#loadingScreen", {});
   showLoadingScreen();
-  initAuth0( function() { hideLoadingScreen(); showNextCallPrompt();} );
+  initAuth0( function () {
+    hideLoadingScreen(); showNextCallPrompt();
+  } );
   handleAuth0Login();
 };
 
 const showLoadingScreen = () => {
-
   showElement("#loading");
-
-}
+};
 
 const hideLoadingScreen = () => {
   hideElement("#loading");
-
-}
+};
 
 
 const recordCall = async (callReport) => {
@@ -293,7 +290,7 @@ const submitCallReport = async () => {
   logCallLocally(callId);
 
   if (callId) {
-	loadAndFillCall();
+    loadAndFillCall();
   }
 };
 
