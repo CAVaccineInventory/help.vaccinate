@@ -130,11 +130,12 @@ const showElement = (selector) => {
   document.querySelector(selector).classList.remove("hidden");
 };
 
-
 const loadAndFillCall = async () => {
   showLoadingScreen();
-  previousLocation= currentLocation;
-  currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+  previousLocation = currentLocation;
+  currentLocation = await fetchJsonFromEndpoint(
+    "/.netlify/functions/requestCall"
+  );
   loadAndFill(currentLocation);
 };
 
@@ -148,12 +149,13 @@ const loadAndFillPreviousCall = () => {
 
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
-  if (previousLocation !== null ) {
-  	fillTemplateIntoDom(undoCallTemplate, "#undoCall", { locationName: previousLocation.Name });
-  	bindClick("#replaceReport", loadAndFillPreviousCall);
+  if (previousLocation !== null) {
+    fillTemplateIntoDom(undoCallTemplate, "#undoCall", {
+      locationName: previousLocation.Name,
+    });
+    bindClick("#replaceReport", loadAndFillPreviousCall);
   } else {
-  	fillTemplateIntoDom(emptyTemplate, "#undoCall", { });
-	
+    fillTemplateIntoDom(emptyTemplate, "#undoCall", {});
   }
   initializeReport(place["id"]);
   hideLoadingScreen();
@@ -172,9 +174,10 @@ const showNextCallPrompt = () => {
 const initScooby = () => {
   fillTemplateIntoDom(loadingScreenTemplate, "#loadingScreen", {});
   showLoadingScreen();
-  initAuth0( function () {
-    hideLoadingScreen(); showNextCallPrompt();
-  } );
+  initAuth0(function () {
+    hideLoadingScreen();
+    showNextCallPrompt();
+  });
   handleAuth0Login();
 };
 
@@ -185,7 +188,6 @@ const showLoadingScreen = () => {
 const hideLoadingScreen = () => {
   hideElement("#loading");
 };
-
 
 const recordCall = async (callReport) => {
   console.log(callReport);
@@ -200,7 +202,6 @@ const recordCall = async (callReport) => {
   }
   return data.created;
 };
-
 
 const initializeReport = (locationId) => {
   currentReport["Location"] = locationId;
@@ -314,25 +315,28 @@ const prepareCallTemplate = (data) => {
 
   console.log(data);
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
-  fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes",{});
+  fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
-    let affiliation = data.Affiliation;
-    affiliation = affiliation.replace(' Pharmacy','').replaceAll(' ','-').replaceAll('/','').toLowerCase();
+  let affiliation = data.Affiliation;
+  affiliation = affiliation
+    .replace(" Pharmacy", "")
+    .replaceAll(" ", "-")
+    .replaceAll("/", "")
+    .toLowerCase();
   console.log(affiliation);
 
-    var affs = document.querySelectorAll("#affiliationNotes .provider");
-if (affs !== null ) {
-	affs.forEach((e) => {
-	e.classList.add("hidden");
-	});
-}
+  const affs = document.querySelectorAll("#affiliationNotes .provider");
+  if (affs !== null) {
+    affs.forEach((e) => {
+      e.classList.add("hidden");
+    });
+  }
 
-    var af = document.querySelector("#affiliationNotes .provider."+affiliation);
-    if (af !== null) {
-	af.classList.remove("hidden");
- } 
+  const af = document.querySelector("#affiliationNotes .provider." + affiliation);
+  if (af !== null) {
+    af.classList.remove("hidden");
+  }
 
- 
   fillTemplateIntoDom(callReportFormTemplate, "#callReportForm", {
     LocationId: data.id,
   });
