@@ -23,6 +23,12 @@ const LOCATION_FIELDS_TO_LOAD = [
   "Hours"
 ];
 
+const COUNTIES_FIELDS_TO_LOAD = [
+  "County",
+  "Vaccine info URL",
+  "Vaccine locations URL",
+  "Notes",
+];
 
 
 // someday soon we might load this dynamically from airtable.
@@ -91,11 +97,32 @@ const handler = requirePermission("caller", async (event, context) => {
     };
   }
 
+  const output = Object.assign(
+    {id: locationToCall.id}, locationToCall.fields);
+
+  // get some additional infomation for the user
+
+  // try to fetch county record
+  const county = locationToCall.get('County');
+  if (county) {
+    try {
+      const countyRecords = await base('Counties').select({
+        fields: COUNTIES_FIELDS_TO_LOAD,
+        filterByFormula: `{County enum} = '${county}'`,
+        maxRecords: 1
+      }).firstPage();
+      if (countyRecords && countyRecords.length) {
+        output.county_record = Object.assign(
+          {id: countyRecords[0].id}, countyRecords[0].fields);
+      }
+    } catch (err) {
+      console.log("Failure getting county for location", locationToCall.id, err);
+    }
+  }
 
   return {
     statusCode: 200,
-    body: JSON.stringify(Object.assign(
-      {id: locationToCall.id}, locationToCall.fields))
+    body: JSON.stringify(output)
   };
 });
 
