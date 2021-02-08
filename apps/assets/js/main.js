@@ -163,30 +163,99 @@ const recordCall = async (callReport) => {
   return data.created;
 };
 
-
-
-let currentReport = {};
-let currentLocation = null;
-let previousLocation = null;
-let previousReport = null;
-
+const currentReport = {};
+const currentLocation = null;
+const previousLocation = null;
+const previousReport = null;
 
 const initializeReport = (locationId) => {
-	currentReport['Location'] = locationId;
+  currentReport["Location"] = locationId;
 };
 
-
-
 const fillReportFromDom = () => {
-    currentReport["Availability"] = Array.from( document.querySelector("#report_Availability").selectedOptions).map((el) => el.value);
-    currentReport["Notes"] = document.querySelector("#report_Notes").value;
-    currentReport["Phone"] = document.querySelector("#report_Phone").value;
-    currentReport["Internal Notes"] = document.querySelector("#report_InternalNotes").value;
-}
+  currentReport["Availability"] = Array.from(
+    document.querySelector("#report_Availability").selectedOptions
+  ).map((el) => el.value);
+  currentReport["Notes"] = document.querySelector("#report_Notes").value;
+  currentReport["Phone"] = document.querySelector("#report_Phone").value;
+  currentReport["Internal Notes"] = document.querySelector(
+    "#report_InternalNotes"
+  ).value;
+};
+
+const saveCallReport = async () => {
+  fillReportFromDom();
+  submitCallReport();
+};
+
+const AVAIL_BAD_CONTACT_INFO = "No: incorrect contact information";
+const AVAIL_PERMANENTLY_CLOSED = "No: location permanently closed";
+const AVAIL_SKIP = "Skip: call back later";
+
+const submitBadContactInfo = async () => {
+  submitWithAvail(AVAIL_BAD_CONTACT_INFO);
+};
+
+const submitPermanentlyClosed = async () => {
+  submitWithAvail(AVAIL_PERMANENTLY_CLOSED);
+};
+
+const submitWithAvail = async (avail) => {
+  fillReportFromDom();
+  currentReport["Availability"] = [avail];
+  submitCallReport();
+};
+
+const submitSkipUntil = async (when) => {
+  fillReportFromDom();
+  currentReport["Do not call until"] = when.toISOString();
+  currentReport["Availability"] = [AVAIL_SKIP];
+  submitCallReport();
+};
+
+const MINUTE = 60 * 1000;
+const HOUR = MINUTE * 60;
+
+// busy = 15 min delay
+const submitBusy = async () => {
+  const when = new Date();
+  when.setTime(when.getTime() + 15 * MINUTE);
+  submitSkipUntil(when);
+};
+
+// no answer = an hour delay - totally arbitrary choice
+const submitNoAnswer = async () => {
+  const when = new Date();
+  when.setTime(when.getTime() + 1 * HOUR);
+  submitSkipUntil(when);
+};
+
+// long hold = an hour delay - totally arbitrary choice
+const submitLongHold = async () => {
+  const when = new Date();
+  when.setTime(when.getTime() + 1 * HOUR);
+  submitSkipUntil(when);
+};
+
+const submitCallTomorrow = async () => {
+  const when = new Date();
+  // Advance the clock 24 hours to get to tomorrow, then bounce back to 8am localtime.
+  // / TODO this shouldn't be in localtime
+  when.setTime(when.getTime() + 24 * HOUR);
+  when.setHours(8);
+  when.setMinutes(0);
+  submitSkipUntil(when);
+};
+
+const submitCallMonday = async () => {
+  const when = new Date();
+  when.setDate(when.getDate() + ((1 + 7 - when.getDay()) % 7));
+  when.setHours(8);
+  when.setMinutes(0);
+  submitSkipUntil(when);
+};
 
 const submitCallReport = async () => {
-
-  fillReportFromDom(); 
   logDebug("loading");
   console.log(currentReport);
   const callId = await recordCall(currentReport);
@@ -199,7 +268,7 @@ const submitCallReport = async () => {
 
 const logCallLocally = (callId) => {
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId });
-}
+};
 const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationName: data.Name,
@@ -232,7 +301,24 @@ const prepareCallTemplate = (data) => {
     locationPhone: data["Phone number"],
   });
 
-  bindClick("#scoobyRecordCall", submitCallReport);
+  bindClick("#wrongNumber", submitBadContactInfo);
+  bindClick("#permanentlyClosed", submitPermanentlyClosed);
+  bindClick("#noAnswer", submitNoAnswer);
+  bindClick("#phoneBusy", submitBusy);
+  bindClick("#closedForTheDay", submitCallTomorrow);
+  bindClick("#closedForTheWeekend", submitCallMonday);
+
+  // don't show "on hold for more than 2 minutes" until 2 min have elapsed
+  const el = document.querySelector("#longHold");
+  if (el !== null) {
+    el.style.visibility = "hidden";
+    setTimeout(function () {
+      el.style.visibility = "visible";
+      bindClick("#longHold", submitLongHold);
+    }, 120000);
+  }
+
+  bindClick("#scoobyRecordCall", saveCallReport);
 };
 
 export {
