@@ -8,12 +8,19 @@ const LOCATION_FIELDS_TO_LOAD = [
   "Name",
   "County",
   "Phone number",
-  "Internal notes",
+  "Internal notes", // really location notes
   "Latest report",
   "Latest report notes",
+  "Latest Internal Notes",
+  "County vaccine info URL",
+  "County Vaccine locations URL",
+  "Availability Info",
   "Address",
+  "Website",
   "Affiliation",
   "Location Type",
+  "Number of Reports",
+  "Hours"
 ];
 
 
