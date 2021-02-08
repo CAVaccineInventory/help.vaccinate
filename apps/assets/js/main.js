@@ -132,6 +132,7 @@ const showScript = (location) => {
 const loadAndFillCall = async () => {
   logDebug("loading");
   const data = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+  initializeReport(data["id"]);
   showScript(data);
 };
 
@@ -162,27 +163,43 @@ const recordCall = async (callReport) => {
   return data.created;
 };
 
-const submitCallReport = async () => {
-  const report = {
-    "Location": document.querySelector("#report_LocationId").value,
-    "Availability": Array.from(
-      document.querySelector("#report_Availability").selectedOptions
-    ).map((el) => el.value),
-    "Notes": document.querySelector("#report_Notes").value,
-    "Phone": document.querySelector("#report_Phone").value,
-    "Internal Notes": document.querySelector("#report_InternalNotes").value,
-  };
 
+
+let currentReport = {};
+let currentLocation = null;
+let previousLocation = null;
+let previousReport = null;
+
+
+const initializeReport = (locationId) => {
+	currentReport['Location'] = locationId;
+};
+
+
+
+const fillReportFromDom = () => {
+    currentReport["Availability"] = Array.from( document.querySelector("#report_Availability").selectedOptions).map((el) => el.value);
+    currentReport["Notes"] = document.querySelector("#report_Notes").value;
+    currentReport["Phone"] = document.querySelector("#report_Phone").value;
+    currentReport["Internal Notes"] = document.querySelector("#report_InternalNotes").value;
+}
+
+const submitCallReport = async () => {
+
+  fillReportFromDom(); 
   logDebug("loading");
-  console.log(report);
-  const callId = await recordCall(report);
-  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId });
+  console.log(currentReport);
+  const callId = await recordCall(currentReport);
+  logCallLocally(callId);
 
   if (callId) {
     showNextCallPrompt();
   }
 };
 
+const logCallLocally = (callId) => {
+  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId });
+}
 const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationName: data.Name,
