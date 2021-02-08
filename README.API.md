@@ -28,7 +28,6 @@ Gets a location for the user to call. 'Locks' the location for 10 minutes so it 
 - **Example response**:
 ```json
 {
-{
   "id": "recRd4p2FWgJJbLc1",
   "Name": "SAVE MART PHARMACY - STANDIFORD #49",
   "Phone number": "209-577-1350",
@@ -94,7 +93,7 @@ Submits a report based on what the user found during a call.
 ```json
 Request:
 {
-  "Location": "recRPSSfimvslExuU",
+  "Location": "recRd4p2FWgJJbLc1",
   "Vaccines available?": "No",
   "Availability": ["No: not open to the public"],
   "Notes": "just testing",
