@@ -5,6 +5,31 @@ const { base } = require("../../lib/airtable.js");
 
 
 const handler = requirePermission("caller", async (event, context) => {
+
+  // save off raw report ASAP. Note that we don't block on this
+  // completing, so it shouldn't slow things down too much.
+  try {
+    const fields = {
+      auth0_reporter_id: context.identityContext.claims.sub,
+      hostname: event.headers.host,
+      remote_ip: event.headers['client-ip'],
+      endpoint: 'submitReport',
+      extra_json: JSON.stringify({body: event.body})
+    };
+    base('Caller Audit Log').create([{fields}]).then((results) => {
+      if (results && results.length > 0) {
+        console.log(`AUDIT log ${fields.auth0_reporter_id} ${results[0].id}`);
+      } else {
+        console.log("Failed to insert audit log results:", results);
+      }
+    }).catch((err) => {
+      console.log("Failed to insert audit log err:", err);
+    });
+  } catch (e) {
+    console.log("ERR failed to kick off audit log entry.", e);
+  }
+
+
   let input = null;
   try {
     input = JSON.parse(event.body);

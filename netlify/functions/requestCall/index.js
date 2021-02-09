@@ -131,6 +131,37 @@ const handler = requirePermission("caller", async (event, context) => {
     }
   }
 
+  // save off an audit log entry noting that this caller got this location.
+  //
+  // Note that we don't block on this completing, so it shouldn't slow things down too much.
+  try {
+    const fields = {
+      auth0_reporter_id: context.identityContext.claims.sub,
+      hostname: event.headers.host,
+      remote_ip: event.headers['client-ip'],
+      endpoint: 'requestCall',
+      extra_json: JSON.stringify({
+        location_id: output.id,
+        location_name: output.Name,
+        release_time: today,
+        affiliation: aff
+      })
+    };
+    base('Caller Audit Log').create([{fields}]).then((results) => {
+      if (results && results.length > 0) {
+        console.log(`AUDIT log ${fields.auth0_reporter_id} ${results[0].id}`);
+      } else {
+        console.log("Failed to insert audit log results:", results);
+      }
+    }).catch((err) => {
+      console.log("Failed to insert audit log err:", err);
+    });
+  } catch (e) {
+    console.log("ERR failed to kick off audit log entry.", e);
+  }
+
+
+
   return {
     statusCode: 200,
     body: JSON.stringify(output)
