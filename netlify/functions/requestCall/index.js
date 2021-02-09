@@ -40,6 +40,7 @@ const PROVIDER_FIELDS_TO_LOAD = [
 
 // someday soon we might load this dynamically from airtable.
 const VIEWS_TO_LOAD = [
+  "Stale reports (with Eva tip)",
   "To-call from Eva reports list (internal)",
   "To-call priority list (internal)",
   "To-call list (internal)",
