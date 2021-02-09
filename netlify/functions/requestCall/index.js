@@ -14,6 +14,7 @@ const LOCATION_FIELDS_TO_LOAD = [
   "Latest Internal Notes",
   "County vaccine info URL", // retire this now that county is fetched
   "County Vaccine locations URL", // retire this now that county is fetched
+  "county_notes",
   "Availability Info",
   "Address",
   "Website",
@@ -21,13 +22,6 @@ const LOCATION_FIELDS_TO_LOAD = [
   "Location Type",
   "Number of Reports",
   "Hours"
-];
-
-const COUNTIES_FIELDS_TO_LOAD = [
-  "County",
-  "Vaccine info URL",
-  "Vaccine locations URL",
-  "Notes",
 ];
 
 const PROVIDER_FIELDS_TO_LOAD = [
@@ -113,27 +107,6 @@ const handler = requirePermission("caller", async (event, context) => {
     {id: locationToCall.id}, locationToCall.fields);
 
   // get some additional infomation for the user
-
-  // try to fetch county record
-  const county = locationToCall.get('County');
-  if (county) {
-    try {
-      const countyRecords = await base('Counties').select({
-        fields: COUNTIES_FIELDS_TO_LOAD,
-        filterByFormula: `{County enum} = "${county}"`,
-        maxRecords: 1
-      }).firstPage();
-      if (countyRecords && countyRecords.length) {
-        output.county_record = Object.assign(
-          {id: countyRecords[0].id}, countyRecords[0].fields);
-      } else {
-        console.log("No county found for location",
-                    locationToCall.id, county);
-      }
-    } catch (err) {
-      console.log("Failure getting county for location", locationToCall.id, err);
-    }
-  }
 
   // try to fetch provider record
   const aff = locationToCall.get('Affiliation');
