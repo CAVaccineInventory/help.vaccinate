@@ -2,33 +2,14 @@
 
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
+const { logEvent } = require("../../lib/log.js");
 
 
 const handler = requirePermission("caller", async (event, context) => {
 
-  // save off raw report ASAP. Note that we don't block on this
-  // completing, so it shouldn't slow things down too much.
-  try {
-    const fields = {
-      auth0_reporter_id: context.identityContext.claims.sub,
-      hostname: event.headers.host,
-      remote_ip: event.headers['client-ip'],
-      endpoint: 'submitReport',
-      extra_json: JSON.stringify({body: event.body})
-    };
-    base('Caller Audit Log').create([{fields}]).then((results) => {
-      if (results && results.length > 0) {
-        console.log(`AUDIT log ${fields.auth0_reporter_id} ${results[0].id}`);
-      } else {
-        console.log("Failed to insert audit log results:", results);
-      }
-    }).catch((err) => {
-      console.log("Failed to insert audit log err:", err);
-    });
-  } catch (e) {
-    console.log("ERR failed to kick off audit log entry.", e);
-  }
-
+  // save off a raw report in case something goes wrong below.
+  logEvent({event, context, endpoint: 'submitReport', name: 'raw',
+            payload: event.body});
 
   let input = null;
   try {
@@ -42,9 +23,12 @@ const handler = requirePermission("caller", async (event, context) => {
 
   // validation, such as it is
   if (!input.Location || !input.Availability) {
+    const output = {error: "location validation failed"};
+    logEvent({event, context, endpoint: 'submitReport', name: 'err',
+              payload: JSON.stringify(output)});
     return {
       statusCode: 400,
-      body: JSON.stringify({error: "location validation failed"})
+      body: JSON.stringify(output)
     };
   }
 
@@ -73,12 +57,17 @@ const handler = requirePermission("caller", async (event, context) => {
   try {
     const result = await base('Reports').create([{fields: input}]);
     const resultIds = result && result.map((r) => r.id) || [];
+
     return {
       statusCode: 200,
       body: JSON.stringify({created: resultIds})
     };
   } catch (err) {
     console.log("Failed to insert to airtable", err); // XXX
+
+    logEvent({event, context, endpoint: 'submitReport', name: 'err',
+              payload: JSON.stringify({error: err})});
+
     return {
       statusCode: 500,
       body: JSON.stringify({error: "airtable insert failed",
