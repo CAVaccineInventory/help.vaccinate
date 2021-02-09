@@ -10,7 +10,6 @@ import locationTemplate from "./templates/location.handlebars";
 import countyTemplate from "./templates/county.handlebars";
 import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
-import callReportFormTemplate from "./templates/callReportForm.handlebars";
 import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
@@ -337,10 +336,6 @@ const prepareCallTemplate = (data) => {
     af.classList.remove("hidden");
   }
 
-
-  fillTemplateIntoDom(callReportFormTemplate, "#callReportForm", {
-    LocationId: data.id,
-  });
 
   fillTemplateIntoDom(latestReportTemplate, "#latestReport", {
     latestReportTime: data["Latest report"],

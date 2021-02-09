@@ -1,4 +1,5 @@
 module.exports = function (config) {
+    config.addPassthroughCopy({ "assets/css": "assets/css" });
     return {
         dir: {
             input: 'pages',
@@ -7,3 +8,4 @@ module.exports = function (config) {
         },
     };
 };
+
