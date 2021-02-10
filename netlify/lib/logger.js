@@ -50,8 +50,7 @@ initLogging = (event) => {
 loggedHandler = (handler) => {
   return async (event, context) => {
     [logger, cleanup] = await initLogging(event);
-    console.log("About to log...");
-    logger.info({ req: event }, event.httpMethod + " " + event.path);
+    logger.info({ req: event }, "%s %s", event.httpMethod, event.path);
     retval = await handler(event, context, logger);
     if (retval.statusCode >= 500) {
       logger.error({ res: retval }, "Response code: %d", retval.statusCode);
