@@ -63,7 +63,7 @@ const loggedHandler = (handler) => {
       }
       await cleanup();
       return retval;
-    } catch (e) {
+    } catch (err) {
       logger.error({ err: err }, "Uncaught error");
       await cleanup();
       return {
