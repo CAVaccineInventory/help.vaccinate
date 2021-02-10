@@ -7,7 +7,6 @@ import "regenerator-runtime/runtime";
 import createAuth0Client from "@auth0/auth0-spa-js";
 import emptyTemplate from "./templates/empty.handlebars";
 import locationTemplate from "./templates/location.handlebars";
-import countyTemplate from "./templates/county.handlebars";
 import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
 import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
@@ -317,6 +316,10 @@ const prepareCallTemplate = (data) => {
     locationHours: data.Hours,
     locationType: data["Location Type"],
     locationAffiliation: data["Location Affiliation"],
+    countyName: data.County,
+    countyInfo:
+      "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine"
+
   });
 
   console.log(data);
@@ -334,7 +337,9 @@ const prepareCallTemplate = (data) => {
     });
   }
 
-  const af = document.querySelector("#affiliationNotes .provider." + affiliation);
+  const af = document.querySelector(
+    "#affiliationNotes .provider." + affiliation
+  );
   if (af !== null) {
     af.classList.remove("hidden");
   }
@@ -346,11 +351,6 @@ const prepareCallTemplate = (data) => {
     latestReportInternalNotes: "Call again tomorrow",
   });
 
-  fillTemplateIntoDom(countyTemplate, "#countyInfo", {
-    countyName: data.County,
-    countyInfo:
-      "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine",
-  });
 
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
