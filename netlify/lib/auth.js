@@ -31,7 +31,7 @@ module.exports.requirePermission = (permission, handler) =>
   verifyJwt(async (event, context, logger) => {
     const { claims } = context.identityContext;
 
-    var logger = logger.child({claims: claims})
+    logger.info({claims: claims}, "Authentication");
 
     // Require the token to contain a specific permission.
     if (!claims || !claims.permissions || claims.permissions.indexOf(permission) === -1) {
