@@ -318,8 +318,7 @@ const prepareCallTemplate = (data) => {
     locationAffiliation: data["Location Affiliation"],
     countyName: data.County,
     countyInfo:
-      "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine"
-
+      "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine",
   });
 
   console.log(data);
@@ -351,11 +350,13 @@ const prepareCallTemplate = (data) => {
     latestReportInternalNotes: "Call again tomorrow",
   });
 
-
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
-  fillTemplateIntoDom(callScriptTemplate, "#callScript", {});
+  fillTemplateIntoDom(callScriptTemplate, "#callScript", {
+    locationId: data.id,
+    locationAddress: data.Address,
+  });
 
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);

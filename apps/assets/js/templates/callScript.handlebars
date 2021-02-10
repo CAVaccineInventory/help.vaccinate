@@ -1,14 +1,10 @@
 <div class="yousay">
-      "Hi, I’m calling to ask about getting the COVID vaccine for a person over 65."
-      "Could I please speak to the pharmacist on duty?"
+      Hi, I’m calling to ask about getting the COVID vaccine for a person over 65.
+      Could I please speak to the pharmacist on duty?
 </div>
 
-<div class="instructions">If you can't reach someone who can answer your questions</div>
-      <input type="button" id="skipNoRightPerson" class="btn btn-outline-secondary" value="Skip this call for now" />
-
-
 <div class="instructions">Once you reach the right person, ask</div>
-<div class="yousay">Are you currently offering COVID-19 vaccines to members of the public</div>
+<div class="yousay">Are you currently offering COVID-19 vaccines to members of the public?</div>
 
 <form id="callScriptForm">
       <div id="noOptions" class="btn-group" role="group" >
@@ -75,52 +71,55 @@
       <div class="yousay">Thanks! Do they need an appointment</div>
 
 	<div class="btn-group" role="group" >
-            <input class="btn-check" type="radio" name="appointment" value="Yes: walk-ins accepted" id="apptWalkin" >
+            <input class="btn-check" type="radio" name="appointment" value="Yes: walk-ins accepted" id="apptWalkin" 
+		data-bs-toggle="collapse" href="#appointmentInfo"
+		>
       <label class="btn btn-outline-secondary" for="apptWalkin">
 Walkins are welcome</label>
             <input class="btn-check" type="radio" name="appointment" value="Yes: appointment required" id="apptReqd">
       <label class="btn btn-outline-secondary" for="apptReqd">
 Appointment Required</label>
-            <input class="btn-check" type="radio" name="appointment" value="appointmentRequired" id="apptFull">
-      <label class="btn btn-outline-secondary" for="apptFull">
-Appointments are required and the schedule is full</label>
       </div>
-
+	<div id="appointmentInfo">
+            <input type="checkbox" class="btn btn-check" name="appointmentsFull" id="apptFull">
+      <label class="btn btn-outline-secondary" for="apptFull">The schedule is full</label>
       <div class="yousay">How should they make the appointment</div>
 	<div class="btn-group" role="group" >
-             <input class="btn-check" type="radio" name="appointmentMethod" value="county"><label class="btn btn-outline-secondary">County website</label>
-             <input class="btn-check" type="radio" name="appointmentMethod" value="myturn"><label class="btn btn-outline-secondary">myturn.ca.gov</label>
-             <input class="btn-check" type="radio" name="appointmentMethod" value="phone"><label class="btn btn-outline-secondary">phone</label>
-             <input class="btn-check" type="radio" name="appointmentMethod" value="web"><label class="btn btn-outline-secondary">web</label>
-             <input class="btn-check" type="radio" name="appointmentMethod" value="other"><label class="btn btn-outline-secondary">Another way</label>
+             <input class="btn-check" type="radio" name="appointmentMethod" id="methodCounty" value="county"><label for="methodCounty" class="btn btn-outline-secondary">County website</label>
+             <input class="btn-check" type="radio" name="appointmentMethod" id="methodMyTurn"  value="myturn"><label for="methodMyTurn" class="btn btn-outline-secondary">myturn.ca.gov</label>
+             <input class="btn-check" type="radio" name="appointmentMethod" id="methodPhone" value="phone"><label for="methodPhone" class="btn btn-outline-secondary">phone</label>
+             <input class="btn-check" type="radio" name="appointmentMethod" id="methodWeb" value="web"><label for="methodWeb" class="btn btn-outline-secondary">web</label>
+             <input class="btn-check" type="radio" name="appointmentMethod" id="methodOther" value="other"><label for="methodOther" class="btn btn-outline-secondary">Another way</label>
       </div>
             Phone number <input type="text" id="appointmentByPhone" class="input">
             <textarea id="otherWay">
                   </textarea>
-
-      <div class="yousay">Are you folks vaccinating all Californians or are there limits on who you can vaccinate</div>
-      <div class="instructions">Click on any of the limitations. If they say anything that's not on the list, mention it
-            in
-            the public notes</div>
+	</div>
+      <div class="yousay">Are you folks vaccinating all Californians or are there limits on who you can vaccinate?</div>
 
             <input class="btn-check" type="checkbox" id="veteransOnly"><label class="btn btn-outline-primary" for="veteransOnly">Veterans only</label>
             <input class="btn-check" type="checkbox" id="patientsOnly"><label class="btn btn-outline-primary" for="patientsOnly">Current patients only</label>
             <input class="btn-check" type="checkbox" id="countyOnly"><label class="btn btn-outline-primary" for="countyOnly">County residents only</label>
       </div>
+      <div class="instructions small secondary">If they say anything that's not on the list, mention it in the public notes.</div>
 
       <div class="yousay">Can you confirm that your address is {{ locationAddress }}</div>
-      <div class="instructions">If that's wrong, DO THE THING TO CORRECT IT</div>
+      <div class="instructions">If that's wrong, 
+    <a target="_blank" class="text-muted small" href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information">Report an error</a></div>
 
       <div>
             <div id="callScriptPublicNotes">Public notes</div>
-            <textarea
-"></textarea>
+<div class="input form-control form-control-sm" role="textbox" contenteditable>
+this is content   
+</div>
+
       </div>
 
       <div>
             <div id="callScriptPrivateNotes">Private notes</div>
-            <textarea
-"></textarea>
+<div class="input border border-warning form-control form-control-sm" role="textbox" contenteditable>
+this is content   
+</div>
       </div>
-      <input type="button" id="scoobyRecordCall" value="Send report" />
+      <input type="button" class="btn btn-primary" id="scoobyRecordCall" value="Send report" />
 </form>
