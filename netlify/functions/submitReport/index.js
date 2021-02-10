@@ -1,11 +1,12 @@
 "use strict";
 
+const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
 const { logEvent } = require("../../lib/log.js");
 
 
-const handler = requirePermission("caller", async (event, context) => {
+const handler = loggedHandler(requirePermission("caller", async (event, context, logger) => {
 
   // save off a raw report in case something goes wrong below.
   logEvent({event, context, endpoint: 'submitReport', name: 'raw',
@@ -51,7 +52,7 @@ const handler = requirePermission("caller", async (event, context) => {
       "auth0_reporter_roles": roles.join(','),
     });
   } catch (err) {
-    console.log("Failed to get userinfo", err); // XXX
+    logger.error({err: err}, "Failed to get userinfo"); // XXX
   }
 
   try {
@@ -63,7 +64,7 @@ const handler = requirePermission("caller", async (event, context) => {
       body: JSON.stringify({created: resultIds})
     };
   } catch (err) {
-    console.log("Failed to insert to airtable", err); // XXX
+    logger.error({err: err}, "Failed to insert to airtable"); // XXX
 
     logEvent({event, context, endpoint: 'submitReport', name: 'err',
               payload: JSON.stringify({error: err})});
@@ -74,6 +75,6 @@ const handler = requirePermission("caller", async (event, context) => {
                             message: err.message})
     };
   }
-});
+}));
 
 exports.handler = handler;

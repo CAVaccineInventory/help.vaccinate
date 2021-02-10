@@ -1,5 +1,9 @@
+"use strict";
+
+const { loggedHandler } = require("../../lib/logger.js");
+
 // Docs on event and context https://www.netlify.com/docs/functions/#the-handler-method
-const handler = async (event) => {
+const handler = loggedHandler(async (event, context, logger) => {
   try {
     const subject = event.queryStringParameters.name || 'World'
     return {
@@ -12,6 +16,6 @@ const handler = async (event) => {
   } catch (error) {
     return { statusCode: 500, body: error.toString() }
   }
-}
+});
 
 module.exports = { handler }

@@ -1,5 +1,6 @@
 "use strict";
 
+const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission } = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
 const { logEvent } = require("../../lib/log.js");
@@ -46,7 +47,7 @@ const VIEWS_TO_LOAD = [
   "To-call list (internal)",
 ];
 
-const handler = requirePermission("caller", async (event, context) => {
+const handler = loggedHandler(requirePermission("caller", async (event, context, logger) => {
   // logic copied from:
   // https://github.com/CAVaccineInventory/airtableApps/blob/main/caller/frontend/index.tsx
 
@@ -65,7 +66,7 @@ const handler = requirePermission("caller", async (event, context) => {
         break;
       }
     } catch (err) {
-      console.log("Failed to load location view", view, err);
+      logger.error({err: err, view: view}, "Failed to load location view");
     }
   }
 
@@ -73,7 +74,7 @@ const handler = requirePermission("caller", async (event, context) => {
   if (locationsToCall.length === 0) {
     logEvent({event, context, endpoint: 'requestCall', name: 'empty',
               payload: ''});
-
+    logger.warn("No locations to call");
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -97,8 +98,7 @@ const handler = requirePermission("caller", async (event, context) => {
     }]);
   } catch (err) {
     // this is unexpected. return an error to the client.
-    console.log("Failed to update location for locking",
-                locationToCall.id, err);
+    logger.error({err: err, location: locationToCall}, "Failed to update location for locking");
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -128,11 +128,12 @@ const handler = requirePermission("caller", async (event, context) => {
         output.provider_record = Object.assign(
           {id: providerRecords[0].id}, providerRecords[0].fields);
       } else {
-        console.log("No affiliation found for location",
-                    locationToCall.id, aff);
+        logger.error({location: locationToCall, affiliation: aff},
+                     "No affiliation found for location");
       }
     } catch (err) {
-      console.log("Failure getting provider for location", locationToCall.id, err);
+      logger.error({err: err, location: locationToCall},
+                   "Failure getting provider for location");
     }
   }
 
@@ -144,6 +145,6 @@ const handler = requirePermission("caller", async (event, context) => {
     statusCode: 200,
     body: JSON.stringify(output)
   };
-});
+}));
 
 exports.handler = handler;

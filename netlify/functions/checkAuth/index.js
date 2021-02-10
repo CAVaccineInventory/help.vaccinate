@@ -1,8 +1,10 @@
 "use strict";
 
+const { loggedHandler } = require("../../lib/logger.js");
+
 const { requireAuth } = require("../../lib/auth.js");
 
-const handler = async (event, context) => {
+const handler = async (event, context, logger) => {
   // The user information is available here.
   const { claims } = context.identityContext;
 
@@ -19,4 +21,4 @@ const handler = async (event, context) => {
 };
 
 
-exports.handler = requireAuth(handler);
+exports.handler = loggedHandler(requireAuth(handler));
