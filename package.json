@@ -21,6 +21,8 @@
     "bunyan": "^1.8.15",
     "core-js": "^3.8.3",
     "custom-event-polyfill": "^1.0.7",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-es": "^4.1.0",
     "handlebars": "^4.7.6",
     "install": "^0.13.0",
     "luxon": "^1.25.0",

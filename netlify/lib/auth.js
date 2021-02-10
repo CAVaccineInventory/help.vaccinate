@@ -1,10 +1,12 @@
-const { NetlifyJwtVerifier } = require("@serverless-jwt/netlify");
+const {
+  NetlifyJwtVerifier: netlifyJwtVerifier,
+} = require("@serverless-jwt/netlify");
 const fetch = require("node-fetch");
 
 const ISSUER = process.env.JWT_ISSUER || "https://vaccinateca.us.auth0.com/";
 const AUDIENCE = process.env.JWT_AUDIENCE || "https://help.vaccinateca.com";
 
-const verifyJwt = NetlifyJwtVerifier({
+const verifyJwt = netlifyJwtVerifier({
   issuer: ISSUER,
   audience: AUDIENCE,
 });
@@ -23,8 +25,9 @@ module.exports.requireAuth = verifyJwt;
 
 /**
  * Require the token to contain a certain permissions.
- * @param {string} scope
- * @param {*} handler
+ * @param {string} permission
+ * @param {function} handler
+ * @return {function} A new handler
  */
 module.exports.requirePermission = (permission, handler) =>
   verifyJwt(async (event, context, logger) => {
@@ -51,7 +54,8 @@ module.exports.requirePermission = (permission, handler) =>
 /**
  * Fetch the user's info from auth0.
  * Pass in the user's token.
- * XXX error handling
+ * @param {string} token
+ * @return {Object}
  */
 module.exports.getUserinfo = async (token) => {
   const userinfo = await fetch("https://vaccinateca.us.auth0.com/userinfo", {

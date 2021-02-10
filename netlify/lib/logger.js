@@ -2,11 +2,11 @@ const bunyan = require("bunyan");
 const { LoggingBunyan } = require("@google-cloud/logging-bunyan");
 
 const initLogging = (event) => {
-  var streams = [
+  const streams = [
     // Log to the console at 'info' and above
     { stream: process.stdout, level: "info" },
   ];
-  var end_request = () => true;
+  let endRequest = () => true;
 
   if (!process.env.GCP_CLIENT_EMAIL || !process.env.GCP_PRIVATE_KEY) {
     console.log("No Stackdriver logging configured, skipping");
@@ -24,7 +24,7 @@ const initLogging = (event) => {
     const stackdriverStream = stackdriver.stream("info");
     streams.push(stackdriverStream);
 
-    end_request = () => {
+    endRequest = () => {
       if (stackdriverStream.writableFinished) return;
       return new Promise((res) => {
         stackdriver.end(res);
@@ -40,12 +40,12 @@ const initLogging = (event) => {
     serializers: bunyan.stdSerializers,
   });
 
-  const request_logger = logger.child({
+  const requestLogger = logger.child({
     request_id: event.headers["x-nf-request-id"],
     deploy: process.env.DEPLOY || "testing",
   });
 
-  return [request_logger, end_request];
+  return [requestLogger, endRequest];
 };
 
 const loggedHandler = (handler) => {
