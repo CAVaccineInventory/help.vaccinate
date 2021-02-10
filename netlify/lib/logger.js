@@ -37,6 +37,7 @@ initLogging = (event) => {
   const logger = bunyan.createLogger({
     name: "netlify",
     streams: streams,
+    serializers: bunyan.stdSerializers,
   });
 
   request_logger = logger.child({
