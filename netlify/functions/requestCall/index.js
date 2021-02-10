@@ -99,7 +99,7 @@ const handler = loggedHandler(
     today.setMinutes(today.getMinutes() + 10);
 
     try {
-      const updated = await base("Locations").update([
+      await base("Locations").update([
         {
           id: locationToCall.id,
           fields: { "Next available to app flow": today },

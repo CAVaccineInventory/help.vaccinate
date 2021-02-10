@@ -3,7 +3,7 @@
 const { loggedHandler } = require("../../lib/logger.js");
 
 // Docs on event and context https://www.netlify.com/docs/functions/#the-handler-method
-const handler = loggedHandler(async (event, context, logger) => {
+const handler = loggedHandler(async (event) => {
   try {
     const subject = event.queryStringParameters.name || "World";
     return {

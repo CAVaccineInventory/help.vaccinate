@@ -1,7 +1,7 @@
 const bunyan = require("bunyan");
 const { LoggingBunyan } = require("@google-cloud/logging-bunyan");
 
-initLogging = (event) => {
+const initLogging = (event) => {
   var streams = [
     // Log to the console at 'info' and above
     { stream: process.stdout, level: "info" },
@@ -26,7 +26,7 @@ initLogging = (event) => {
 
     end_request = () => {
       if (stackdriverStream.writableFinished) return;
-      return new Promise((res, rej) => {
+      return new Promise((res) => {
         stackdriver.end(res);
       });
     };
@@ -40,7 +40,7 @@ initLogging = (event) => {
     serializers: bunyan.stdSerializers,
   });
 
-  request_logger = logger.child({
+  const request_logger = logger.child({
     request_id: event.headers["x-nf-request-id"],
     deploy: process.env.DEPLOY || "testing",
   });
@@ -48,11 +48,11 @@ initLogging = (event) => {
   return [request_logger, end_request];
 };
 
-loggedHandler = (handler) => {
+const loggedHandler = (handler) => {
   return async (event, context) => {
-    [logger, cleanup] = await initLogging(event);
+    const [logger, cleanup] = await initLogging(event);
     logger.info({ req: event }, "%s %s", event.httpMethod, event.path);
-    retval = await handler(event, context, logger);
+    const retval = await handler(event, context, logger);
     if (retval.statusCode >= 500) {
       logger.error({ res: retval }, "Response code: %d", retval.statusCode);
     } else if (retval.statusCode >= 400) {
