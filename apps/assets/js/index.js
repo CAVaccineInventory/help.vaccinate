@@ -7,8 +7,9 @@ import {
 } from "./main.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-  initAuth0();
-  handleAuth0Login();
+  initAuth0(function () {
+    handleAuth0Login();
+  });
 });
 
 const debugOutput = (data) => {
