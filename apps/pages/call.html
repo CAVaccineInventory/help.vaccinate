@@ -2,46 +2,41 @@
 title: Scooby
 layout: base.html
 ---
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">VaccinateCA Scooby</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="d-flex" id="loggedInAs"></div>
-  </div>
+     <div class="d-flex" id="loggedInAs"></div>
 </nav>
+	</div>
+	</nav>
 <div class="container">
-  <div class="">
-    <div class="" id="nextCallPrompt"></div>
 
-    <div id="callerTool" class="hidden">
-      <div id="undoCall"></div>
-      <div id="locationInfo"></div>
+    <div class="">
+	<div class="" id="nextCallPrompt">
+	</div>
 
-      <div class="hidden" id="latestReport"></div>
+  <div id="callerTool" class="hidden">
+    <div id="undoCall"></div>
+    <div id="locationInfo"></div>
 
-      <div id="affiliationNotes"></div>
-      <div id="countyInfo"></div>
+    <div class="hidden" id="latestReport"></div>
 
-      <div id="cta" class="call-to-action"></div>
+    <div id="affiliationNotes"></div>
+    <div id="countyInfo"></div>
 
-      <div id="dialResult"></div>
-      <div id="callScript"></div>
-    </div>
+    <div id="cta" class="call-to-action"></div>
+
+    <div id="dialResult"></div>
+    <div id="callScript"></div>
+
   </div>
-
-  <div id="callLog"></div>
-
-  <div id="loadingScreen"></div>
 </div>
+
+<div id="callLog"></div>
+
+<div id="loadingScreen"></div>
+  </div>
 <script src="/assets/js/scooby.js"></script>

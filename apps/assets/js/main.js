@@ -129,12 +129,11 @@ const showElement = (selector) => {
   document.querySelector(selector).classList.remove("hidden");
 };
 
+
 const loadAndFillCall = async () => {
   showLoadingScreen();
   previousLocation = currentLocation;
-  currentLocation = await fetchJsonFromEndpoint(
-    "/.netlify/functions/requestCall"
-  );
+  currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   loadAndFill(currentLocation);
 };
 
@@ -149,12 +148,11 @@ const loadAndFillPreviousCall = () => {
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null) {
-    fillTemplateIntoDom(rewindCallTemplate, "#undoCall", {
-      locationName: previousLocation.Name,
-    });
+    fillTemplateIntoDom(rewindCallTemplate, "#undoCall", { locationName: previousLocation.Name });
     bindClick("#replaceReport", loadAndFillPreviousCall);
   } else {
     fillTemplateIntoDom(emptyTemplate, "#undoCall", {});
+
   }
   initializeReport(place["id"]);
   hideLoadingScreen();
@@ -174,8 +172,7 @@ const initScooby = () => {
   fillTemplateIntoDom(loadingScreenTemplate, "#loadingScreen", {});
   showLoadingScreen();
   initAuth0(function () {
-    hideLoadingScreen();
-    showNextCallPrompt();
+    hideLoadingScreen(); showNextCallPrompt();
   });
   handleAuth0Login();
 };
@@ -187,6 +184,7 @@ const showLoadingScreen = () => {
 const hideLoadingScreen = () => {
   hideElement("#loading");
 };
+
 
 const recordCall = async (callReport) => {
   console.log(callReport);
@@ -202,21 +200,20 @@ const recordCall = async (callReport) => {
   return data.created;
 };
 
+
 const initializeReport = (locationId) => {
   currentReport["Location"] = locationId;
 };
 
 const fillReportFromDom = () => {
-  const data = new FormData(document.querySelector("#callScriptForm"));
-  const answers = [];
+  var data = new FormData(document.querySelector("#callScriptForm"));
+  let answers = [];
   for (const entry of data) {
     answers.push(entry[1]);
-  }
-  logDebug(answers);
+  };
+  logDebug(answers)
   currentReport["Availability"] = answers;
-  currentReport["Notes"] = document.querySelector(
-    "#callScriptPublicNotes"
-  ).value;
+  currentReport["Notes"] = document.querySelector("#callScriptPublicNotes").value;
   // currentReport["Phone"] = document.querySelector("#report_Phone").value;
   currentReport["Internal Notes"] = document.querySelector(
     "#callScriptPrivateNotes"
@@ -324,20 +321,21 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
   let affiliation = data.Affiliation;
-  affiliation = affiliation.replace(/\W/g, "").toLowerCase();
+  affiliation = affiliation.replace(/\W/g, '').toLowerCase();
   console.log(affiliation);
 
-  const affs = document.querySelectorAll("#affiliationNotes .provider");
+  var affs = document.querySelectorAll("#affiliationNotes .provider");
   if (affs !== null) {
     affs.forEach((e) => {
       e.classList.add("hidden");
     });
   }
 
-  const af = document.querySelector("#affiliationNotes .provider." + affiliation);
+  var af = document.querySelector("#affiliationNotes .provider." + affiliation);
   if (af !== null) {
     af.classList.remove("hidden");
   }
+
 
   fillTemplateIntoDom(latestReportTemplate, "#latestReport", {
     latestReportTime: data["Latest report"],
