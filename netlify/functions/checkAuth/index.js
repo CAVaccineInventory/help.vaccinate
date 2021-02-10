@@ -8,6 +8,8 @@ const handler = async (event, context) => {
   // The user information is available here.
   const { claims } = context.identityContext;
 
+  logger.info({ claims: claims }, "Read authentication");
+
   const authorizedCaller = !!(
     claims &&
     claims.permissions &&
