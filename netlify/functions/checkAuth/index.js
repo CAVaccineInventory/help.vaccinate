@@ -8,9 +8,9 @@ const handler = async (event, context, logger) => {
   // The user information is available here.
   const { claims } = context.identityContext;
 
-  perms = claims && claims.permissions ? claims.permissions : [];
-  roles = claims && claims[ROLE_SCOPE] ? claims[ROLE_SCOPE] : [];
-  user = claims && claims.sub;
+  const perms = claims && claims.permissions ? claims.permissions : [];
+  const roles = claims && claims[ROLE_SCOPE] ? claims[ROLE_SCOPE] : [];
+  const user = claims && claims.sub;
   logger.info(
     { permissions: perms, roles: roles, user: user },
     "Authentication"
