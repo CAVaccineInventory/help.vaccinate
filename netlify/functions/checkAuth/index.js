@@ -4,7 +4,7 @@ const { loggedHandler } = require("../../lib/logger.js");
 
 const { requireAuth } = require("../../lib/auth.js");
 
-const handler = async (event, context) => {
+const handler = async (event, context, logger) => {
   // The user information is available here.
   const { claims } = context.identityContext;
 
