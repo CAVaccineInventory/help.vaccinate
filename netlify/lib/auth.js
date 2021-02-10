@@ -23,7 +23,7 @@ const json = (statusCode, body) => {
 
 module.exports.requireAuth = verifyJwt;
 
-const ROLE_SCOPE = "https://vaccinateca.us.auth0.com/roles";
+const ROLE_SCOPE = "https://help.vaccinateca.com/roles";
 module.exports.ROLE_SCOPE = ROLE_SCOPE;
 
 /**
