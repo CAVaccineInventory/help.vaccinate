@@ -23,6 +23,9 @@ const json = (statusCode, body) => {
 
 module.exports.requireAuth = verifyJwt;
 
+const ROLE_SCOPE = "https://vaccinateca.us.auth0.com/roles";
+module.exports.ROLE_SCOPE = ROLE_SCOPE;
+
 /**
  * Require the token to contain a certain permissions.
  * @param {string} permission
@@ -33,14 +36,16 @@ module.exports.requirePermission = (permission, handler) =>
   verifyJwt(async (event, context, logger) => {
     const { claims } = context.identityContext;
 
-    logger.info({ claims: claims }, "Authentication");
+    perms = claims && claims.permissions ? claims.permissions : [];
+    roles = claims && claims[ROLE_SCOPE] ? claims[ROLE_SCOPE] : [];
+    user = claims && claims.sub;
+    logger.info(
+      { permissions: perms, roles: roles, user: user },
+      "Authentication"
+    );
 
     // Require the token to contain a specific permission.
-    if (
-      !claims ||
-      !claims.permissions ||
-      claims.permissions.indexOf(permission) === -1
-    ) {
+    if (perms.indexOf(permission) === -1) {
       return json(403, {
         error: "access_denied",
         error_description: `Token does not contain the required '${permission}' permission`,

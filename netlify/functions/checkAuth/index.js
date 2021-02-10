@@ -2,19 +2,21 @@
 
 const { loggedHandler } = require("../../lib/logger.js");
 
-const { requireAuth } = require("../../lib/auth.js");
+const { requireAuth, ROLE_SCOPE } = require("../../lib/auth.js");
 
 const handler = async (event, context, logger) => {
   // The user information is available here.
   const { claims } = context.identityContext;
 
-  logger.info({ claims: claims }, "Read authentication");
-
-  const authorizedCaller = !!(
-    claims &&
-    claims.permissions &&
-    claims.permissions.indexOf("caller") !== -1
+  perms = claims && claims.permissions ? claims.permissions : [];
+  roles = claims && claims[ROLE_SCOPE] ? claims[ROLE_SCOPE] : [];
+  user = claims && claims.sub;
+  logger.info(
+    { permissions: perms, roles: roles, user: user },
+    "Authentication"
   );
+
+  const authorizedCaller = !!(perms.indexOf("caller") !== -1);
 
   return {
     statusCode: 200,
