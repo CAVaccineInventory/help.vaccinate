@@ -56,7 +56,7 @@ loggedHandler = (handler) => {
     } else if (retval.statusCode >= 400) {
       logger.warn({ res: retval }, "Response code: %d", retval.statusCode);
     } else {
-      logger.info({ res: retval }), "Response code: %d", retval.statusCode;
+      logger.info({ res: retval }, "Response code: %d", retval.statusCode);
     }
     await cleanup();
     return retval;
