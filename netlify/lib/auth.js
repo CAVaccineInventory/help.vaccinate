@@ -28,8 +28,10 @@ module.exports.requireAuth = verifyJwt;
  * @param {*} handler
  */
 module.exports.requirePermission = (permission, handler) =>
-  verifyJwt(async (event, context, cb) => {
+  verifyJwt(async (event, context, logger) => {
     const { claims } = context.identityContext;
+
+    var logger = logger.child({claims: claims})
 
     // Require the token to contain a specific permission.
     if (!claims || !claims.permissions || claims.permissions.indexOf(permission) === -1) {
@@ -40,7 +42,7 @@ module.exports.requirePermission = (permission, handler) =>
     }
 
     // Continue.
-    return handler(event, context, cb);
+    return handler(event, context, logger);
   });
 
 
