@@ -22,7 +22,7 @@ initLogging = (event) => {
 
     const stackdriver = new LoggingBunyan(options);
     const stackdriverStream = stackdriver.stream("info");
-    streams.append(stackdriverStream);
+    streams.push(stackdriverStream);
 
     end_request = () => {
       if (stackdriverStream.writableFinished) return;
