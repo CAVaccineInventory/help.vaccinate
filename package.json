@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "lint": "prettier 'webpack/**/*.js' assets/css/*.css **/*.html && eslint .",
-    "lint:fix": "prettier --write 'webpack/**/*.js' assets/css/*.css **/*.html && eslint --fix .",
+    "lint": "prettier 'netlify/**/*.js' && eslint netlify/",
+    "lint:fix": "prettier --write 'netlify/**/*.js' && eslint --fix netlify/",
     "dev-functions": "rimraf dist"
   },
   "license": {
@@ -38,5 +38,8 @@
   "version": "1.0.0",
   "main": ".eslintrc.js",
   "keywords": [],
-  "author": ""
+  "author": "",
+  "devDependencies": {
+    "eslint": "^7.19.0"
+  }
 }
