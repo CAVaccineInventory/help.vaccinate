@@ -52,24 +52,22 @@ const loggedHandler = (handler) => {
   return async (event, context) => {
     const [logger, cleanup] = await initLogging(event);
     logger.info({ req: event }, "%s %s", event.httpMethod, event.path);
+    let retval = null;
     try {
-      const retval = await handler(event, context, logger);
-      if (retval.statusCode >= 500) {
-        logger.error({ res: retval }, "Response code: %d", retval.statusCode);
-      } else if (retval.statusCode >= 400) {
-        logger.warn({ res: retval }, "Response code: %d", retval.statusCode);
-      } else {
-        logger.info({ res: retval }, "Response code: %d", retval.statusCode);
-      }
-      await cleanup();
-      return retval;
+      retval = await handler(event, context, logger);
     } catch (err) {
+      retval = { statusCode: 500 };
       logger.error({ err: err }, "Uncaught error");
-      await cleanup();
-      return {
-        statusCode: 500,
-      };
     }
+    let logFunc = logger.info.bind(logger);
+    if (retval.statusCode >= 500) {
+      logFunc = logger.error.bind(logger);
+    } else if (retval.statusCode >= 400) {
+      logFunc = logger.warn.bind(logger);
+    }
+    logFunc({ res: retval }, "Response code: %d", retval.statusCode);
+    await cleanup();
+    return retval;
   };
 };
 
