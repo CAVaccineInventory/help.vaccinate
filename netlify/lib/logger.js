@@ -50,6 +50,7 @@ const initLogging = (event) => {
 
 const loggedHandler = (handler) => {
   return async (event, context) => {
+    const startTime = new Date();
     const [logger, cleanup] = await initLogging(event);
     logger.info({ req: event }, "%s %s", event.httpMethod, event.path);
     let retval = null;
@@ -65,7 +66,12 @@ const loggedHandler = (handler) => {
     } else if (retval.statusCode >= 400) {
       logFunc = logger.warn.bind(logger);
     }
-    logFunc({ res: retval }, "Response code: %d", retval.statusCode);
+    const duration = new Date() - startTime;
+    logFunc(
+      { res: retval, duration: duration },
+      "Response code: %d",
+      retval.statusCode
+    );
     await cleanup();
     return retval;
   };
