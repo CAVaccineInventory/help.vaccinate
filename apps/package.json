@@ -28,7 +28,7 @@
     "build:webpack": "webpack --mode production",
     "build:eleventy": "ELEVENTY_ENV=production eleventy",
     "build": "run-s clean build:*",
-    "lint": "prettier assets/**/*.js **/*.html && eslint assets/js",
+    "lint": "prettier --check assets/**/*.js '**/*.html' && eslint assets/js",
     "lint:fix": "prettier --write assets/**/*.js **/*.html && eslint --fix assets/js"
   },
   "author": "vaccinateca.com",
