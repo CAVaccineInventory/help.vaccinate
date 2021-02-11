@@ -179,13 +179,9 @@ const initScooby = () => {
   handleAuth0Login();
 };
 
-const showLoadingScreen = () => {
-  showElement("#loading");
-};
+const showLoadingScreen = () => { showElement("#loading"); };
 
-const hideLoadingScreen = () => {
-  hideElement("#loading");
-};
+const hideLoadingScreen = () => { hideElement("#loading"); };
 
 const recordCall = async (callReport) => {
   console.log(callReport);
@@ -312,13 +308,15 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
     locationName: data.Name,
-    locationAddress: data.Address,
+    locationAddress: data.Address || 'No address information available',
     locationHours: data.Hours,
+    locationWebsite: data.Website,
     locationType: data["Location Type"],
     locationAffiliation: data["Location Affiliation"],
     countyName: data.County,
-    countyInfo:
-      "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine",
+    countyURL: data["County vaccine info URL"],
+    countyInfo: data.county_notes,
+    internalNotes: data["Internal Notes"]
   });
 
   console.log(data);
