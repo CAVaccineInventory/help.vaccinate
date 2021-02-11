@@ -7,10 +7,8 @@ import "regenerator-runtime/runtime";
 import createAuth0Client from "@auth0/auth0-spa-js";
 import emptyTemplate from "./templates/empty.handlebars";
 import locationTemplate from "./templates/location.handlebars";
-import countyTemplate from "./templates/county.handlebars";
 import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
-import callReportFormTemplate from "./templates/callReportForm.handlebars";
 import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
@@ -28,7 +26,6 @@ let auth0 = null;
 const currentReport = {};
 let currentLocation = null;
 let previousLocation = null;
-const previousReport = {};
 
 const updateLogin = (user) => {
   if (user && user.email) {
@@ -121,27 +118,29 @@ const fillTemplateIntoDom = (template, selector, data) => {
 const logDebug = (msg) => {
   console.log(msg);
 };
+
+const isHidden = (selector) => {
+  return document.querySelector(selector)?.classList.contains("hidden");
+};
+
 const hideElement = (selector) => {
-  logDebug("hiding " + selector);
-  document.querySelector(selector).classList.add("hidden");
+  document.querySelector(selector)?.classList.add("hidden");
 };
 
 const showElement = (selector) => {
-  logDebug("showing " + selector);
-  document.querySelector(selector).classList.remove("hidden");
+  document.querySelector(selector)?.classList.remove("hidden");
 };
-
 
 const loadAndFillCall = async () => {
   showLoadingScreen();
-  previousLocation= currentLocation;
-  currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+  previousLocation = currentLocation;
+  currentLocation = await fetchJsonFromEndpoint(
+    "/.netlify/functions/requestCall"
+  );
   loadAndFill(currentLocation);
 };
 
 const loadAndFillPreviousCall = () => {
-  logDebug("loading previous location");
-  logDebug("it was " + previousLocation.Name);
   currentLocation = previousLocation;
   previousLocation = null;
   loadAndFill(currentLocation);
@@ -149,12 +148,13 @@ const loadAndFillPreviousCall = () => {
 
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
-  if (previousLocation !== null ) {
-  	fillTemplateIntoDom(rewindCallTemplate, "#undoCall", { locationName: previousLocation.Name });
-  	bindClick("#replaceReport", loadAndFillPreviousCall);
+  if (previousLocation !== null) {
+    fillTemplateIntoDom(rewindCallTemplate, "#undoCall", {
+      locationName: previousLocation.Name,
+    });
+    bindClick("#replaceReport", loadAndFillPreviousCall);
   } else {
-  	fillTemplateIntoDom(emptyTemplate, "#undoCall", { });
-	
+    fillTemplateIntoDom(emptyTemplate, "#undoCall", {});
   }
   initializeReport(place["id"]);
   hideLoadingScreen();
@@ -173,9 +173,10 @@ const showNextCallPrompt = () => {
 const initScooby = () => {
   fillTemplateIntoDom(loadingScreenTemplate, "#loadingScreen", {});
   showLoadingScreen();
-  initAuth0( function () {
-    hideLoadingScreen(); showNextCallPrompt();
-  } );
+  initAuth0(function () {
+    hideLoadingScreen();
+    showNextCallPrompt();
+  });
   handleAuth0Login();
 };
 
@@ -186,7 +187,6 @@ const showLoadingScreen = () => {
 const hideLoadingScreen = () => {
   hideElement("#loading");
 };
-
 
 const recordCall = async (callReport) => {
   console.log(callReport);
@@ -202,19 +202,24 @@ const recordCall = async (callReport) => {
   return data.created;
 };
 
-
 const initializeReport = (locationId) => {
   currentReport["Location"] = locationId;
 };
 
 const fillReportFromDom = () => {
-  currentReport["Availability"] = Array.from(
-    document.querySelector("#report_Availability").selectedOptions
-  ).map((el) => el.value);
-  currentReport["Notes"] = document.querySelector("#report_Notes").value;
-  currentReport["Phone"] = document.querySelector("#report_Phone").value;
+  const data = new FormData(document.querySelector("#callScriptForm"));
+  const answers = [];
+  for (const entry of data) {
+    answers.push(entry[1]);
+  }
+  logDebug(answers);
+  currentReport["Availability"] = answers;
+  currentReport["Notes"] = document.querySelector(
+    "#callScriptPublicNotes"
+  ).value;
+  // currentReport["Phone"] = document.querySelector("#report_Phone").value;
   currentReport["Internal Notes"] = document.querySelector(
-    "#report_InternalNotes"
+    "#callScriptPrivateNotes"
   ).value;
 };
 
@@ -308,54 +313,93 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
     locationName: data.Name,
-    locationAddress: data.Address,
+    locationAddress: data.Address || "No address information available",
     locationHours: data.Hours,
+    locationWebsite: data.Website,
     locationType: data["Location Type"],
     locationAffiliation: data["Location Affiliation"],
+    countyName: data.County,
+    countyURL: data["County vaccine info URL"],
+    countyInfo: data.county_notes,
+    internalNotes: data["Internal Notes"],
   });
 
   console.log(data);
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
-  fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes",{});
+  fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
-    let affiliation = data.Affiliation;
-    affiliation = affiliation.replace(/\W/g, '').toLowerCase();
+  let affiliation = data.Affiliation;
+  affiliation = affiliation.replace(/\W/g, "").toLowerCase();
   console.log(affiliation);
 
-    var affs = document.querySelectorAll("#affiliationNotes .provider");
-if (affs !== null ) {
-	affs.forEach((e) => {
-	e.classList.add("hidden");
-	});
-}
+  const affs = document.querySelectorAll("#affiliationNotes .provider");
+  if (affs !== null) {
+    affs.forEach((e) => {
+      e.classList.add("hidden");
+    });
+  }
 
-    var af = document.querySelector("#affiliationNotes .provider."+affiliation);
-    if (af !== null) {
-	af.classList.remove("hidden");
- } 
-
- 
-  fillTemplateIntoDom(callReportFormTemplate, "#callReportForm", {
-    LocationId: data.id,
-  });
-
-  fillTemplateIntoDom(latestReportTemplate, "#latestReport", {
-    latestReportTime: data["Latest report"],
-    latestReportStatus: "❌ No vaccine inventory",
-    latestReportPublicNotes: "Expect something",
-    latestReportInternalNotes: "Call again tomorrow",
-  });
-
-  fillTemplateIntoDom(countyTemplate, "#countyInfo", {
-    countyName: data.County,
-    countyInfo:
-      "county vaccine info, common appointment url: https://www.rivcoph.org/COVID-19-Vaccine",
-  });
+  const af = document.querySelector(
+    "#affiliationNotes .provider." + affiliation
+  );
+  if (af !== null) {
+    af.classList.remove("hidden");
+  }
 
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
-  fillTemplateIntoDom(callScriptTemplate, "#callScript",{});
+  fillTemplateIntoDom(callScriptTemplate, "#callScript", {
+    locationId: data.id,
+    locationAddress: data.Address,
+    locationWebsite: data.Website,
+    locationPhone: data["Phone number"],
+    locationPublicNotes: data["Latest report notes"],
+    locationPrivateNotes: data["Latest Internal Notes"],
+  });
+
+  // This bit of js will automatically make clicking on any checkbox that has a data-show-also attribute
+  // automatically toggle on the element with the id in the data-show-also attr
+  document.querySelectorAll("[data-show-also]").forEach(function (sel) {
+    document
+      .querySelectorAll('input[name="' + sel.name + '"]')
+      .forEach(function (x) {
+        addEventListener("change", function () {
+          const selector = "#" + x.getAttribute("data-show-also");
+          if (x.checked) {
+            showElement(selector);
+          } else {
+            hideElement(selector);
+          }
+        });
+      });
+  });
+
+  // This bit of js will automatically make clicking on any checkbox that has a data-hide-on-select attribute
+  // automatically toggle on the element with the id in the data-hide-on-select attr
+  document.querySelectorAll("[data-hide-on-select]").forEach(function (sel) {
+    document
+      .querySelectorAll('input[name="' + sel.name + '"]')
+      .forEach(function (x) {
+        addEventListener("change", function () {
+          const selector = "#" + x.getAttribute("data-hide-on-select");
+          console.log("#" + x.getAttribute("data-hide-on-select") + ":checked");
+          if (x.checked) {
+            hideElement(selector);
+          }
+          // If any of the other radio buttons hide this section are picked, don't show it
+          else if (
+            !document.querySelector(
+              "[data-hide-on-select=" +
+                x.getAttribute("data-hide-on-select") +
+                "]:checked"
+            )
+          ) {
+            showElement(selector);
+          }
+        });
+      });
+  });
 
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);

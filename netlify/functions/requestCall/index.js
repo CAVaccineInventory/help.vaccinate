@@ -1,8 +1,9 @@
 "use strict";
 
+const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission } = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
-
+const { logEvent } = require("../../lib/log.js");
 
 const LOCATION_FIELDS_TO_LOAD = [
   "Name",
@@ -14,20 +15,14 @@ const LOCATION_FIELDS_TO_LOAD = [
   "Latest Internal Notes",
   "County vaccine info URL", // retire this now that county is fetched
   "County Vaccine locations URL", // retire this now that county is fetched
+  "county_notes",
   "Availability Info",
   "Address",
   "Website",
   "Affiliation",
   "Location Type",
   "Number of Reports",
-  "Hours"
-];
-
-const COUNTIES_FIELDS_TO_LOAD = [
-  "County",
-  "Vaccine info URL",
-  "Vaccine locations URL",
-  "Notes",
+  "Hours",
 ];
 
 const PROVIDER_FIELDS_TO_LOAD = [
@@ -42,126 +37,142 @@ const PROVIDER_FIELDS_TO_LOAD = [
   "Internal notes",
 ];
 
-
 // someday soon we might load this dynamically from airtable.
 const VIEWS_TO_LOAD = [
+  "Stale reports (with Eva tip)",
   "To-call from Eva reports list (internal)",
   "To-call priority list (internal)",
   "To-call list (internal)",
 ];
 
-const handler = requirePermission("caller", async (event, context) => {
-  // logic copied from:
-  // https://github.com/CAVaccineInventory/airtableApps/blob/main/caller/frontend/index.tsx
+const handler = loggedHandler(
+  requirePermission("caller", async (event, context, logger) => {
+    // logic copied from:
+    // https://github.com/CAVaccineInventory/airtableApps/blob/main/caller/frontend/index.tsx
 
-  // NOTE: there is a race condition here where two callers could get the same location.
-  // this is no worse than the current app, though.
+    // NOTE: there is a race condition here where two callers could get the same location.
+    // this is no worse than the current app, though.
 
-  let locationsToCall = [];
+    let locationsToCall = [];
 
-  for (const view of VIEWS_TO_LOAD) {
-    try {
-      const locs = await base('Locations').select({
-        view, fields: LOCATION_FIELDS_TO_LOAD,
-      }).firstPage();
-      if (locs.length > 0) {
-        locationsToCall = locs;
-        break;
+    for (const view of VIEWS_TO_LOAD) {
+      try {
+        const locs = await base("Locations")
+          .select({
+            view,
+            fields: LOCATION_FIELDS_TO_LOAD,
+          })
+          .firstPage();
+        if (locs.length > 0) {
+          locationsToCall = locs;
+          break;
+        }
+      } catch (err) {
+        logger.error({ err: err, view: view }, "Failed to load location view");
       }
-    } catch (err) {
-      console.log("Failed to load location view", view, err);
     }
-  }
 
-  // Can't find anyone to call?
-  if (locationsToCall.length === 0) {
+    // Can't find anyone to call?
+    if (locationsToCall.length === 0) {
+      logEvent({
+        event,
+        context,
+        endpoint: "requestCall",
+        name: "empty",
+        payload: "",
+      });
+      logger.warn("No locations to call");
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          error: "Couldn't find somewhere to call",
+        }),
+      };
+    }
+
+    // pick a row
+    const locationIndex = Math.floor(Math.random() * locationsToCall.length);
+    const locationToCall = locationsToCall[locationIndex];
+
+    // Defer checking on this record for 10 minutes, to avoid multiple people picking up the same row:
+    const today = new Date();
+    today.setMinutes(today.getMinutes() + 10);
+
+    try {
+      await base("Locations").update([
+        {
+          id: locationToCall.id,
+          fields: { "Next available to app flow": today },
+        },
+      ]);
+    } catch (err) {
+      // this is unexpected. return an error to the client.
+      logger.error(
+        { err: err, location: locationToCall },
+        "Failed to update location for locking"
+      );
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: "Failed to update location for locking",
+          message: err.message,
+        }),
+      };
+    }
+
+    const output = Object.assign(
+      { id: locationToCall.id },
+      locationToCall.fields
+    );
+
+    // get some additional infomation for the user
+
+    // try to fetch provider record
+    const aff = locationToCall.get("Affiliation");
+    if (aff && aff !== "None / Unknown / Unimportant") {
+      try {
+        const providerRecords = await base("Provider networks")
+          .select({
+            fields: PROVIDER_FIELDS_TO_LOAD,
+            // XXX there are single quotes in some names, so we use "
+            // here. Add real escaping before we add " to names.
+            filterByFormula: `{Provider} = "${aff}"`,
+            maxRecords: 1,
+          })
+          .firstPage();
+        if (providerRecords && providerRecords.length) {
+          output.provider_record = Object.assign(
+            { id: providerRecords[0].id },
+            providerRecords[0].fields
+          );
+        } else {
+          logger.error(
+            { location: locationToCall, affiliation: aff },
+            "No affiliation found for location"
+          );
+        }
+      } catch (err) {
+        logger.error(
+          { err: err, location: locationToCall },
+          "Failure getting provider for location"
+        );
+      }
+    }
+
+    // save off an audit log entry noting that this caller got this location.
+    logEvent({
+      event,
+      context,
+      endpoint: "requestCall",
+      name: "assigned",
+      payload: JSON.stringify(output),
+    });
+
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        error: "Couldn't find somewhere to call"
-      })
+      body: JSON.stringify(output),
     };
-  }
-
-  // pick a row
-  const locationIndex = Math.floor(Math.random() * locationsToCall.length);
-  const locationToCall = locationsToCall[locationIndex];
-
-  // Defer checking on this record for 10 minutes, to avoid multiple people picking up the same row:
-  const today = new Date();
-  today.setMinutes(today.getMinutes() + 10);
-
-  try {
-    const updated = await base('Locations').update([{
-      id: locationToCall.id,
-      fields: { "Next available to app flow": today }
-    }]);
-  } catch (err) {
-    // this is unexpected. return an error to the client.
-    console.log("Failed to update location for locking",
-                locationToCall.id, err);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: "Failed to update location for locking",
-        message: err.message
-      })
-    };
-  }
-
-  const output = Object.assign(
-    {id: locationToCall.id}, locationToCall.fields);
-
-  // get some additional infomation for the user
-
-  // try to fetch county record
-  const county = locationToCall.get('County');
-  if (county) {
-    try {
-      const countyRecords = await base('Counties').select({
-        fields: COUNTIES_FIELDS_TO_LOAD,
-        filterByFormula: `{County enum} = "${county}"`,
-        maxRecords: 1
-      }).firstPage();
-      if (countyRecords && countyRecords.length) {
-        output.county_record = Object.assign(
-          {id: countyRecords[0].id}, countyRecords[0].fields);
-      } else {
-        console.log("No county found for location",
-                    locationToCall.id, county);
-      }
-    } catch (err) {
-      console.log("Failure getting county for location", locationToCall.id, err);
-    }
-  }
-
-  // try to fetch provider record
-  const aff = locationToCall.get('Affiliation');
-  if (aff && aff !== "None / Unknown / Unimportant") {
-    try {
-      const providerRecords = await base('Provider networks').select({
-        fields: PROVIDER_FIELDS_TO_LOAD,
-        // XXX there are single quotes in some names, so we use "
-        // here. Add real escaping before we add " to names.
-        filterByFormula: `{Provider} = "${aff}"`,
-        maxRecords: 1
-      }).firstPage();
-      if (providerRecords && providerRecords.length) {
-        output.provider_record = Object.assign(
-          {id: providerRecords[0].id}, providerRecords[0].fields);
-      } else {
-        console.log("No affiliation found for location",
-                    locationToCall.id, aff);
-      }
-    } catch (err) {
-      console.log("Failure getting provider for location", locationToCall.id, err);
-    }
-  }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify(output)
-  };
-});
+  })
+);
 
 exports.handler = handler;

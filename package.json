@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "lint": "prettier 'webpack/**/*.js' assets/css/*.css **/*.html && eslint .",
-    "lint:fix": "prettier --write 'webpack/**/*.js' assets/css/*.css **/*.html && eslint --fix .",
+    "lint": "prettier --check 'netlify/**/*.js' && eslint netlify/",
+    "lint:fix": "prettier --write 'netlify/**/*.js' && eslint --fix netlify/",
     "dev-functions": "rimraf dist"
   },
   "license": {
@@ -14,11 +14,15 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.13.6",
+    "@google-cloud/logging-bunyan": "^3.0.2",
     "@serverless-jwt/netlify": "^0.2.1",
     "@tarekraafat/autocomplete.js": "^8.2.0",
     "airtable": "^0.10.1",
+    "bunyan": "^1.8.15",
     "core-js": "^3.8.3",
     "custom-event-polyfill": "^1.0.7",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-es": "^4.1.0",
     "handlebars": "^4.7.6",
     "install": "^0.13.0",
     "luxon": "^1.25.0",
@@ -36,5 +40,8 @@
   "version": "1.0.0",
   "main": ".eslintrc.js",
   "keywords": [],
-  "author": ""
+  "author": "",
+  "devDependencies": {
+    "eslint": "^7.19.0"
+  }
 }

@@ -1,14 +1,24 @@
 <div class="location">
-    <div class="label">Location</div>
+  <div class="h6" id="location-name">{{locationName}}</div>
+  <address class="small" id="location-address">{{locationAddress}}</address>
 
-    <div id="location-name">{{locationName}}</div>
-
-    <div class="label">Address</div> 
-    <span id="location-address">{{locationAddress}}</span>
-    <a href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information">Report a correction</a>
-    <div class="label">Hours</div>
-
-    <div id="location-hours">{{locationHours}}</div>
-
-
+  <div class="small" id="location-hours">{{locationHours}}</div>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a
+      target="_blank"
+      class="text-muted small"
+      href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
+      >Report an error</a
+    >
+  </div>
+  <div class="countyInfo">
+    <div class="small" id="locationCountyName">
+      <a class="text-muted" href="{{countyURL}}" target="_blank"
+        >{{countyName}}</a
+      >
+    </div>
+    <div class="small overflow-scroll" style="max-height: 6em">
+      {{countyInfo}}
+    </div>
+  </div>
 </div>

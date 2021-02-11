@@ -1,0 +1,21 @@
+.instructions {
+	
+}
+
+.yousay {
+	font-weight: bold;
+	padding-top: 0.5em;	
+	padding-bottom: 0.25em;	
+}
+
+.hidden {
+	display: none;
+
+}
+
+#vaccinatingPublicScript {
+}
+
+#callScriptPrivateNotes {
+	background-color: #ffeeee;
+}
