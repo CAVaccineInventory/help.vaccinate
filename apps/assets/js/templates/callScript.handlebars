@@ -82,7 +82,7 @@
         value="Yes: vaccinating 65+"
         id="over65"
       />
-      <label class="btn btn-outline-warning" for="over65"> 65 </label>
+      <label class="btn btn-outline-secondary" for="over65"> 65 </label>
       <input
         class="btn-check"
         type="radio"
@@ -90,7 +90,7 @@
         value="Yes: vaccinating 75+"
         id="over75"
       />
-      <label class="btn btn-outline-warning" for="over75"> 75 </label>
+      <label class="btn btn-outline-secondary" for="over75"> 75 </label>
       <input
         class="btn-check"
         type="radio"
@@ -98,7 +98,7 @@
         value="Yes: vaccinating 80+"
         id="over80"
       />
-      <label class="btn btn-outline-warning" for="over80"> 80 </label>
+      <label class="btn btn-outline-secondary" for="over80"> 80 </label>
       <input
         class="btn-check"
         type="radio"
@@ -106,20 +106,9 @@
         value="Yes: vaccinating 85+"
         id="over85"
       />
-      <label class="btn btn-outline-warning" for="over85"> 85 </label>
-      <input
-        class="btn-check"
-        type="radio"
-        name="ageSelect"
-        value="no_seniors"
-        id="noSeniors"
-      />
-      <label class="btn btn-outline-warning" for="noSeniors">
-        Not vaccinating seniors
-      </label>
+      <label class="btn btn-outline-secondary" for="over85"> 85 </label>
     </div>
-  </div>
-  <div class="yousay ">Thanks! Do they need an appointment</div>
+  <div class="yousay ">Thanks! Do they need an appointment?</div>
 
   <div class="btn-group" role="group">
     <input
@@ -128,7 +117,6 @@
       name="appointment"
       value="Yes: walk-ins accepted"
       id="apptWalkin"
-      data-bs-toggle="collapse"
       href="#appointmentInfo"
     />
     <label class="btn btn-outline-secondary" for="apptWalkin">
@@ -145,17 +133,17 @@
       Appointment Required</label
     >
   </div>
-  <div id="appointmentInfo">
+<div id="appointmentDetails">
+ <div class="yousay">Do you know if you have any appointments available in the next two weeks?</div>
     <input
       type="checkbox"
-      class="btn btn-check"
       name="appointmentsFull"
       id="apptFull"
     />
-    <label class="btn btn-outline-secondary" for="apptFull"
-      >The schedule is full</label
+    <label class="" for="apptsFull"
+      >The schedule is full for the next two weeks</label
     >
-    <div class="yousay ">How should they make the appointment</div>
+    <div class="yousay ">How should they make the appointment?</div>
     <div class="btn-group" role="group">
       <input
         class="btn-check"
@@ -198,12 +186,41 @@
     </div>
     <input type="text" id="appointmentPhone" class="form-control" placeholder="Appointment phone number" value="{{locationPhone}}"/>
     <input type="text" id="appointmentOtherInstructions" class="form-control" placeholder="Scheduling instructions" />
-    <input type="text" id="appointmentWebsite" class="form-control" placeholder="Appointment website" />
-  </div>
+    <input type="text" id="appointmentWebsite" class="form-control" placeholder="Appointment website" value="{{locationWebsite}}"/>
+</div>
+  <div class="expansions">
+    <div class="yousay ">
+      Are there any other groups you are able to offer vaccines to?
+    </div>
+    <div class="">
+      <input class="btn-check" type="checkbox" id="educationAndChildcareAccepted" /><label
+        class="btn btn-outline-primary"
+        for="educationAndChildcareAccepted"
+        >Education and Childcare</label>
+
+      <input class="btn-check" type="checkbox" id="emergencyServicesAccepted" /><label
+        class="btn btn-outline-primary"
+        for="emergencyServicesAccepted"
+        >Emergency Services</label>
+
+      <input class="btn-check" type="checkbox" id="foodAndAgAccepted" /><label
+        class="btn btn-outline-primary"
+        for="foodAndAgAccepted"
+        >Food and Agriculture</label>
+
+      <input class="btn-check" type="checkbox" id="essentialWorkersAccepted" /><label
+        class="btn btn-outline-primary"
+        for="essentialWorkersAccepted"
+        >Essential workers</label>
+
+
+    <div class="instructions small secondary">
+      If they say anything that's not on the list, mention it in the public
+      notes.
+    </div>
   <div class="restrictions">
     <div class="yousay ">
-      Are you folks vaccinating all Californians or are there limits on who you
-      can vaccinate?
+      Are there limits on who you can accomodate right now?
     </div>
     <div class="">
       <input class="btn-check" type="checkbox" id="veteransOnly" /><label
@@ -240,10 +257,14 @@
       >
     </div>
   </div>
+  </div>
+
+
+  <div class="yousay">Thanks so much for your time! Have a great day.</div>
 
   <div>
-    <div id="callScriptPublicNotes">Public notes</div>
-    <div
+    <div >Public notes</div>
+    <div id="callScriptPublicNotes"
       class="input form-control form-control-sm"
       role="textbox"
       contenteditable
@@ -251,9 +272,9 @@
   </div>
 
   <div>
-    <div id="callScriptPrivateNotes">Private notes</div>
-    <div
-      class="input border border-warning form-control form-control-sm"
+    <div>Private notes</div>
+    <div id="callScriptPrivateNotes"
+      class="input border border-secondary form-control form-control-sm"
       role="textbox"
       contenteditable
     >{{ locationPrivateNotes }}</div>

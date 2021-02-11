@@ -11,3 +11,10 @@
 .hidden {
 	display: none;
 }
+
+#vaccinatingPublicScript {
+}
+
+#callScriptPrivateNotes {
+	background-color: #ffeeee;
+}

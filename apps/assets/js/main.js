@@ -119,11 +119,12 @@ const logDebug = (msg) => {
   console.log(msg);
 };
 const hideElement = (selector) => {
-  document.querySelector(selector).classList.add("hidden");
+  
+  document.querySelector(selector)?.classList.add("hidden");
 };
 
 const showElement = (selector) => {
-  document.querySelector(selector).classList.remove("hidden");
+  document.querySelector(selector)?.classList.remove("hidden");
 };
 
 const loadAndFillCall = async () => {
@@ -345,10 +346,19 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
+    locationWebsite: data.Website,
     locationPhone: data["Phone number"],
     locationPublicNotes: data.['Latest report notes'],
     locationPrivateNotes: data.["Latest Internal Notes"]
   });
+
+
+document.querySelectorAll("#noOptions input[type=radio]").forEach(function(x) { x.addEventListener("change", function() { hideElement("#vaccinatingPublicScript")})});
+
+document.querySelectorAll("#yesOptions input[type=radio]").forEach(function(x) { x.addEventListener("change", function() { showElement("#vaccinatingPublicScript")})});
+
+document.querySelector("#apptWalkin").addEventListener("change", function() { hideElement("#appointmentDetails")});
+document.querySelector("#apptReqd").addEventListener("change", function () { showElement("#appointmentDetails")});
 
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
