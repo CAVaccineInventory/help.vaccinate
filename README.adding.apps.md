@@ -13,3 +13,6 @@ For example for the 'call' app you'd add these 3 to Allowed Callback URLs :
 http://localhost:4000/call/, 
 https://staging-help-vaccinateca.netlify.app/call/, 
 https://help.vaccinateca.com/call/
+
+
+You probably also want to have the same list in logout locations
