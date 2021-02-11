@@ -119,12 +119,10 @@ const logDebug = (msg) => {
   console.log(msg);
 };
 const hideElement = (selector) => {
-  logDebug("hiding " + selector);
   document.querySelector(selector).classList.add("hidden");
 };
 
 const showElement = (selector) => {
-  logDebug("showing " + selector);
   document.querySelector(selector).classList.remove("hidden");
 };
 
@@ -340,13 +338,6 @@ const prepareCallTemplate = (data) => {
   if (af !== null) {
     af.classList.remove("hidden");
   }
-
-  fillTemplateIntoDom(latestReportTemplate, "#latestReport", {
-    latestReportTime: data["Latest report"],
-    latestReportStatus: "❌ No vaccine inventory",
-    latestReportPublicNotes: "Expect something",
-    latestReportInternalNotes: "Call again tomorrow",
-  });
 
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
