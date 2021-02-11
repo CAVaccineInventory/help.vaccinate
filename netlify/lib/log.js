@@ -7,14 +7,14 @@ module.exports.logEvent = ({ event, context, endpoint, payload, name }) => {
   // save off raw report ASAP. Note that we don't block on this
   // completing, so it shouldn't slow things down too much.
   try {
-    const auth0ReporterId =
+    const auth0_reporter_id =
       context &&
       context.identityContext &&
       context.identityContext.claims &&
       context.identityContext.claims.sub;
 
     const fields = {
-      auth0ReporterId,
+      auth0_reporter_id,
       endpoint,
       payload,
       event_name: name,
@@ -29,7 +29,7 @@ module.exports.logEvent = ({ event, context, endpoint, payload, name }) => {
             "EVENTLOG",
             endpoint,
             name,
-            auth0ReporterId,
+            auth0_reporter_id,
             results[0].id
           );
         } else {
