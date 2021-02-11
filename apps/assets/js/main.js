@@ -345,6 +345,8 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
+    locationPublicNotes: data.['Latest report notes'],
+    locationPrivateNotes: data.["Latest Internal Notes"]
   });
 
   bindClick("#wrongNumber", submitBadContactInfo);
