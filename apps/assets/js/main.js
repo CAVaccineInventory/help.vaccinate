@@ -345,6 +345,7 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
+    locationPhone: data["Phone number"],
     locationPublicNotes: data.['Latest report notes'],
     locationPrivateNotes: data.["Latest Internal Notes"]
   });
