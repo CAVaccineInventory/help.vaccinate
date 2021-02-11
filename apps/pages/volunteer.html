@@ -6,7 +6,7 @@ layout: base.html
 <script>
 let auth0 = null;
 const configureClient = async () => {
-
+	
   auth0 = await createAuth0Client({
   "domain": "vaccinateca.us.auth0.com",
   "client_id": "ZnpcUDelsgbXXXMTayxzdPWTX8wikGi5"
@@ -30,8 +30,18 @@ const logout = () => {
 };
 
 const updateUI = async () => {
+	var isAuthenticated;
+	if (auth0) {
+try {
   await auth0.getTokenSilently();
-  const isAuthenticated = await auth0.isAuthenticated();
+} catch (error) {
+  if (error.error !== 'login_required') {
+    throw error;
+  }
+}
+
+  isAuthenticated = await auth0.isAuthenticated();
+}
 	if (isAuthenticated) {
 		document.getElementById("thanks").style.display='block';	
 		document.getElementById("volunteer").style.display='none';	
@@ -40,6 +50,7 @@ const updateUI = async () => {
 		document.getElementById("volunteer").style.display='block';	
 
 	}
+
 };
 
 </script>
