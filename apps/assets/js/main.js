@@ -118,8 +118,12 @@ const fillTemplateIntoDom = (template, selector, data) => {
 const logDebug = (msg) => {
   console.log(msg);
 };
+
+const isHidden = (selector) => {
+  return document.querySelector(selector)?.classList.contains("hidden");
+};
+
 const hideElement = (selector) => {
-  
   document.querySelector(selector)?.classList.add("hidden");
 };
 
@@ -176,9 +180,13 @@ const initScooby = () => {
   handleAuth0Login();
 };
 
-const showLoadingScreen = () => { showElement("#loading"); };
+const showLoadingScreen = () => {
+  showElement("#loading");
+};
 
-const hideLoadingScreen = () => { hideElement("#loading"); };
+const hideLoadingScreen = () => {
+  hideElement("#loading");
+};
 
 const recordCall = async (callReport) => {
   console.log(callReport);
@@ -305,7 +313,7 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
     locationName: data.Name,
-    locationAddress: data.Address || 'No address information available',
+    locationAddress: data.Address || "No address information available",
     locationHours: data.Hours,
     locationWebsite: data.Website,
     locationType: data["Location Type"],
@@ -313,7 +321,7 @@ const prepareCallTemplate = (data) => {
     countyName: data.County,
     countyURL: data["County vaccine info URL"],
     countyInfo: data.county_notes,
-    internalNotes: data["Internal Notes"]
+    internalNotes: data["Internal Notes"],
   });
 
   console.log(data);
@@ -346,22 +354,52 @@ const prepareCallTemplate = (data) => {
     locationAddress: data.Address,
     locationWebsite: data.Website,
     locationPhone: data["Phone number"],
-    locationPublicNotes: data.['Latest report notes'],
-    locationPrivateNotes: data.["Latest Internal Notes"]
+    locationPublicNotes: data["Latest report notes"],
+    locationPrivateNotes: data["Latest Internal Notes"],
   });
 
+  // This bit of js will automatically make clicking on any checkbox that has a data-show-also attribute
+  // automatically toggle on the element with the id in the data-show-also attr
+  document.querySelectorAll("[data-show-also]").forEach(function (sel) {
+    document
+      .querySelectorAll('input[name="' + sel.name + '"]')
+      .forEach(function (x) {
+        addEventListener("change", function () {
+          const selector = "#" + x.getAttribute("data-show-also");
+          if (x.checked) {
+            showElement(selector);
+          } else {
+            hideElement(selector);
+          }
+        });
+      });
+  });
 
-document.querySelectorAll("#noOptions input[type=radio]").forEach(function(x) { x.addEventListener("change", function() { hideElement("#vaccinatingPublicScript")})});
-
-document.querySelectorAll("#yesOptions input[type=radio]").forEach(function(x) { x.addEventListener("change", function() { showElement("#vaccinatingPublicScript")})});
-
-document.querySelector("#apptWalkin").addEventListener("change", function() { hideElement("#appointmentDetails")});
-document.querySelector("#apptReqd").addEventListener("change", function () { showElement("#appointmentDetails")});
-
-document.querySelector("#appointmentMethodPhone").addEventListener("change", 
-	function() { var selector = "#"+this.getAttribute('data-show-also'); alert(this.checked);
-			 if(this.checked) { showElement(selector)} else { hideElement(selector)}}, false);
-
+  // This bit of js will automatically make clicking on any checkbox that has a data-hide-on-select attribute
+  // automatically toggle on the element with the id in the data-hide-on-select attr
+  document.querySelectorAll("[data-hide-on-select]").forEach(function (sel) {
+    document
+      .querySelectorAll('input[name="' + sel.name + '"]')
+      .forEach(function (x) {
+        addEventListener("change", function () {
+          const selector = "#" + x.getAttribute("data-hide-on-select");
+          console.log("#" + x.getAttribute("data-hide-on-select") + ":checked");
+          if (x.checked) {
+            hideElement(selector);
+          }
+          // If any of the other radio buttons hide this section are picked, don't show it
+          else if (
+            !document.querySelector(
+              "[data-hide-on-select=" +
+                x.getAttribute("data-hide-on-select") +
+                "]:checked"
+            )
+          ) {
+            showElement(selector);
+          }
+        });
+      });
+  });
 
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
