@@ -137,8 +137,6 @@ const loadAndFillCall = async () => {
 };
 
 const loadAndFillPreviousCall = () => {
-  logDebug("loading previous location");
-  logDebug("it was " + previousLocation.Name);
   currentLocation = previousLocation;
   previousLocation = null;
   loadAndFill(currentLocation);
@@ -359,6 +357,11 @@ document.querySelectorAll("#yesOptions input[type=radio]").forEach(function(x) {
 
 document.querySelector("#apptWalkin").addEventListener("change", function() { hideElement("#appointmentDetails")});
 document.querySelector("#apptReqd").addEventListener("change", function () { showElement("#appointmentDetails")});
+
+document.querySelector("#appointmentMethodPhone").addEventListener("change", 
+	function() { var selector = "#"+this.getAttribute('data-show-also'); alert(this.checked);
+			 if(this.checked) { showElement(selector)} else { hideElement(selector)}}, false);
+
 
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);

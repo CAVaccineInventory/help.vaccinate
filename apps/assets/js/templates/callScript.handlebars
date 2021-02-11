@@ -149,44 +149,48 @@
         class="btn-check"
         type="radio"
         name="appointmentMethod"
-        id="methodCounty"
+        id="appointmentMethodCounty"
         value="county"
-      /><label for="methodCounty" class="btn btn-outline-secondary"
+      /><label for="appointmentMethodCounty" class="btn btn-outline-secondary"
         >County website</label >
       <input
         class="btn-check"
         type="radio"
         name="appointmentMethod"
-        id="methodMyTurn"
+        id="appointmentMethodMyTurn"
         value="myturn"
-      /><label for="methodMyTurn" class="btn btn-outline-secondary" >myturn.ca.gov</label>
+      /><label for="appointmentMethodMyTurn" class="btn btn-outline-secondary" >myturn.ca.gov</label>
       <input
-        class="btn-check"
         type="radio"
+        class="btn-check"
         name="appointmentMethod"
-        id="methodPhone"
+        id="appointmentMethodPhone"
+        data-show-also="appointmentPhone"
         value="phone"
-      /><label for="methodPhone" class="btn btn-outline-secondary">phone</label>
+      /><label for="appointmentMethodPhone" class="btn btn-outline-secondary">phone</label>
       <input
         class="btn-check"
         type="radio"
         name="appointmentMethod"
-        id="methodWeb"
+        id="appointmentMethodWeb"
         value="web"
-      /><label for="methodWeb" class="btn btn-outline-secondary">web</label>
+      /><label for="appointmentMethodWeb" class="btn btn-outline-secondary">web</label>
       <input
         class="btn-check"
         type="radio"
         name="appointmentMethod"
-        id="methodOther"
+        id="appointmentMethodOther"
+        data-show-also="appointmentOtherInstructions"
         value="other"
-      /><label for="methodOther" class="btn btn-outline-secondary"
+      /><label for="appointmentMethodOther" class="btn btn-outline-secondary"
         >Another way</label
       >
     </div>
-    <input type="text" id="appointmentPhone" class="form-control" placeholder="Appointment phone number" value="{{locationPhone}}"/>
-    <input type="text" id="appointmentOtherInstructions" class="form-control" placeholder="Scheduling instructions" />
-    <input type="text" id="appointmentWebsite" class="form-control" placeholder="Appointment website" value="{{locationWebsite}}"/>
+    <div id="appointmentMethodDetail">
+    <input type="text" id="appointmentPhone" class="form-control hidden" placeholder="Appointment phone number" value="{{locationPhone}}"/>
+    <input type="text" id="appointmentOtherInstructions" class="form-control hidden" placeholder="Scheduling instructions" />
+    <input type="text" id="appointmentWebsite" class="form-control hidden" placeholder="Appointment website" value="{{locationWebsite}}"/>
+	</div>
 </div>
   <div class="expansions">
     <div class="yousay ">
