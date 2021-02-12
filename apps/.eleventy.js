@@ -3,6 +3,7 @@ module.exports = function (config) {
 	ghostMode: false
   });
     config.addPassthroughCopy({ "assets/css": "assets/css" });
+    config.addPassthroughCopy({ "assets/img": "assets/img" });
     return {
         dir: {
             input: 'pages',
