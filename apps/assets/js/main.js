@@ -209,18 +209,98 @@ const initializeReport = (locationId) => {
 const fillReportFromDom = () => {
   const data = new FormData(document.querySelector("#callScriptForm"));
   const answers = [];
-  for (const entry of data) {
-    answers.push(entry[1]);
-  }
-  logDebug(answers);
+  
+
+  const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked").value;
+  switch (topLevelAnswer)  {
+	case 'never': 
+		answers.push("No: will never be a vaccination site");
+		break;
+	case 'private':
+		answers.push("No: not open to the public");
+		break;
+	case 'staffOnly': 
+		answers.push("No: only vaccinating staff");
+		break;
+	case 'hcwOnly':  
+		answers.push("No: only vaccinating health care workers");
+		break;
+	case 'yesJustYes': 
+		// We don't have a tag for this one
+		break;
+	case 'yesSoon':
+		answers.push("Yes: coming soon");
+		break;
+
+	default: 
+		logDebug("No top level answer selected");
+	}	
+		
+	
+  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked").value;
+  answers.push("Yes: vaccinating "+minAgeAnswer+"+");
+
+  const apptRequired = document.querySelector("[name=appointmentRequired]:checked").value;
+
+  switch (apptRequired) {
+	case 'walkinOk':
+		answers.push("Yes: walk-ins accepted");
+		break;
+	case 'required':
+		answers.push("Yes: appointment required");
+		break;
+	default: 
+		logDebug("no appt required selected");
+   }
+
+  if (apptRequired === 'required') {
+   if (document.querySelector("#appointmentsFull").checked) {
+	answers.push("Yes: appointment calendar currently full");
+   }
+ 
+  const apptMethod = document.querySelector("[name=appointmentMethod]:checked").value;
+	switch (apptMethod) {
+		case 'phone':
+			currentReport["Appointments by phone?"] = 1;
+ 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone").value;
+			break;
+		case 'county':
+ 			currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
+			break;	
+		case 'myturn':
+ 			currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
+			break;	
+		case 'web':
+ 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite").value;
+			break;	
+		case 'other':
+ 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentOtherInstructions").value;
+			break;	
+		default:
+			break;	
+
+	}
+	} 
+   if (document.querySelector("#essentialWorkersAccepted").checked) {
+	answers.push("Vaccinating essential workers");
+   }
+
+   if (document.querySelector("#veteransOnly").checked) {
+	answers.push("Yes: must be a veteran");
+   }
+
+   if (document.querySelector("#patientsOnly").checked) {
+	answers.push("Yes: must be a current patient");
+   }
+   if (document.querySelector("#countyOnly").checked) {
+	answers.push("Yes: restricted to county residents");
+   }
+
+
   currentReport["Availability"] = answers;
-  currentReport["Notes"] = document.querySelector(
-    "#callScriptPublicNotes"
-  ).value;
-  // currentReport["Phone"] = document.querySelector("#report_Phone").value;
-  currentReport["Internal Notes"] = document.querySelector(
-    "#callScriptPrivateNotes"
-  ).value;
+  currentReport["Notes"] = document.querySelector( "#callScriptPublicNotes").value;
+  currentReport["Internal Notes"] = document.querySelector( "#callScriptPrivateNotes").value;
+  logDebug(currentReport);
 };
 
 const saveCallReport = async () => {
@@ -358,6 +438,34 @@ const prepareCallTemplate = (data) => {
     locationPrivateNotes: data["Latest Internal Notes"],
   });
 
+
+
+  enableShowAlso(); 
+  enableHideOnSelect();
+
+
+  bindClick("#wrongNumber", submitBadContactInfo);
+  bindClick("#permanentlyClosed", submitPermanentlyClosed);
+  bindClick("#noAnswer", submitNoAnswer);
+  bindClick("#phoneBusy", submitBusy);
+  bindClick("#closedForTheDay", submitCallTomorrow);
+  bindClick("#closedForTheWeekend", submitCallMonday);
+
+  // don't show "on hold for more than 2 minutes" until 2 min have elapsed
+  const el = document.querySelector("#longHold");
+  if (el !== null) {
+    el.style.visibility = "hidden";
+    setTimeout(function () {
+      el.style.visibility = "visible";
+      bindClick("#longHold", submitLongHold);
+    }, 120000);
+  }
+
+  bindClick("#scoobyRecordCall", saveCallReport);
+};
+
+
+const enableShowAlso = () => {
   // This bit of js will automatically make clicking on any checkbox that has a data-show-also attribute
   // automatically toggle on the element with the id in the data-show-also attr
   document.querySelectorAll("[data-show-also]").forEach(function (sel) {
@@ -374,6 +482,10 @@ const prepareCallTemplate = (data) => {
         });
       });
   });
+
+};
+
+const  enableHideOnSelect = () => {
 
   // This bit of js will automatically make clicking on any checkbox that has a data-hide-on-select attribute
   // automatically toggle on the element with the id in the data-hide-on-select attr
@@ -400,26 +512,8 @@ const prepareCallTemplate = (data) => {
         });
       });
   });
-
-  bindClick("#wrongNumber", submitBadContactInfo);
-  bindClick("#permanentlyClosed", submitPermanentlyClosed);
-  bindClick("#noAnswer", submitNoAnswer);
-  bindClick("#phoneBusy", submitBusy);
-  bindClick("#closedForTheDay", submitCallTomorrow);
-  bindClick("#closedForTheWeekend", submitCallMonday);
-
-  // don't show "on hold for more than 2 minutes" until 2 min have elapsed
-  const el = document.querySelector("#longHold");
-  if (el !== null) {
-    el.style.visibility = "hidden";
-    setTimeout(function () {
-      el.style.visibility = "visible";
-      bindClick("#longHold", submitLongHold);
-    }, 120000);
   }
 
-  bindClick("#scoobyRecordCall", saveCallReport);
-};
 
 export {
   doLogin,
