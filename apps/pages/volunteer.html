@@ -20,7 +20,7 @@ window.onload = async () => {
 }
 const login = async () => {
   await auth0.loginWithRedirect({
-    redirect_uri: window.location.href
+    redirect_uri: "https://vaccinatecacallers.slack.com/sso/saml/start"
   });
 };
 const logout = () => {
@@ -80,7 +80,7 @@ try {
 	</div>
 	<div id="thanks" style="display:none;"> 
 	<h1>Thanks!</h1>
-	<p>We'll be in touch shortly to get you up to speed.</p>
+	<p><a href="https://vaccinatecacallers.slack.com/sso/saml/start">Join us on Slack to start helping out.</a></p>
 
 	</div>
 
