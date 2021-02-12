@@ -211,7 +211,7 @@ const fillReportFromDom = () => {
   const answers = [];
   
 
-  const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked").value;
+  const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
   switch (topLevelAnswer)  {
 	case 'never': 
 		answers.push("No: will never be a vaccination site");
@@ -237,10 +237,10 @@ const fillReportFromDom = () => {
 	}	
 		
 	
-  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked").value;
+  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
   answers.push("Yes: vaccinating "+minAgeAnswer+"+");
 
-  const apptRequired = document.querySelector("[name=appointmentRequired]:checked").value;
+  const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
 
   switch (apptRequired) {
 	case 'walkinOk':
@@ -254,15 +254,15 @@ const fillReportFromDom = () => {
    }
 
   if (apptRequired === 'required') {
-   if (document.querySelector("#appointmentsFull").checked) {
+   if (document.querySelector("#appointmentsFull")?.checked) {
 	answers.push("Yes: appointment calendar currently full");
    }
  
-  const apptMethod = document.querySelector("[name=appointmentMethod]:checked").value;
+  const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
 	switch (apptMethod) {
 		case 'phone':
 			currentReport["Appointments by phone?"] = 1;
- 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone").value;
+ 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
 			break;
 		case 'county':
  			currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
@@ -271,35 +271,35 @@ const fillReportFromDom = () => {
  			currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
 			break;	
 		case 'web':
- 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite").value;
+ 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
 			break;	
 		case 'other':
- 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentOtherInstructions").value;
+ 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentOtherInstructions")?.value;
 			break;	
 		default:
 			break;	
 
 	}
 	} 
-   if (document.querySelector("#essentialWorkersAccepted").checked) {
+   if (document.querySelector("#essentialWorkersAccepted")?.checked) {
 	answers.push("Vaccinating essential workers");
    }
 
-   if (document.querySelector("#veteransOnly").checked) {
+   if (document.querySelector("#veteransOnly")?.checked) {
 	answers.push("Yes: must be a veteran");
    }
 
-   if (document.querySelector("#patientsOnly").checked) {
+   if (document.querySelector("#patientsOnly")?.checked) {
 	answers.push("Yes: must be a current patient");
    }
-   if (document.querySelector("#countyOnly").checked) {
+   if (document.querySelector("#countyOnly")?.checked) {
 	answers.push("Yes: restricted to county residents");
    }
 
 
   currentReport["Availability"] = answers;
-  currentReport["Notes"] = document.querySelector( "#callScriptPublicNotes").value;
-  currentReport["Internal Notes"] = document.querySelector( "#callScriptPrivateNotes").value;
+  currentReport["Notes"] = document.querySelector( "#callScriptPublicNotes")?.innerText;
+  currentReport["Internal Notes"] = document.querySelector( "#callScriptPrivateNotes")?.innerText;
   logDebug(currentReport);
 };
 
