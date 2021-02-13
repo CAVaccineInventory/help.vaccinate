@@ -1,22 +1,13 @@
 ---
-title: Scooby
+title: Help VaccinateCA
 layout: base.html
 ---
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">VaccinateCA Scooby</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <a class="navbar-brand" href="#">
+      <img src="/assets/img/logo.png" alt="VaccinateCA logo" height="24"
+    /></a>
     <div class="d-flex" id="loggedInAs"></div>
   </div>
 </nav>
@@ -60,6 +51,17 @@ layout: base.html
   </div>
   <div id="callLog"></div>
 
-  <div id="loadingScreen"></div>
+  <div id="loadingScreen">
+<div class="container-fluid h-100" id="loading">
+  <div class="position-absolute top-50 start-50">
+    <div class="row bg-light p-5 borer">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden p-5 m-5 bg-light">Loading...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
 </div>
 <script src="/assets/js/scooby.js"></script>

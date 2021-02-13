@@ -62,10 +62,10 @@
  	<label for="appointmentMethodCounty" class="btn btn-outline-secondary" >County website</label >
         <input class="btn-check" type="radio" name="appointmentMethod" id="appointmentMethodMyTurn" value="myturn" />
 	<label for="appointmentMethodMyTurn" class="btn btn-outline-secondary" >myturn.ca.gov</label>
-        <input type="radio" class="btn-check" name="appointmentMethod" id="appointmentMethodPhone" data-show-also="appointmentPhone" value="phone" />
-	<label for="appointmentMethodPhone" class="btn btn-outline-secondary" >phone</label >
         <input class="btn-check" type="radio" name="appointmentMethod" id="appointmentMethodWeb" data-show-also="appointmentWebsite" value="web" />
 	<label for="appointmentMethodWeb" class="btn btn-outline-secondary" >web</label >
+        <input type="radio" class="btn-check" name="appointmentMethod" id="appointmentMethodPhone" data-show-also="appointmentPhone" value="phone" />
+	<label for="appointmentMethodPhone" class="btn btn-outline-secondary" >phone</label >
         <input class="btn-check" type="radio" name="appointmentMethod" id="appointmentMethodOther" data-show-also="appointmentOtherInstructions" value="other"
         />
 	<label for="appointmentMethodOther" class="btn btn-outline-secondary" >Another way</label >
@@ -104,21 +104,20 @@
             public notes.
           </div>
 
-          <div class="yousay">
-            Can you confirm that your address is {{ locationAddress }}
-          </div>
-          <div class="instructions">
-            If that's wrong,
-            <a
-              target="_blank"
-              class="text-muted small"
-              href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
-              >Report an error</a
-            >
-          </div>
+	<div id="confirmAddress">
+          <div class="yousay"> Can you confirm that your address is {{ locationAddress }}</div>
+          <div class="instructions"> If that's wrong, <a target="_blank" class="text-muted small" href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information" >report an error</a > </div>
         </div>
+	</div>
+	<div id="requestAddress" class="hidden">
+          <div class="yousay">Would you mind telling me what your address is?</div>
+          <div class="instructions"><a target="_blank" class="text-muted small" href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information" >Request a database update</a > </div>
+        </div>
+	</div>
+
+
+
       </div>
-    </div>
     </div>
 
     <div class="yousay">Thanks so much for your time! Have a great day.</div>

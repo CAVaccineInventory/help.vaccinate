@@ -7,7 +7,6 @@ import "regenerator-runtime/runtime";
 import createAuth0Client from "@auth0/auth0-spa-js";
 import emptyTemplate from "./templates/empty.handlebars";
 import locationTemplate from "./templates/location.handlebars";
-import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
 import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
@@ -15,7 +14,6 @@ import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
 import rewindCallTemplate from "./templates/rewindCall.handlebars";
-import loadingScreenTemplate from "./templates/loadingScreen.handlebars";
 import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
 
@@ -84,7 +82,7 @@ const doLogin = () => {
 };
 
 const doLogout = () => {
-  auth0.logout({ returnTo: location.origin });
+  auth0.logout({ returnTo: window.location.href });
 };
 
 const handleAuth0Login = async () => {
@@ -119,9 +117,7 @@ const logDebug = (msg) => {
   console.log(msg);
 };
 
-const isHidden = (selector) => {
-  return document.querySelector(selector)?.classList.contains("hidden");
-};
+// const isHidden = (selector) => { return document.querySelector(selector)?.classList.contains("hidden"); };
 
 const hideElement = (selector) => {
   document.querySelector(selector)?.classList.add("hidden");
@@ -130,6 +126,15 @@ const hideElement = (selector) => {
 const showElement = (selector) => {
   document.querySelector(selector)?.classList.remove("hidden");
 };
+
+const authOrLoadAndFillCall = async () => {
+      const user = await  auth0.getUser();
+	if (user && user.email )  {
+		loadAndFillCall();
+	} else {
+		doLogin();
+	}
+}
 
 const loadAndFillCall = async () => {
   showLoadingScreen();
@@ -165,19 +170,18 @@ const loadAndFill = (place) => {
 
 const showNextCallPrompt = () => {
   fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
-  bindClick("#requestCallButton", loadAndFillCall);
+  bindClick("#requestCallButton", authOrLoadAndFillCall);
   showElement("#nextCallPrompt");
   hideElement("#callerTool");
 };
 
 const initScooby = () => {
-  fillTemplateIntoDom(loadingScreenTemplate, "#loadingScreen", {});
   showLoadingScreen();
   initAuth0(function () {
+    handleAuth0Login();
     hideLoadingScreen();
     showNextCallPrompt();
   });
-  handleAuth0Login();
 };
 
 const showLoadingScreen = () => {
@@ -207,99 +211,112 @@ const initializeReport = (locationId) => {
 };
 
 const fillReportFromDom = () => {
-  const data = new FormData(document.querySelector("#callScriptForm"));
   const answers = [];
-  
 
-  const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
-  switch (topLevelAnswer)  {
-	case 'never': 
-		answers.push("No: will never be a vaccination site");
-		break;
-	case 'private':
-		answers.push("No: not open to the public");
-		break;
-	case 'staffOnly': 
-		answers.push("No: only vaccinating staff");
-		break;
-	case 'hcwOnly':  
-		answers.push("No: only vaccinating health care workers");
-		break;
-	case 'yesJustYes': 
-		// We don't have a tag for this one
-		break;
-	case 'yesSoon':
-		answers.push("Yes: coming soon");
-		break;
+  const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")
+    ?.value;
+  switch (topLevelAnswer) {
+    case "never":
+      answers.push("No: will never be a vaccination site");
+      break;
+    case "private":
+      answers.push("No: not open to the public");
+      break;
+    case "staffOnly":
+      answers.push("No: only vaccinating staff");
+      break;
+    case "hcwOnly":
+      answers.push("No: only vaccinating health care workers");
+      break;
+    case "yesJustYes":
+      // We don't have a tag for this one
+      break;
+    case "yesSoon":
+      answers.push("Yes: coming soon");
+      break;
 
-	default: 
-		logDebug("No top level answer selected");
-	}	
-		
-	
-  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
-  answers.push("Yes: vaccinating "+minAgeAnswer+"+");
+    default:
+      logDebug("No top level answer selected");
+  }
 
-  const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
+  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")
+    ?.value;
+  answers.push("Yes: vaccinating " + minAgeAnswer + "+");
+
+  const apptRequired = document.querySelector(
+    "[name=appointmentRequired]:checked"
+  )?.value;
 
   switch (apptRequired) {
-	case 'walkinOk':
-		answers.push("Yes: walk-ins accepted");
-		break;
-	case 'required':
-		answers.push("Yes: appointment required");
-		break;
-	default: 
-		logDebug("no appt required selected");
-   }
+    case "walkinOk":
+      answers.push("Yes: walk-ins accepted");
+      break;
+    case "required":
+      answers.push("Yes: appointment required");
+      break;
+    default:
+      logDebug("no appt required selected");
+  }
 
-  if (apptRequired === 'required') {
-   if (document.querySelector("#appointmentsFull")?.checked) {
-	answers.push("Yes: appointment calendar currently full");
-   }
- 
-  const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
-	switch (apptMethod) {
-		case 'phone':
-			currentReport["Appointments by phone?"] = 1;
- 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
-			break;
-		case 'county':
- 			currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
-			break;	
-		case 'myturn':
- 			currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
-			break;	
-		case 'web':
- 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
-			break;	
-		case 'other':
- 			currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentOtherInstructions")?.value;
-			break;	
-		default:
-			break;	
+  if (apptRequired === "required") {
+    if (document.querySelector("#appointmentsFull")?.checked) {
+      answers.push("Yes: appointment calendar currently full");
+    }
 
-	}
-	} 
-   if (document.querySelector("#essentialWorkersAccepted")?.checked) {
-	answers.push("Vaccinating essential workers");
-   }
+    const apptMethod = document.querySelector(
+      "[name=appointmentMethod]:checked"
+    )?.value;
+    switch (apptMethod) {
+      case "phone":
+        currentReport["Appointments by phone?"] = 1;
+        currentReport[
+          "Appointment scheduling instructions"
+        ] = document.querySelector("#appointmentPhone")?.value;
+        break;
+      case "county":
+        currentReport["Appointment scheduling instructions"] =
+          "Uses county scheduling system";
+        break;
+      case "myturn":
+        currentReport["Appointment scheduling instructions"] =
+          "https://myturn.ca.gov/";
+        break;
+      case "web":
+        currentReport[
+          "Appointment scheduling instructions"
+        ] = document.querySelector("#appointmentWebsite")?.value;
+        break;
+      case "other":
+        currentReport[
+          "Appointment scheduling instructions"
+        ] = document.querySelector("#appointmentOtherInstructions")?.value;
+        break;
+      default:
+        break;
+    }
+  }
+  if (document.querySelector("#essentialWorkersAccepted")?.checked) {
+    answers.push("Vaccinating essential workers");
+  }
 
-   if (document.querySelector("#veteransOnly")?.checked) {
-	answers.push("Yes: must be a veteran");
-   }
+  if (document.querySelector("#veteransOnly")?.checked) {
+    answers.push("Yes: must be a veteran");
+  }
 
-   if (document.querySelector("#patientsOnly")?.checked) {
-	answers.push("Yes: must be a current patient");
-   }
-   if (document.querySelector("#countyOnly")?.checked) {
-	answers.push("Yes: restricted to county residents");
-   }
-
+  if (document.querySelector("#patientsOnly")?.checked) {
+    answers.push("Yes: must be a current patient");
+  }
+  if (document.querySelector("#countyOnly")?.checked) {
+    answers.push("Yes: restricted to county residents");
+  }
 
   currentReport["Availability"] = answers;
-  currentReport["Notes"] = document.querySelector( "#callScriptPublicNotes")?.innerText;
-  currentReport["Internal Notes"] = document.querySelector( "#callScriptPrivateNotes")?.innerText;
+  currentReport["Notes"] = document.querySelector(
+    "#callScriptPublicNotes"
+  )?.innerText;
+  currentReport["Internal Notes"] = document.querySelector(
+    "#callScriptPrivateNotes"
+  )?.innerText;
   logDebug(currentReport);
 };
 
@@ -437,12 +454,14 @@ const prepareCallTemplate = (data) => {
     locationPublicNotes: data["Latest report notes"],
     locationPrivateNotes: data["Latest Internal Notes"],
   });
+  if (data.Address === '' || ! data.Address) {
+	hideElement("#confirmAddress");
+	showElement("#requestAddress");
+  }
 
 
-
-  enableShowAlso(); 
+  enableShowAlso();
   enableHideOnSelect();
-
 
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
@@ -464,7 +483,6 @@ const prepareCallTemplate = (data) => {
   bindClick("#scoobyRecordCall", saveCallReport);
 };
 
-
 const enableShowAlso = () => {
   // This bit of js will automatically make clicking on any checkbox that has a data-show-also attribute
   // automatically toggle on the element with the id in the data-show-also attr
@@ -482,11 +500,9 @@ const enableShowAlso = () => {
         });
       });
   });
-
 };
 
-const  enableHideOnSelect = () => {
-
+const enableHideOnSelect = () => {
   // This bit of js will automatically make clicking on any checkbox that has a data-hide-on-select attribute
   // automatically toggle on the element with the id in the data-hide-on-select attr
   document.querySelectorAll("[data-hide-on-select]").forEach(function (sel) {
@@ -495,25 +511,22 @@ const  enableHideOnSelect = () => {
       .forEach(function (x) {
         addEventListener("change", function () {
           const selector = "#" + x.getAttribute("data-hide-on-select");
-          console.log("#" + x.getAttribute("data-hide-on-select") + ":checked");
           if (x.checked) {
             hideElement(selector);
-          }
-          // If any of the other radio buttons hide this section are picked, don't show it
-          else if (
+          } else if (
             !document.querySelector(
               "[data-hide-on-select=" +
                 x.getAttribute("data-hide-on-select") +
                 "]:checked"
             )
           ) {
+            // If any of the other radio buttons hide this section are picked, don't show it
             showElement(selector);
           }
         });
       });
   });
-  }
-
+};
 
 export {
   doLogin,
