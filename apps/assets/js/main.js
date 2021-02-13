@@ -14,7 +14,6 @@ import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
 import rewindCallTemplate from "./templates/rewindCall.handlebars";
-import loadingScreenTemplate from "./templates/loadingScreen.handlebars";
 import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
 
@@ -83,7 +82,7 @@ const doLogin = () => {
 };
 
 const doLogout = () => {
-  auth0.logout({ returnTo: location.origin });
+  auth0.logout({ returnTo: window.location.href });
 };
 
 const handleAuth0Login = async () => {
@@ -168,13 +167,12 @@ const showNextCallPrompt = () => {
 };
 
 const initScooby = () => {
-  fillTemplateIntoDom(loadingScreenTemplate, "#loadingScreen", {});
   showLoadingScreen();
   initAuth0(function () {
+    handleAuth0Login();
     hideLoadingScreen();
     showNextCallPrompt();
   });
-  handleAuth0Login();
 };
 
 const showLoadingScreen = () => {
