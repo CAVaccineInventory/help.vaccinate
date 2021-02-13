@@ -2,57 +2,53 @@
 title: Volunteer account setup
 layout: base.html
 ---
+
 <script src="https://cdn.auth0.com/js/auth0-spa-js/1.13/auth0-spa-js.production.js"></script>
 <script>
-let auth0 = null;
-const configureClient = async () => {
-	
-  auth0 = await createAuth0Client({
-  "domain": "vaccinateca.us.auth0.com",
-  "client_id": "ZnpcUDelsgbXXXMTayxzdPWTX8wikGi5"
-  });
-};
+  let auth0 = null;
+  const configureClient = async () => {
+    auth0 = await createAuth0Client({
+      domain: "vaccinateca.us.auth0.com",
+      client_id: "ZnpcUDelsgbXXXMTayxzdPWTX8wikGi5",
+    });
+  };
 
-window.onload = async () => {
-  await configureClient();
-  updateUI();
+  window.onload = async () => {
+    await configureClient();
+    updateUI();
+  };
+  const login = async () => {
+    await auth0.loginWithRedirect({
+      redirect_uri: "https://vaccinatecacallers.slack.com/sso/saml/start",
+    });
+  };
+  const logout = () => {
+    auth0.logout({
+      returnTo: window.location.href,
+    });
+  };
 
-}
-const login = async () => {
-  await auth0.loginWithRedirect({
-    redirect_uri: "https://vaccinatecacallers.slack.com/sso/saml/start"
-  });
-};
-const logout = () => {
-  auth0.logout({
-    returnTo: window.location.href
-  });
-};
+  const updateUI = async () => {
+    var isAuthenticated;
+    if (auth0) {
+      try {
+        await auth0.getTokenSilently();
+      } catch (error) {
+        if (error.error !== "login_required") {
+          throw error;
+        }
+      }
 
-const updateUI = async () => {
-	var isAuthenticated;
-	if (auth0) {
-try {
-  await auth0.getTokenSilently();
-} catch (error) {
-  if (error.error !== 'login_required') {
-    throw error;
-  }
-}
-
-  isAuthenticated = await auth0.isAuthenticated();
-}
-	if (isAuthenticated) {
-		document.getElementById("thanks").style.display='block';	
-		document.getElementById("volunteer").style.display='none';	
-	} else {
-		document.getElementById("thanks").style.display='none';	
-		document.getElementById("volunteer").style.display='block';	
-
-	}
-
-};
-
+      isAuthenticated = await auth0.isAuthenticated();
+    }
+    if (isAuthenticated) {
+      document.getElementById("thanks").style.display = "block";
+      document.getElementById("volunteer").style.display = "none";
+    } else {
+      document.getElementById("thanks").style.display = "none";
+      document.getElementById("volunteer").style.display = "block";
+    }
+  };
 </script>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
@@ -71,18 +67,26 @@ try {
   </div>
 </nav>
 <div class="container-fluid">
-   <div class="d-flex" id="signup">
-	<div id="volunteer" style="display: none;">
-	<h1>Volunteer for VaccinateCA</h1>
-	<h2>Thanks so much for your interest in helping Californians learn how to get access to COVID-19 vaccines.</h2>
-	<p>The next step is to register for an account, so you can join us on Slack and start working on making calls</p>
-    <button id="btn-login"  onclick="login()">Sign up for an account</button>
-	</div>
-	<div id="thanks" style="display:none;"> 
-	<h1>Thanks!</h1>
-	<p><a href="https://vaccinatecacallers.slack.com/sso/saml/start">Join us on Slack to start helping out.</a></p>
-
-	</div>
-
-</div>
+  <div class="d-flex" id="signup">
+    <div id="volunteer" style="display: none">
+      <h1>Volunteer for VaccinateCA</h1>
+      <h2>
+        Thanks so much for your interest in helping Californians learn how to
+        get access to COVID-19 vaccines.
+      </h2>
+      <p>
+        The next step is to register for an account, so you can join us on Slack
+        and start working on making calls
+      </p>
+      <button id="btn-login" onclick="login()">Sign up for an account</button>
+    </div>
+    <div id="thanks" style="display: none">
+      <h1>Thanks!</h1>
+      <p>
+        <a href="https://vaccinatecacallers.slack.com/sso/saml/start"
+          >Join us on Slack to start helping out.</a
+        >
+      </p>
+    </div>
+  </div>
 </div>
