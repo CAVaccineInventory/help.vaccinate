@@ -7,7 +7,6 @@ import "regenerator-runtime/runtime";
 import createAuth0Client from "@auth0/auth0-spa-js";
 import emptyTemplate from "./templates/empty.handlebars";
 import locationTemplate from "./templates/location.handlebars";
-import latestReportTemplate from "./templates/latestReport.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
 import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
@@ -119,9 +118,7 @@ const logDebug = (msg) => {
   console.log(msg);
 };
 
-const isHidden = (selector) => {
-  return document.querySelector(selector)?.classList.contains("hidden");
-};
+// const isHidden = (selector) => { return document.querySelector(selector)?.classList.contains("hidden"); };
 
 const hideElement = (selector) => {
   document.querySelector(selector)?.classList.add("hidden");
@@ -207,7 +204,6 @@ const initializeReport = (locationId) => {
 };
 
 const fillReportFromDom = () => {
-  const data = new FormData(document.querySelector("#callScriptForm"));
   const answers = [];
 
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")
@@ -503,18 +499,16 @@ const enableHideOnSelect = () => {
       .forEach(function (x) {
         addEventListener("change", function () {
           const selector = "#" + x.getAttribute("data-hide-on-select");
-          console.log("#" + x.getAttribute("data-hide-on-select") + ":checked");
           if (x.checked) {
             hideElement(selector);
-          }
-          // If any of the other radio buttons hide this section are picked, don't show it
-          else if (
+          } else if (
             !document.querySelector(
               "[data-hide-on-select=" +
                 x.getAttribute("data-hide-on-select") +
                 "]:checked"
             )
           ) {
+            // If any of the other radio buttons hide this section are picked, don't show it
             showElement(selector);
           }
         });
