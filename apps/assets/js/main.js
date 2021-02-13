@@ -16,6 +16,7 @@ import callLogTemplate from "./templates/callLog.handlebars";
 import rewindCallTemplate from "./templates/rewindCall.handlebars";
 import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
+import errorModalTemplate from "./templates/errorModal.handlebars";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
@@ -142,11 +143,12 @@ const loadAndFillCall = async () => {
   currentLocation = await fetchJsonFromEndpoint(
     "/.netlify/functions/requestCall"
   );
-
+  const user = await auth0.getUser()
   if (currentLocation.error) {
-	alert("Something bad happened :"+currentLocation.error_description+". Please ask someone to complain to Jesse");
-  }
+	showErrorModal("Error fetching a call", "It looks like you might not yet have permission to use this tool. Please show this error message to your captain or lead on Slack: '"+currentLocation.error_description+"'. They may also need to know that you are logged in as "+user?.email+".",  { user: user, error: currentLocation} );
+  } else {
   loadAndFill(currentLocation);
+	}
 };
 
 const loadAndFillPreviousCall = () => {
@@ -203,6 +205,12 @@ const recordCall = async (callReport) => {
     "POST",
     JSON.stringify(callReport)
   );
+
+  if (data.error) {
+	showErrorModal("Error submitting your report", "I'm really sorry, but it looks like something has gone wrong while trying to submit your report. The specific error the system sent back was '"+ data.error_description+"'. This is not your fault. You can try clicking the 'Close' button on this box and submitting your report again. If that doesn't work, copy the technical information below and paste it into Slack, so we can get this sorted out for you", {report: callReport, result: data})
+
+  }
+
   if (data.created) {
     logDebug("Created a call");
     logDebug(data.created[0]);
@@ -440,14 +448,10 @@ const prepareCallTemplate = (data) => {
       e.classList.add("hidden");
     });
   }
-
-  const af = document.querySelector(
-    "#affiliationNotes .provider." + affiliation
-  );
-  if (af !== null) {
-    af.classList.remove("hidden");
-  }
-
+ 
+  if (affiliation && affiliation !== '') {
+  document.querySelector( "#affiliationNotes .provider." + affiliation)?.classList.remove("hidden");
+ }
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
@@ -488,6 +492,20 @@ const prepareCallTemplate = (data) => {
   }
 
 };
+
+
+const showErrorModal = (title,body, json) =>  {
+fillTemplateIntoDom(errorModalTemplate, '#applicationError', { 
+		title: title,
+		body: body,
+		json: JSON.stringify(json, null, 2)
+	} );
+
+var myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
+  myModal.show();
+
+}
+
 
 const enableShowAlso = () => {
   // This bit of js will automatically make clicking on any checkbox that has a data-show-also attribute

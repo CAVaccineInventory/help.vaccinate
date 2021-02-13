@@ -1,10 +1,14 @@
-<div class="alert alert-secondary" role="alert">
-  Your last call was to {{ locationName }}. If you need to make a change, you
+<div class="alert alert-dismissible alert-secondary fade show" role="alert">
+  <div class="small">Your last call was to {{ locationName }}. If you need to make a change, you
   can
   <input
     type="button"
     id="replaceReport"
-    class="btn btn-outline-secondary"
+    class="btn-small"
     value="submit a replacement report."
   />
+</button>
+</div>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
 </div>
