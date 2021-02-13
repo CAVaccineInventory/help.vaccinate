@@ -142,6 +142,10 @@ const loadAndFillCall = async () => {
   currentLocation = await fetchJsonFromEndpoint(
     "/.netlify/functions/requestCall"
   );
+
+  if (currentLocation.error) {
+	alert("Something bad happened :"+currentLocation.error_description+". Please ask someone to complain to Jesse");
+  }
   loadAndFill(currentLocation);
 };
 
@@ -508,7 +512,7 @@ const enableHideOnSelect = () => {
   document.querySelectorAll("[data-hide-on-select]").forEach(function (sel) {
     document
       .querySelectorAll('input[name="' + sel.name + '"]')
-      .forEach(function (x) {
+      ?.forEach(function (x) {
         addEventListener("change", function () {
           const selector = "#" + x.getAttribute("data-hide-on-select");
           if (x.checked) {
