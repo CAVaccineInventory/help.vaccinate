@@ -245,8 +245,9 @@ const fillReportFromDom = () => {
 
   const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")
     ?.value;
-  answers.push("Yes: vaccinating " + minAgeAnswer + "+");
-
+  if (minAgeAnswer) {
+  	answers.push("Yes: vaccinating " + minAgeAnswer + "+");
+  } 
   const apptRequired = document.querySelector(
     "[name=appointmentRequired]:checked"
   )?.value;
@@ -272,7 +273,7 @@ const fillReportFromDom = () => {
     )?.value;
     switch (apptMethod) {
       case "phone":
-        currentReport["Appointments by phone?"] = 1;
+        currentReport["Appointments by phone?"] = true;
         currentReport[
           "Appointment scheduling instructions"
         ] = document.querySelector("#appointmentPhone")?.value;
@@ -467,12 +468,15 @@ const prepareCallTemplate = (data) => {
   enableShowAlso();
   enableHideOnSelect();
 
+  bindClick("#scoobyRecordCall", saveCallReport);
+
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
   bindClick("#noAnswer", submitNoAnswer);
   bindClick("#phoneBusy", submitBusy);
   bindClick("#closedForTheDay", submitCallTomorrow);
   bindClick("#closedForTheWeekend", submitCallMonday);
+  bindClick("#longHold", submitLongHold);
 
   // don't show "on hold for more than 2 minutes" until 2 min have elapsed
   const el = document.querySelector("#longHold");
@@ -480,11 +484,9 @@ const prepareCallTemplate = (data) => {
     el.style.visibility = "hidden";
     setTimeout(function () {
       el.style.visibility = "visible";
-      bindClick("#longHold", submitLongHold);
     }, 120000);
   }
 
-  bindClick("#scoobyRecordCall", saveCallReport);
 };
 
 const enableShowAlso = () => {
