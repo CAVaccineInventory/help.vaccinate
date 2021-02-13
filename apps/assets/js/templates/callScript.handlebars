@@ -9,235 +9,79 @@
 </div>
 <form id="callScriptForm">
   <div id="noOptions" class="btn-group" role="group">
-    <input
-      class="btn-check"
-      type="radio"
-      id="noNever"
-      data-hide-on-select="vaccinatingPublicScript"
-      name="yesNoSelect"
-      value="No: will never be a vaccination site"
-    />
+    <input class="btn-check" type="radio" id="noNever" data-hide-on-select="vaccinatingPublicScript" name="yesNoSelect" value="never" />
     <label class="btn btn-outline-danger" for="noNever"> Never </label>
 
-    <input
-      class="btn-check"
-      type="radio"
-      id="noPrivate"
-      name="yesNoSelect"
-      value="No: not open to the public"
-      data-hide-on-select="vaccinatingPublicScript"
-    />
-    <label class="btn btn-outline-danger" for="noPrivate">
-      Private facility
-    </label>
-    <input
-      class="btn-check"
-      type="radio"
-      name="yesNoSelect"
-      data-hide-on-select="vaccinatingPublicScript"
-      id="noStaffOnly"
-      value="No: only vaccinating staff"
-    />
+    <input class="btn-check" type="radio" id="noPrivate" name="yesNoSelect" value="private" data-hide-on-select="vaccinatingPublicScript" />
+    <label class="btn btn-outline-danger" for="noPrivate"> Private facility </label>
+    <input class="btn-check" type="radio" name="yesNoSelect" data-hide-on-select="vaccinatingPublicScript" id="noStaffOnly" value="staffOnly" />
     <label class="btn btn-outline-danger" for="noStaffOnly"> Only staff </label>
 
-    <input
-      class="btn-check"
-      type="radio"
-      name="yesNoSelect"
-      data-hide-on-select="vaccinatingPublicScript"
-      id="noHCWOnly"
-      value="No: only vaccinating health care workers"
-    />
-    <label class="btn btn-outline-danger" for="noHCWOnly">
-      Only health care workers
-    </label>
+    <input class="btn-check" type="radio" name="yesNoSelect" data-hide-on-select="vaccinatingPublicScript" id="noHCWOnly" value="hcwOnly" />
+    <label class="btn btn-outline-danger" for="noHCWOnly">Only health care workers</label>
   </div>
 
   <div id="yesOptions" class="btn-group" role="group">
-    <input
-      type="radio"
-      name="yesNoSelect"
-      value="Yes"
-      id="yesJustYes"
-      class="btn-check"
-    />
+    <input type="radio" name="yesNoSelect" value="Yes" id="yesJustYes" class="btn-check" />
     <label class="btn btn-outline-success" for="yesJustYes"> Yes we are </label>
-    <input
-      type="radio"
-      id="yesSoon"
-      value="Yes: coming soon"
-      class="btn-check"
-      name="yesNoSelect"
-    />
-    <label class="btn btn-outline-success" for="yesSoon">
-      We will be soon
-    </label>
+    <input type="radio" id="yesSoon" value="yesSoon" class="btn-check" name="yesNoSelect" />
+    <label class="btn btn-outline-success" for="yesSoon"> We will be soon </label>
   </div>
 
   <div id="vaccinatingPublicScript">
     <div class="yousay">How old do seniors need to be to get vaccinated?</div>
     <div class="btn-group" role="group">
-      <input
-        class="btn-check"
-        type="radio"
-        name="ageSelect"
-        value="Yes: vaccinating 65+"
-        id="over65"
-      />
-      <label class="btn btn-outline-secondary" for="over65"> 65 </label>
-      <input
-        class="btn-check"
-        type="radio"
-        name="ageSelect"
-        value="Yes: vaccinating 70+"
-        id="over70"
-      />
-      <label class="btn btn-outline-secondary" for="over70"> 70 </label>
-      <input
-        class="btn-check"
-        type="radio"
-        name="ageSelect"
-        value="Yes: vaccinating 75+"
-        id="over75"
-      />
-      <label class="btn btn-outline-secondary" for="over75"> 75 </label>
-      <input
-        class="btn-check"
-        type="radio"
-        name="ageSelect"
-        value="Yes: vaccinating 80+"
-        id="over80"
-      />
-      <label class="btn btn-outline-secondary" for="over80"> 80 </label>
-      <input
-        class="btn-check"
-        type="radio"
-        name="ageSelect"
-        value="Yes: vaccinating 85+"
-        id="over85"
-      />
-      <label class="btn btn-outline-secondary" for="over85"> 85 </label>
+      <input class="btn-check" type="radio" name="minAgeSelect" value="65" id="minAge65" />
+      <label class="btn btn-outline-secondary" for="minAge65"> 65+ </label>
+      <input class="btn-check" type="radio" name="minAgeSelect" value="70" id="minAge70" />
+      <label class="btn btn-outline-secondary" for="minAge70"> 70+ </label>
+      <input class="btn-check" type="radio" name="minAgeSelect" value="75" id="minAge75" />
+      <label class="btn btn-outline-secondary" for="minAge75"> 75+ </label>
+      <input class="btn-check" type="radio" name="minAgeSelect" value="80" id="minAge80" />
+      <label class="btn btn-outline-secondary" for="minAge80"> 80+ </label>
+      <input class="btn-check" type="radio" name="minAgeSelect" value="85" id="minAge85" />
+      <label class="btn btn-outline-secondary" for="minAge85"> 85+ </label>
     </div>
     <div class="yousay">Thanks! Do they need an appointment?</div>
 
     <div class="btn-group" role="group">
-      <input
-        class="btn-check"
-        type="radio"
-        name="appointment"
-        value="Yes: walk-ins accepted"
-        id="apptWalkin"
-        data-hide-on-select="appointmentDetails"
-        href="#appointmentInfo"
-      />
-      <label class="btn btn-outline-secondary" for="apptWalkin">
-        Walkins are welcome</label
-      >
-      <input
-        class="btn-check"
-        type="radio"
-        name="appointment"
-        value="Yes: appointment required"
-        id="apptReqd"
-      />
-      <label class="btn btn-outline-secondary" for="apptReqd">
-        Appointment Required</label
-      >
+      <input class="btn-check" type="radio" name="appointmentRequired" value="walkinOk" id="apptWalkin" data-hide-on-select="appointmentDetails" />
+      <label class="btn btn-outline-secondary" for="apptWalkin">Walkins are welcome</label>
+      <input class="btn-check" type="radio" name="appointmentRequired" value="required" id="appointmentRequired" />
+      <label class="btn btn-outline-secondary" for="appointmentRequired">Appointment Required</label>
     </div>
     <div id="appointmentDetails">
       <div class="yousay">
-        Do you know if you have any appointments available in the next two
-        weeks?
+        Do you know if you have any appointments available in the next two weeks?
       </div>
-      <input type="checkbox" name="appointmentsFull" id="apptFull" />
-      <label class="" for="apptsFull"
-        >The schedule is full for the next two weeks</label
-      >
+      <input type="checkbox" name="appointmentsFull" id="appointmentsFull" />
+      <label class="" for="apptointmentsFull" >The schedule is full for the next two weeks</label >
       <div class="yousay">How should they make the appointment?</div>
       <div class="btn-group" role="group">
-        <input
-          class="btn-check"
-          type="radio"
-          name="appointmentMethod"
-          id="appointmentMethodCounty"
-          value="county"
-        /><label for="appointmentMethodCounty" class="btn btn-outline-secondary"
-          >County website</label
-        >
-        <input
-          class="btn-check"
-          type="radio"
-          name="appointmentMethod"
-          id="appointmentMethodMyTurn"
-          value="myturn"
-        /><label for="appointmentMethodMyTurn" class="btn btn-outline-secondary"
-          >myturn.ca.gov</label
-        >
-        <input
-          type="radio"
-          class="btn-check"
-          name="appointmentMethod"
-          id="appointmentMethodPhone"
-          data-show-also="appointmentPhone"
-          value="phone"
-        /><label for="appointmentMethodPhone" class="btn btn-outline-secondary"
-          >phone</label
-        >
-        <input
-          class="btn-check"
-          type="radio"
-          name="appointmentMethod"
-          id="appointmentMethodWeb"
-          data-show-also="appointmentWebsite"
-          value="web"
-        /><label for="appointmentMethodWeb" class="btn btn-outline-secondary"
-          >web</label
-        >
-        <input
-          class="btn-check"
-          type="radio"
-          name="appointmentMethod"
-          id="appointmentMethodOther"
-          data-show-also="appointmentOtherInstructions"
-          value="other"
-        /><label for="appointmentMethodOther" class="btn btn-outline-secondary"
-          >Another way</label
-        >
+        <input class="btn-check" type="radio" name="appointmentMethod" id="appointmentMethodCounty" value="county" />
+ 	<label for="appointmentMethodCounty" class="btn btn-outline-secondary" >County website</label >
+        <input class="btn-check" type="radio" name="appointmentMethod" id="appointmentMethodMyTurn" value="myturn" />
+	<label for="appointmentMethodMyTurn" class="btn btn-outline-secondary" >myturn.ca.gov</label>
+        <input type="radio" class="btn-check" name="appointmentMethod" id="appointmentMethodPhone" data-show-also="appointmentPhone" value="phone" />
+	<label for="appointmentMethodPhone" class="btn btn-outline-secondary" >phone</label >
+        <input class="btn-check" type="radio" name="appointmentMethod" id="appointmentMethodWeb" data-show-also="appointmentWebsite" value="web" />
+	<label for="appointmentMethodWeb" class="btn btn-outline-secondary" >web</label >
+        <input class="btn-check" type="radio" name="appointmentMethod" id="appointmentMethodOther" data-show-also="appointmentOtherInstructions" value="other"
+        />
+	<label for="appointmentMethodOther" class="btn btn-outline-secondary" >Another way</label >
       </div>
       <div id="appointmentMethodDetail">
-        <input
-          type="text"
-          id="appointmentPhone"
-          class="form-control hidden"
-          placeholder="Appointment phone number"
-          value="{{locationPhone}}"
-        />
-        <input
-          type="text"
-          id="appointmentOtherInstructions"
-          class="form-control hidden"
-          placeholder="Scheduling instructions"
-        />
-        <input
-          type="text"
-          id="appointmentWebsite"
-          class="form-control hidden"
-          placeholder="Appointment website"
-          value="{{locationWebsite}}"
-        />
+        <input type="text" id="appointmentPhone" class="form-control hidden" placeholder="Appointment phone number" value="{{locationPhone}}" />
+        <input type="text" id="appointmentOtherInstructions" class="form-control hidden" placeholder="Scheduling instructions" />
+        <input type="text" id="appointmentWebsite" class="form-control hidden" placeholder="Appointment website" value="{{locationWebsite}}" />
       </div>
     </div>
     <div class="expansions">
       <div class="yousay">
         Are there any other groups you are able to offer vaccines to?
       </div>
-        <input
-          class="btn-check"
-          type="checkbox"
-          id="essentialWorkersAccepted"
-        /><label class="btn btn-outline-primary" for="essentialWorkersAccepted"
-          >Essential workers</label
-        >
+        <input class="btn-check" type="checkbox" id="essentialWorkersAccepted" />
+	<label class="btn btn-outline-primary" for="essentialWorkersAccepted" >Essential workers</label >
 
         <div class="instructions small secondary">
           If they say anything that's not on the list, mention it in the public
@@ -248,21 +92,12 @@
             Are there limits on who you can accomodate right now?
           </div>
           <div class="">
-            <input class="btn-check" type="checkbox" id="veteransOnly" /><label
-              class="btn btn-outline-primary"
-              for="veteransOnly"
-              >Veterans only</label
-            >
-            <input class="btn-check" type="checkbox" id="patientsOnly" /><label
-              class="btn btn-outline-primary"
-              for="patientsOnly"
-              >Current patients only</label
-            >
-            <input class="btn-check" type="checkbox" id="countyOnly" /><label
-              class="btn btn-outline-primary"
-              for="countyOnly"
-              >County residents only</label
-            >
+            <input class="btn-check" type="checkbox" id="veteransOnly" />
+		<label class="btn btn-outline-primary" for="veteransOnly" >Veterans only</label >
+            <input class="btn-check" type="checkbox" id="patientsOnly" />
+		<label class="btn btn-outline-primary" for="patientsOnly" >Current patients only</label >
+            <input class="btn-check" type="checkbox" id="countyOnly" />
+		<label class="btn btn-outline-primary" for="countyOnly" >County residents only</label >
           </div>
           <div class="instructions small secondary">
             If they say anything that's not on the list, mention it in the
@@ -290,31 +125,15 @@
 
     <div>
       <div>Public notes</div>
-      <div
-        id="callScriptPublicNotes"
-        class="input form-control form-control-sm"
-        role="textbox"
-        contenteditable
-      >
-        {{ locationPublicNotes }}
-      </div>
+      <div id="callScriptPublicNotes" class="input form-control form-control-sm" role="textbox" contenteditable > {{ locationPublicNotes }} </div>
     </div>
 
     <div>
       <div>Private notes</div>
-      <div
-        id="callScriptPrivateNotes"
-        class="input border border-secondary form-control form-control-sm"
-        role="textbox"
-        contenteditable
-      >{{ locationPrivateNotes }}</div>
+      <div id="callScriptPrivateNotes" class="input border border-secondary form-control form-control-sm" role="textbox" contenteditable >{{ locationPrivateNotes }}</div>
     </div>
     <div class="d-grid gap-2 col-6 mx-auto row">
       <input
-        type="button"
-        class="btn btn-primary"
-        id="scoobyRecordCall"
-        value="Send report"
-      />
+        type="button" class="btn btn-primary" id="scoobyRecordCall" value="Send report" />
   </div>
 </form>
