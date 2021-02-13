@@ -447,6 +447,11 @@ const prepareCallTemplate = (data) => {
     locationPublicNotes: data["Latest report notes"],
     locationPrivateNotes: data["Latest Internal Notes"],
   });
+  if (data.Address === '' || ! data.Address) {
+	hideElement("#confirmAddress");
+	showElement("#requestAddress");
+  }
+
 
   enableShowAlso();
   enableHideOnSelect();

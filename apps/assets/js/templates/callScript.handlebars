@@ -104,19 +104,19 @@
             public notes.
           </div>
 
-          <div class="yousay">
-            Can you confirm that your address is {{ locationAddress }}
-          </div>
-          <div class="instructions">
-            If that's wrong,
-            <a
-              target="_blank"
-              class="text-muted small"
-              href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
-              >Report an error</a
-            >
-          </div>
+	<div id="confirmAddress">
+          <div class="yousay"> Can you confirm that your address is {{ locationAddress }}</div>
+          <div class="instructions"> If that's wrong, <a target="_blank" class="text-muted small" href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information" >report an error</a > </div>
         </div>
+	</div>
+	<div id="requestAddress" class="hidden">
+          <div class="yousay">Would you mind telling me what your address is?</div>
+          <div class="instructions"><a target="_blank" class="text-muted small" href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information" >Request a database update</a > </div>
+        </div>
+	</div>
+
+
+
       </div>
     </div>
 
