@@ -425,7 +425,7 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
-  let affiliation = data.Affiliation;
+  let affiliation = data.Affiliation || '';
   affiliation = affiliation.replace(/\W/g, "").toLowerCase();
   console.log(affiliation);
 
