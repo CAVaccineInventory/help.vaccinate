@@ -13,7 +13,7 @@ import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
-import rewindCallTemplate from "./templates/rewindCall.handlebars";
+import toastTemplate from "./templates/toast.handlebars";
 import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
 import errorModalTemplate from "./templates/errorModal.handlebars";
@@ -157,16 +157,35 @@ const loadAndFillPreviousCall = () => {
   loadAndFill(currentLocation);
 };
 
+// assumes we only have one toast at a time
+const showToast = (title, body, buttonLabel, clickHandler ) => {
+    fillTemplateIntoDom(toastTemplate, "#toastContainer", {
+	body: body,
+	title: title,
+	buttonLabel: buttonLabel
+    });
+ 
+    bindClick("#onlyToastButton", clickHandler);
+    var t = new bootstrap.Toast(document.querySelector("#onlyToast"), { autohide: false} );
+    t.show();
+
+
+}
+
+
+const hideToast = () => { 
+    var el = document.querySelector("#onlyToast");
+	if (el) {
+	el.classList.add("hide");
+	console.log("found the toast");
+	}
+}
+
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null) {
-    fillTemplateIntoDom(rewindCallTemplate, "#undoCall", {
-      locationName: previousLocation.Name,
-    });
-    bindClick("#replaceReport", loadAndFillPreviousCall);
-  } else {
-    fillTemplateIntoDom(emptyTemplate, "#undoCall", {});
-  }
+	showToast(previousLocation.Name, "Thanks for your report! If you need to make a change, you can.", "Submit updated report",loadAndFillPreviousCall);
+
   initializeReport(place["id"]);
   hideLoadingScreen();
   hideElement("#nextCallPrompt");
@@ -199,13 +218,14 @@ const hideLoadingScreen = () => {
 };
 
 const recordCall = async (callReport) => {
-  console.log(callReport);
+	hideToast();
+  showLoadingScreen();
   const data = await fetchJsonFromEndpoint(
     "/.netlify/functions/submitReport",
     "POST",
     JSON.stringify(callReport)
   );
-
+  hideLoadingScreen();
   if (data.error) {
 	showErrorModal("Error submitting your report", "I'm really sorry, but it looks like something has gone wrong while trying to submit your report. The specific error the system sent back was '"+ data.error_description+"'. This is not your fault. You can try clicking the 'Close' button on this box and submitting your report again. If that doesn't work, copy the technical information below and paste it into Slack, so we can get this sorted out for you", {report: callReport, result: data})
 
