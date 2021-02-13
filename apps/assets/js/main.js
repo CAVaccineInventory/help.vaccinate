@@ -127,6 +127,15 @@ const showElement = (selector) => {
   document.querySelector(selector)?.classList.remove("hidden");
 };
 
+const authOrLoadAndFillCall = async () => {
+      const user = await  auth0.getUser();
+	if (user && user.email )  {
+		loadAndFillCall();
+	} else {
+		doLogin();
+	}
+}
+
 const loadAndFillCall = async () => {
   showLoadingScreen();
   previousLocation = currentLocation;
@@ -161,7 +170,7 @@ const loadAndFill = (place) => {
 
 const showNextCallPrompt = () => {
   fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
-  bindClick("#requestCallButton", loadAndFillCall);
+  bindClick("#requestCallButton", authOrLoadAndFillCall);
   showElement("#nextCallPrompt");
   hideElement("#callerTool");
 };
