@@ -4,6 +4,15 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+
+import {        bindClick,
+        fillTemplateIntoDom,
+        enableShowAlso,
+        enableHideOnSelect,
+        hideElement,
+        showElement } from "./fauxFramework.js";
+
+
 import createAuth0Client from "@auth0/auth0-spa-js";
 import locationTemplate from "./templates/location.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
@@ -97,35 +106,10 @@ const handleAuth0Login = async () => {
   }
 };
 
-const bindClick = (selector, handler) => {
-  const el = document.querySelector(selector);
-  if (el !== null) {
-    el.addEventListener("click", handler);
-  } else {
-    logDebug("Could not find element with selector " + selector);
-  }
-};
-const fillTemplateIntoDom = (template, selector, data) => {
-  const el = document.querySelector(selector);
-  if (el !== null) {
-    el.innerHTML = template(data);
-  } else {
-    logDebug("Could not find element with selector " + selector);
-  }
-};
 const logDebug = (msg) => {
   console.log(msg);
 };
 
-// const isHidden = (selector) => { return document.querySelector(selector)?.classList.contains("hidden"); };
-
-const hideElement = (selector) => {
-  document.querySelector(selector)?.classList.add("hidden");
-};
-
-const showElement = (selector) => {
-  document.querySelector(selector)?.classList.remove("hidden");
-};
 
 const authOrLoadAndFillCall = async () => {
   const user = await auth0.getUser();
@@ -319,33 +303,23 @@ const fillReportFromDom = () => {
       answers.push("Yes: appointment calendar currently full");
     }
 
-    const apptMethod = document.querySelector(
-      "[name=appointmentMethod]:checked"
-    )?.value;
+    const apptMethod = document.querySelector( "[name=appointmentMethod]:checked")?.value;
     switch (apptMethod) {
       case "phone":
         currentReport["Appointments by phone?"] = true;
-        currentReport[
-          "Appointment scheduling instructions"
-        ] = document.querySelector("#appointmentPhone")?.value;
+        currentReport[ "Appointment scheduling instructions" ] = document.querySelector("#appointmentPhone")?.value;
         break;
       case "county":
-        currentReport["Appointment scheduling instructions"] =
-          "Uses county scheduling system";
+        currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
         break;
       case "myturn":
-        currentReport["Appointment scheduling instructions"] =
-          "https://myturn.ca.gov/";
+        currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
         break;
       case "web":
-        currentReport[
-          "Appointment scheduling instructions"
-        ] = document.querySelector("#appointmentWebsite")?.value;
+        currentReport[ "Appointment scheduling instructions" ] = document.querySelector("#appointmentWebsite")?.value;
         break;
       case "other":
-        currentReport[
-          "Appointment scheduling instructions"
-        ] = document.querySelector("#appointmentOtherInstructions")?.value;
+        currentReport[ "Appointment scheduling instructions" ] = document.querySelector("#appointmentOtherInstructions")?.value;
         break;
       default:
         break;
@@ -367,12 +341,8 @@ const fillReportFromDom = () => {
   }
 
   currentReport["Availability"] = answers;
-  currentReport["Notes"] = document.querySelector(
-    "#callScriptPublicNotes"
-  )?.innerText;
-  currentReport["Internal Notes"] = document.querySelector(
-    "#callScriptPrivateNotes"
-  )?.innerText;
+  currentReport["Notes"] = document.querySelector( "#callScriptPublicNotes")?.innerText;
+  currentReport["Internal Notes"] = document.querySelector( "#callScriptPrivateNotes")?.innerText;
   logDebug(currentReport);
 };
 
@@ -551,56 +521,6 @@ const showErrorModal = (title, body, json) => {
   myModal.show();
 };
 
-const enableShowAlso = () => {
-  // This bit of js will automatically make clicking on any checkbox that has a data-show-also attribute
-  // automatically toggle on the element with the id in the data-show-also attr
-  document.querySelectorAll("[data-show-also]").forEach(function (sel) {
-    document
-      .querySelectorAll('input[name="' + sel.name + '"]')
-      .forEach(function (x) {
-        addEventListener("change", function () {
-          const selector = "#" + x.getAttribute("data-show-also");
-          if (x.checked) {
-            showElement(selector);
-          } else if (
-            !document.querySelector(
-              "[data-show-also=" +
-                x.getAttribute("data-show-also") +
-                "]:checked"
-            )
-          ) {
-            hideElement(selector);
-          }
-        });
-      });
-  });
-};
-
-const enableHideOnSelect = () => {
-  // This bit of js will automatically make clicking on any checkbox that has a data-hide-on-select attribute
-  // automatically toggle on the element with the id in the data-hide-on-select attr
-  document.querySelectorAll("[data-hide-on-select]").forEach(function (sel) {
-    document
-      .querySelectorAll('input[name="' + sel.name + '"]')
-      ?.forEach(function (x) {
-        addEventListener("change", function () {
-          const selector = "#" + x.getAttribute("data-hide-on-select");
-          if (x.checked) {
-            hideElement(selector);
-          } else if (
-            !document.querySelector(
-              "[data-hide-on-select=" +
-                x.getAttribute("data-hide-on-select") +
-                "]:checked"
-            )
-          ) {
-            // If any of the other radio buttons hide this section are picked, don't show it
-            showElement(selector);
-          }
-        });
-      });
-  });
-};
 
 export {
   doLogin,
