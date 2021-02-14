@@ -16,7 +16,7 @@
 
 const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission } = require("../../lib/auth.js");
-const { base } = require("../../lib/airtable.js");
+const { getReadBase } = require("../../lib/airtable.js");
 
 const REPORTS_FIELDS_TO_LOAD = [
   'Date',
@@ -28,6 +28,7 @@ const handler = loggedHandler(requirePermission("caller", async (event, context,
 
   try {
     // fetch all reports from airtable
+    const base = getReadBase();
     const sub = context.identityContext.claims.sub;
     const stats = await base('Reports').select({
       fields: REPORTS_FIELDS_TO_LOAD,
