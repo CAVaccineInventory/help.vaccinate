@@ -152,7 +152,7 @@ const showToast = (title, body, buttonLabel, clickHandler) => {
 
   bindClick("#onlyToastButton", clickHandler);
   const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
-    autohide: false,
+    autohide: true,
   });
   t.show();
 };
@@ -167,7 +167,7 @@ const hideToast = () => {
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null) {
-    showToast(previousLocation.Name, "Thanks for your report!", "Submit updated report", loadAndFillPreviousCall);
+    showToast(previousLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
   }
   initializeReport(place["id"]);
   hideLoadingScreen();

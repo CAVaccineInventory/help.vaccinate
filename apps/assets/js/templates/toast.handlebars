@@ -2,19 +2,26 @@
   role="alert"
   aria-live="assertive"
   aria-atomic="true"
-  class="toast"
+  class="toast bg-white"
   data-bs-autohide="false"
   id="onlyToast"
   data-bs-backdrop="static"
 >
   <div class="toast-header">
-    <strong class="me-auto overflow-hidden">{{ title }}</strong>
+    <strong class="me-auto text-nowrap overflow-hidden">{{ title }}</strong>
+    <small></small>
     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
   </div>
   <div class="toast-body">
-    {{ body }}
-    <div class="d-grid gap-2 d-md-flex p-1 justify-content-md-end">
-      <button id="onlyToastButton" class="btn-sm btn btn-outline-secondary"> {{ buttonLabel }} </button>
+    <div class="container">
+      <div class="row justify-content-md-center">
+        <div class="col small text-nowrap align-self-center">{{ body }}</div>
+        <div class="col small justify-content-md-end">
+          <button id="onlyToastButton" class="btn-sm small text-nowrap btn btn-outline-secondary">
+            {{ buttonLabel }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
