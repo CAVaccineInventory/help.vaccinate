@@ -13,15 +13,14 @@ const LOCATION_FIELDS_TO_LOAD = [
   "Latest report",
   "Latest report notes",
   "Latest Internal Notes",
-  "County vaccine info URL", // retire this now that county is fetched
-  "County Vaccine locations URL", // retire this now that county is fetched
+  "County vaccine info URL",
+  "County Vaccine locations URL",
   "county_notes",
   "Availability Info",
   "Address",
   "Website",
   "Affiliation",
   "Location Type",
-  "Number of Reports",
   "Hours",
 ];
 
