@@ -152,6 +152,7 @@ const loadAndFillCall = async () => {
 };
 
 const loadAndFillPreviousCall = () => {
+	hideToast(); // should do this somewhere smarter.
   currentLocation = previousLocation;
   previousLocation = null;
   loadAndFill(currentLocation);
@@ -184,8 +185,8 @@ const hideToast = () => {
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null) {
-	showToast(previousLocation.Name, "Thanks for your report! If you need to make a change, you can.", "Submit updated report",loadAndFillPreviousCall);
-
+	showToast(previousLocation.Name, "Thanks for your report!", "Submit updated report",loadAndFillPreviousCall);
+  }
   initializeReport(place["id"]);
   hideLoadingScreen();
   hideElement("#nextCallPrompt");
@@ -220,6 +221,12 @@ const hideLoadingScreen = () => {
 const recordCall = async (callReport) => {
 	hideToast();
   showLoadingScreen();
+window.scrollTo({
+  top: 0,
+  left: 0,
+  behavior: 'smooth'
+});
+
   const data = await fetchJsonFromEndpoint(
     "/.netlify/functions/submitReport",
     "POST",
@@ -515,6 +522,7 @@ const prepareCallTemplate = (data) => {
 
 
 const showErrorModal = (title,body, json) =>  {
+hideLoadingScreen();
 fillTemplateIntoDom(errorModalTemplate, '#applicationError', { 
 		title: title,
 		body: body,
@@ -538,7 +546,12 @@ const enableShowAlso = () => {
           const selector = "#" + x.getAttribute("data-show-also");
           if (x.checked) {
             showElement(selector);
-          } else {
+          } else if ( 
+            !document.querySelector(
+              "[data-show-also=" +
+                x.getAttribute("data-show-also") +
+                "]:checked"
+            )) {
             hideElement(selector);
           }
         });

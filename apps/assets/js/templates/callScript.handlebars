@@ -9,22 +9,34 @@
 </div>
 <form id="callScriptForm">
   <div id="noOptions" class="btn-group" role="group">
-    <input class="btn-check" type="radio" id="noNever" data-hide-on-select="vaccinatingPublicScript" name="yesNoSelect" value="never" />
+    <input class="btn-check" type="radio" id="noNever" data-hide-on-select="vaccinatingPublicScript" name="yesNoSelect" value="never"
+data-show-also="scoobyRecordCall"
+ />
     <label class="btn btn-outline-danger" for="noNever"> Never </label>
 
-    <input class="btn-check" type="radio" id="noPrivate" name="yesNoSelect" value="private" data-hide-on-select="vaccinatingPublicScript" />
+    <input class="btn-check" type="radio" id="noPrivate" name="yesNoSelect" value="private" data-hide-on-select="vaccinatingPublicScript" 
+data-show-also="scoobyRecordCall"
+/>
     <label class="btn btn-outline-danger" for="noPrivate"> Private facility </label>
-    <input class="btn-check" type="radio" name="yesNoSelect" data-hide-on-select="vaccinatingPublicScript" id="noStaffOnly" value="staffOnly" />
+    <input class="btn-check" type="radio" name="yesNoSelect" data-hide-on-select="vaccinatingPublicScript" id="noStaffOnly" value="staffOnly" 
+data-show-also="scoobyRecordCall"
+/>
     <label class="btn btn-outline-danger" for="noStaffOnly"> Only staff </label>
 
-    <input class="btn-check" type="radio" name="yesNoSelect" data-hide-on-select="vaccinatingPublicScript" id="noHCWOnly" value="hcwOnly" />
+    <input class="btn-check" type="radio" name="yesNoSelect" data-hide-on-select="vaccinatingPublicScript" id="noHCWOnly" value="hcwOnly" 
+data-show-also="scoobyRecordCall"
+/>
     <label class="btn btn-outline-danger" for="noHCWOnly">Only health care workers</label>
   </div>
 
   <div id="yesOptions" class="btn-group" role="group">
-    <input type="radio" name="yesNoSelect" value="Yes" id="yesJustYes" class="btn-check" />
+    <input type="radio" name="yesNoSelect" value="Yes" id="yesJustYes" class="btn-check"
+data-show-also="scoobyRecordCall"
+ />
     <label class="btn btn-outline-success" for="yesJustYes"> Yes we are </label>
-    <input type="radio" id="yesSoon" value="yesSoon" class="btn-check" name="yesNoSelect" />
+    <input type="radio" id="yesSoon" value="yesSoon" class="btn-check" name="yesNoSelect"
+data-show-also="scoobyRecordCall"
+ />
     <label class="btn btn-outline-success" for="yesSoon"> We will be soon </label>
   </div>
 
@@ -133,6 +145,6 @@
     </div>
     <div class="d-grid gap-2 col-6 mx-auto row">
       <input
-        type="button" class="btn btn-primary" id="scoobyRecordCall" value="Send report" />
+        type="button" class="btn btn-primary hidden" id="scoobyRecordCall" value="Send report" />
   </div>
 </form>
