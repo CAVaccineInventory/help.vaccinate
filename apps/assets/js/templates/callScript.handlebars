@@ -1,12 +1,12 @@
 <form id="callScriptForm">
-  <div class="yousay">
-    Hi, I’m calling to ask about getting the COVID vaccine for a person over 65. Could I please speak to the pharmacist
-    on duty?
-  </div>
+  <div class="yousay"
+    >Hi, I’m calling to ask about getting the COVID vaccine for a person over 65. Could I please speak to the pharmacist
+    on duty?</div
+  >
 
   <div class="surveyQuestion">
     <div class="instructions">Once you reach the right person, ask:</div>
-    <div class="yousay"> Are you currently offering COVID-19 vaccines to members of the public? </div>
+    <div class="yousay">Are you currently offering COVID-19 vaccines to members of the public?</div>
     <div id="noOptions" class="btn-group" role="group">
       <input
         class="btn-check"
@@ -17,7 +17,7 @@
         value="never"
         data-show-also="scoobyRecordCall"
       />
-      <label class="btn btn-outline-danger" for="noNever"> Never </label>
+      <label class="btn btn-outline-danger" for="noNever">Never</label>
 
       <input
         class="btn-check"
@@ -28,7 +28,7 @@
         data-hide-on-select="vaccinatingPublicScript"
         data-show-also="scoobyRecordCall"
       />
-      <label class="btn btn-outline-danger" for="noPrivate"> Private facility </label>
+      <label class="btn btn-outline-danger" for="noPrivate">Private facility</label>
       <input
         class="btn-check"
         type="radio"
@@ -38,7 +38,7 @@
         value="staffOnly"
         data-show-also="scoobyRecordCall"
       />
-      <label class="btn btn-outline-danger" for="noStaffOnly"> Only staff </label>
+      <label class="btn btn-outline-danger" for="noStaffOnly">Only staff</label>
 
       <input
         class="btn-check"
@@ -61,7 +61,7 @@
         class="btn-check"
         data-show-also="scoobyRecordCall"
       />
-      <label class="btn btn-outline-success" for="yesJustYes"> Yes we are </label>
+      <label class="btn btn-outline-success" for="yesJustYes">Yes we are</label>
       <input
         type="radio"
         id="yesSoon"
@@ -70,7 +70,7 @@
         name="yesNoSelect"
         data-show-also="scoobyRecordCall"
       />
-      <label class="btn btn-outline-success" for="yesSoon"> We will be soon </label>
+      <label class="btn btn-outline-success" for="yesSoon">We will be soon</label>
     </div>
     <div>
       <div id="vaccinatingPublicScript">
@@ -78,15 +78,15 @@
           <div class="yousay">How old do seniors need to be to get vaccinated?</div>
           <div class="btn-group" role="group">
             <input class="btn-check" type="radio" name="minAgeSelect" value="65" id="minAge65" />
-            <label class="btn btn-outline-secondary" for="minAge65"> 65+ </label>
+            <label class="btn btn-outline-secondary" for="minAge65">65+</label>
             <input class="btn-check" type="radio" name="minAgeSelect" value="70" id="minAge70" />
-            <label class="btn btn-outline-secondary" for="minAge70"> 70+ </label>
+            <label class="btn btn-outline-secondary" for="minAge70">70+</label>
             <input class="btn-check" type="radio" name="minAgeSelect" value="75" id="minAge75" />
-            <label class="btn btn-outline-secondary" for="minAge75"> 75+ </label>
+            <label class="btn btn-outline-secondary" for="minAge75">75+</label>
             <input class="btn-check" type="radio" name="minAgeSelect" value="80" id="minAge80" />
-            <label class="btn btn-outline-secondary" for="minAge80"> 80+ </label>
+            <label class="btn btn-outline-secondary" for="minAge80">80+</label>
             <input class="btn-check" type="radio" name="minAgeSelect" value="85" id="minAge85" />
-            <label class="btn btn-outline-secondary" for="minAge85"> 85+ </label>
+            <label class="btn btn-outline-secondary" for="minAge85">85+</label>
           </div>
         </div>
         <div class="surveyQuestion">
@@ -114,7 +114,7 @@
         </div>
         <div id="appointmentDetails">
           <div class="surveyQuestion">
-            <div class="yousay"> Do you know if you have any appointments available in the next two weeks? </div>
+            <div class="yousay">Do you know if you have any appointments available in the next two weeks?</div>
             <input type="checkbox" name="appointmentsFull" id="appointmentsFull" />
             <label class="" for="appointmentsFull">The schedule is full for the next two weeks</label>
           </div>
@@ -191,7 +191,7 @@
         </div>
         <div class="expansions">
           <div class="surveyQuestion">
-            <div class="yousay"> Are there any other groups you are able to offer vaccines to? </div>
+            <div class="yousay">Are there any other groups you are able to offer vaccines to?</div>
             <input class="btn-check" type="checkbox" id="essentialWorkersAccepted" />
             <label class="btn btn-outline-primary" for="essentialWorkersAccepted">Essential workers</label>
 
@@ -201,7 +201,7 @@
           </div>
           <div class="restrictions">
             <div class="surveyQuestion">
-              <div class="yousay"> Are there limits on who you can accomodate right now? </div>
+              <div class="yousay">Are there limits on who you can accomodate right now?</div>
               <div class="">
                 <input class="btn-check" type="checkbox" id="veteransOnly" />
                 <label class="btn btn-outline-primary" for="veteransOnly">Veterans only</label>
@@ -217,7 +217,7 @@
 
             <div id="confirmAddress">
               <div class="surveyQuestion">
-                <div class="yousay"> Can you confirm that your address is {{ locationAddress }} </div>
+                <div class="yousay">Can you confirm that your address is {{ locationAddress }}</div>
                 <div class="instructions">
                   If that's wrong,
                   <a
@@ -232,7 +232,7 @@
           </div>
           <div id="requestAddress" class="hidden">
             <div class="surveyQuestion">
-              <div class="yousay"> Would you mind telling me what your address is? </div>
+              <div class="yousay">Would you mind telling me what your address is?</div>
               <div class="instructions">
                 <a
                   target="_blank"
@@ -250,9 +250,9 @@
       <div>
         <div class="surveyQuestion">
           <div>Public notes</div>
-          <div id="callScriptPublicNotes" class="input form-control form-control-sm" role="textbox" contenteditable>
-            {{ locationPublicNotes }}
-          </div>
+          <div id="callScriptPublicNotes" class="input form-control form-control-sm" role="textbox" contenteditable
+            >{{ locationPublicNotes }}</div
+          >
         </div>
       </div>
 
@@ -264,9 +264,8 @@
             class="input border border-secondary form-control form-control-sm"
             role="textbox"
             contenteditable
+            >{{ locationPrivateNotes }}</div
           >
-            {{ locationPrivateNotes }}
-          </div>
         </div>
       </div>
     </div>
