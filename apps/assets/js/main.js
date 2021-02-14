@@ -4,6 +4,16 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+
+import {
+  bindClick,
+  fillTemplateIntoDom,
+  enableShowAlso,
+  enableHideOnSelect,
+  hideElement,
+  showElement,
+} from "./fauxFramework.js";
+
 import createAuth0Client from "@auth0/auth0-spa-js";
 import locationTemplate from "./templates/location.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
@@ -87,44 +97,13 @@ const doLogout = () => {
 
 const handleAuth0Login = async () => {
   if (auth0) {
-    const redirectResult = await auth0.handleRedirectCallback();
+    await auth0.handleRedirectCallback();
     // XXX maybe remove url paramaters now?
-    logDebug(redirectResult);
     const user = await auth0.getUser();
     if (user) {
       updateLogin(user);
     }
   }
-};
-
-const bindClick = (selector, handler) => {
-  const el = document.querySelector(selector);
-  if (el !== null) {
-    el.addEventListener("click", handler);
-  } else {
-    logDebug("Could not find element with selector " + selector);
-  }
-};
-const fillTemplateIntoDom = (template, selector, data) => {
-  const el = document.querySelector(selector);
-  if (el !== null) {
-    el.innerHTML = template(data);
-  } else {
-    logDebug("Could not find element with selector " + selector);
-  }
-};
-const logDebug = (msg) => {
-  console.log(msg);
-};
-
-// const isHidden = (selector) => { return document.querySelector(selector)?.classList.contains("hidden"); };
-
-const hideElement = (selector) => {
-  document.querySelector(selector)?.classList.add("hidden");
-};
-
-const showElement = (selector) => {
-  document.querySelector(selector)?.classList.remove("hidden");
 };
 
 const authOrLoadAndFillCall = async () => {
@@ -139,9 +118,7 @@ const authOrLoadAndFillCall = async () => {
 const loadAndFillCall = async () => {
   showLoadingScreen();
   previousLocation = currentLocation;
-  currentLocation = await fetchJsonFromEndpoint(
-    "/.netlify/functions/requestCall"
-  );
+  currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   const user = await auth0.getUser();
   if (currentLocation.error) {
     showErrorModal(
@@ -175,7 +152,7 @@ const showToast = (title, body, buttonLabel, clickHandler) => {
 
   bindClick("#onlyToastButton", clickHandler);
   const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
-    autohide: false,
+    autohide: true,
   });
   t.show();
 };
@@ -184,19 +161,13 @@ const hideToast = () => {
   const el = document.querySelector("#onlyToast");
   if (el) {
     el.classList.add("hide");
-    console.log("found the toast");
   }
 };
 
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null) {
-    showToast(
-      previousLocation.Name,
-      "Thanks for your report!",
-      "Submit updated report",
-      loadAndFillPreviousCall
-    );
+    showToast(previousLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
   }
   initializeReport(place["id"]);
   hideLoadingScreen();
@@ -238,11 +209,7 @@ const recordCall = async (callReport) => {
     behavior: "smooth",
   });
 
-  const data = await fetchJsonFromEndpoint(
-    "/.netlify/functions/submitReport",
-    "POST",
-    JSON.stringify(callReport)
-  );
+  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(callReport));
   hideLoadingScreen();
   if (data.error) {
     showErrorModal(
@@ -254,10 +221,6 @@ const recordCall = async (callReport) => {
     );
   }
 
-  if (data.created) {
-    logDebug("Created a call");
-    logDebug(data.created[0]);
-  }
   return data.created;
 };
 
@@ -268,8 +231,7 @@ const initializeReport = (locationId) => {
 const fillReportFromDom = () => {
   const answers = [];
 
-  const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")
-    ?.value;
+  const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
   switch (topLevelAnswer) {
     case "never":
       answers.push("No: will never be a vaccination site");
@@ -291,17 +253,14 @@ const fillReportFromDom = () => {
       break;
 
     default:
-      logDebug("No top level answer selected");
+      console.log("No top level answer selected");
   }
 
-  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")
-    ?.value;
+  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
   if (minAgeAnswer) {
     answers.push("Yes: vaccinating " + minAgeAnswer + "+");
   }
-  const apptRequired = document.querySelector(
-    "[name=appointmentRequired]:checked"
-  )?.value;
+  const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
 
   switch (apptRequired) {
     case "walkinOk":
@@ -311,7 +270,7 @@ const fillReportFromDom = () => {
       answers.push("Yes: appointment required");
       break;
     default:
-      logDebug("no appt required selected");
+      console.log("no appt required selected");
   }
 
   if (apptRequired === "required") {
@@ -319,33 +278,25 @@ const fillReportFromDom = () => {
       answers.push("Yes: appointment calendar currently full");
     }
 
-    const apptMethod = document.querySelector(
-      "[name=appointmentMethod]:checked"
-    )?.value;
+    const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
     switch (apptMethod) {
       case "phone":
         currentReport["Appointments by phone?"] = true;
-        currentReport[
-          "Appointment scheduling instructions"
-        ] = document.querySelector("#appointmentPhone")?.value;
+        currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
         break;
       case "county":
-        currentReport["Appointment scheduling instructions"] =
-          "Uses county scheduling system";
+        currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
         break;
       case "myturn":
-        currentReport["Appointment scheduling instructions"] =
-          "https://myturn.ca.gov/";
+        currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
         break;
       case "web":
-        currentReport[
-          "Appointment scheduling instructions"
-        ] = document.querySelector("#appointmentWebsite")?.value;
+        currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
         break;
       case "other":
-        currentReport[
-          "Appointment scheduling instructions"
-        ] = document.querySelector("#appointmentOtherInstructions")?.value;
+        currentReport["Appointment scheduling instructions"] = document.querySelector(
+          "#appointmentOtherInstructions"
+        )?.value;
         break;
       default:
         break;
@@ -367,13 +318,9 @@ const fillReportFromDom = () => {
   }
 
   currentReport["Availability"] = answers;
-  currentReport["Notes"] = document.querySelector(
-    "#callScriptPublicNotes"
-  )?.innerText;
-  currentReport["Internal Notes"] = document.querySelector(
-    "#callScriptPrivateNotes"
-  )?.innerText;
-  logDebug(currentReport);
+  currentReport["Notes"] = document.querySelector("#callScriptPublicNotes")?.innerText;
+  currentReport["Internal Notes"] = document.querySelector("#callScriptPrivateNotes")?.innerText;
+  console.log(currentReport);
 };
 
 const saveCallReport = async () => {
@@ -449,7 +396,6 @@ const submitCallMonday = async () => {
 };
 
 const submitCallReport = async () => {
-  logDebug("loading");
   console.log(currentReport);
   const callId = await recordCall(currentReport);
   logCallLocally(callId);
@@ -483,7 +429,11 @@ const prepareCallTemplate = (data) => {
 
   let affiliation = data.Affiliation || "";
   affiliation = affiliation.replace(/\W/g, "").toLowerCase();
-  console.log(affiliation);
+
+  let responsiblePerson = "the right person";
+  if (data["Location Type"] === "Pharmacy") {
+    responsiblePerson = "the pharmacist on duty";
+  }
 
   const affs = document.querySelectorAll("#affiliationNotes .provider");
   if (affs !== null) {
@@ -493,9 +443,7 @@ const prepareCallTemplate = (data) => {
   }
 
   if (affiliation && affiliation !== "") {
-    document
-      .querySelector("#affiliationNotes .provider." + affiliation)
-      ?.classList.remove("hidden");
+    document.querySelector("#affiliationNotes .provider." + affiliation)?.classList.remove("hidden");
   }
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
@@ -504,6 +452,7 @@ const prepareCallTemplate = (data) => {
     locationId: data.id,
     locationAddress: data.Address,
     locationWebsite: data.Website,
+    responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
     locationPublicNotes: data["Latest report notes"],
     locationPrivateNotes: data["Latest Internal Notes"],
@@ -544,69 +493,8 @@ const showErrorModal = (title, body, json) => {
     json: JSON.stringify(json, null, 2),
   });
 
-  const myModal = new bootstrap.Modal(
-    document.getElementById("errorModal"),
-    {}
-  );
+  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
   myModal.show();
 };
 
-const enableShowAlso = () => {
-  // This bit of js will automatically make clicking on any checkbox that has a data-show-also attribute
-  // automatically toggle on the element with the id in the data-show-also attr
-  document.querySelectorAll("[data-show-also]").forEach(function (sel) {
-    document
-      .querySelectorAll('input[name="' + sel.name + '"]')
-      .forEach(function (x) {
-        addEventListener("change", function () {
-          const selector = "#" + x.getAttribute("data-show-also");
-          if (x.checked) {
-            showElement(selector);
-          } else if (
-            !document.querySelector(
-              "[data-show-also=" +
-                x.getAttribute("data-show-also") +
-                "]:checked"
-            )
-          ) {
-            hideElement(selector);
-          }
-        });
-      });
-  });
-};
-
-const enableHideOnSelect = () => {
-  // This bit of js will automatically make clicking on any checkbox that has a data-hide-on-select attribute
-  // automatically toggle on the element with the id in the data-hide-on-select attr
-  document.querySelectorAll("[data-hide-on-select]").forEach(function (sel) {
-    document
-      .querySelectorAll('input[name="' + sel.name + '"]')
-      ?.forEach(function (x) {
-        addEventListener("change", function () {
-          const selector = "#" + x.getAttribute("data-hide-on-select");
-          if (x.checked) {
-            hideElement(selector);
-          } else if (
-            !document.querySelector(
-              "[data-hide-on-select=" +
-                x.getAttribute("data-hide-on-select") +
-                "]:checked"
-            )
-          ) {
-            // If any of the other radio buttons hide this section are picked, don't show it
-            showElement(selector);
-          }
-        });
-      });
-  });
-};
-
-export {
-  doLogin,
-  doLogout,
-  initScooby,
-  fetchJsonFromEndpoint,
-  handleAuth0Login,
-  initAuth0,
-};
+export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint, handleAuth0Login, initAuth0 };

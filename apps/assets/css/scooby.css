@@ -1,11 +1,22 @@
 .instructions {
-	
+	font-style: italic;	
+}
+
+.surveyQuestion {
+	padding-top: 2.5em;
+
+}
+
+.yousay::before {
+	content: '"';
+}
+.yousay::after {
+	content: '"';
 }
 
 .yousay {
 	font-weight: bold;
 	padding-bottom: 0.5em;	
-	padding-top: 1.5em;
 }
 
 .hidden {
