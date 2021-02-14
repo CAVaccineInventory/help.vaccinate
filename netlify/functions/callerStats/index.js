@@ -48,20 +48,12 @@ const handler = loggedHandler(requirePermission("caller", async (event, context,
       nowDate === formatter.format(new Date(r.get('Date')))
     )).length;
 
+    /* XXX not doing these for now. Let's figure out more stats to give users later.
     // how many of them have yes tags
     output.yesses = stats.filter((r) => (
       r.get('Availability').some((s) => s.startsWith("Yes:"))
     )).length;
-
-    // how many have no tags
-    output.nos = stats.filter((r) => (
-      r.get('Availability').some((s) => s.startsWith("No:"))
-    )).length;
-
-    // how many have skip tags
-    output.skipped = stats.filter((r) => (
-      r.get('Availability').some((s) => s.startsWith("Skip:"))
-    )).length;
+    */
 
   } catch (err) {
     return {

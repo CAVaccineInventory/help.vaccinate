@@ -115,5 +115,5 @@ Get a summary of how many calls the user has made.
 - **Response**: A JSON object with keys detailing how many reports the user has submitted.
 - **Example response**:
 ```json
-{"total":3,"today":2,"yesses":0,"nos":2,"skipped":1}
+{"total":3,"today":2}
 ```
