@@ -118,9 +118,7 @@ const authOrLoadAndFillCall = async () => {
 const loadAndFillCall = async () => {
   showLoadingScreen();
   previousLocation = currentLocation;
-  currentLocation = await fetchJsonFromEndpoint(
-    "/.netlify/functions/requestCall"
-  );
+  currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   const user = await auth0.getUser();
   if (currentLocation.error) {
     showErrorModal(
@@ -169,12 +167,7 @@ const hideToast = () => {
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null) {
-    showToast(
-      previousLocation.Name,
-      "Thanks for your report!",
-      "Submit updated report",
-      loadAndFillPreviousCall
-    );
+    showToast(previousLocation.Name, "Thanks for your report!", "Submit updated report", loadAndFillPreviousCall);
   }
   initializeReport(place["id"]);
   hideLoadingScreen();
@@ -216,11 +209,7 @@ const recordCall = async (callReport) => {
     behavior: "smooth",
   });
 
-  const data = await fetchJsonFromEndpoint(
-    "/.netlify/functions/submitReport",
-    "POST",
-    JSON.stringify(callReport)
-  );
+  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(callReport));
   hideLoadingScreen();
   if (data.error) {
     showErrorModal(
@@ -242,8 +231,7 @@ const initializeReport = (locationId) => {
 const fillReportFromDom = () => {
   const answers = [];
 
-  const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")
-    ?.value;
+  const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
   switch (topLevelAnswer) {
     case "never":
       answers.push("No: will never be a vaccination site");
@@ -268,14 +256,11 @@ const fillReportFromDom = () => {
       console.log("No top level answer selected");
   }
 
-  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")
-    ?.value;
+  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
   if (minAgeAnswer) {
     answers.push("Yes: vaccinating " + minAgeAnswer + "+");
   }
-  const apptRequired = document.querySelector(
-    "[name=appointmentRequired]:checked"
-  )?.value;
+  const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
 
   switch (apptRequired) {
     case "walkinOk":
@@ -293,33 +278,25 @@ const fillReportFromDom = () => {
       answers.push("Yes: appointment calendar currently full");
     }
 
-    const apptMethod = document.querySelector(
-      "[name=appointmentMethod]:checked"
-    )?.value;
+    const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
     switch (apptMethod) {
       case "phone":
         currentReport["Appointments by phone?"] = true;
-        currentReport[
-          "Appointment scheduling instructions"
-        ] = document.querySelector("#appointmentPhone")?.value;
+        currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
         break;
       case "county":
-        currentReport["Appointment scheduling instructions"] =
-          "Uses county scheduling system";
+        currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
         break;
       case "myturn":
-        currentReport["Appointment scheduling instructions"] =
-          "https://myturn.ca.gov/";
+        currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
         break;
       case "web":
-        currentReport[
-          "Appointment scheduling instructions"
-        ] = document.querySelector("#appointmentWebsite")?.value;
+        currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
         break;
       case "other":
-        currentReport[
-          "Appointment scheduling instructions"
-        ] = document.querySelector("#appointmentOtherInstructions")?.value;
+        currentReport["Appointment scheduling instructions"] = document.querySelector(
+          "#appointmentOtherInstructions"
+        )?.value;
         break;
       default:
         break;
@@ -341,12 +318,8 @@ const fillReportFromDom = () => {
   }
 
   currentReport["Availability"] = answers;
-  currentReport["Notes"] = document.querySelector(
-    "#callScriptPublicNotes"
-  )?.innerText;
-  currentReport["Internal Notes"] = document.querySelector(
-    "#callScriptPrivateNotes"
-  )?.innerText;
+  currentReport["Notes"] = document.querySelector("#callScriptPublicNotes")?.innerText;
+  currentReport["Internal Notes"] = document.querySelector("#callScriptPrivateNotes")?.innerText;
   console.log(currentReport);
 };
 
@@ -466,9 +439,7 @@ const prepareCallTemplate = (data) => {
   }
 
   if (affiliation && affiliation !== "") {
-    document
-      .querySelector("#affiliationNotes .provider." + affiliation)
-      ?.classList.remove("hidden");
+    document.querySelector("#affiliationNotes .provider." + affiliation)?.classList.remove("hidden");
   }
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
@@ -517,18 +488,8 @@ const showErrorModal = (title, body, json) => {
     json: JSON.stringify(json, null, 2),
   });
 
-  const myModal = new bootstrap.Modal(
-    document.getElementById("errorModal"),
-    {}
-  );
+  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
   myModal.show();
 };
 
-export {
-  doLogin,
-  doLogout,
-  initScooby,
-  fetchJsonFromEndpoint,
-  handleAuth0Login,
-  initAuth0,
-};
+export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint, handleAuth0Login, initAuth0 };
