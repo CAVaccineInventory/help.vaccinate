@@ -34,6 +34,12 @@ const addNetlifyTesterListeners = () => {
     const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", body);
     debugOutput(data);
   });
+
+  document.querySelector("#callerStatsButton").addEventListener("click", async () => {
+    debugOutput("loading");
+    const data = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
+    debugOutput(data);
+  });
 };
 
 document.addEventListener("DOMContentLoaded", function () {
