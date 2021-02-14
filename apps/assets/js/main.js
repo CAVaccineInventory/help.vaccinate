@@ -429,7 +429,11 @@ const prepareCallTemplate = (data) => {
 
   let affiliation = data.Affiliation || "";
   affiliation = affiliation.replace(/\W/g, "").toLowerCase();
-  console.log(affiliation);
+
+  let responsiblePerson = "the right person";
+  if (data["Location Type"] === "Pharmacy") {
+    responsiblePerson = "the pharmacist on duty";
+  }
 
   const affs = document.querySelectorAll("#affiliationNotes .provider");
   if (affs !== null) {
@@ -448,6 +452,7 @@ const prepareCallTemplate = (data) => {
     locationId: data.id,
     locationAddress: data.Address,
     locationWebsite: data.Website,
+    responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
     locationPublicNotes: data["Latest report notes"],
     locationPrivateNotes: data["Latest Internal Notes"],
