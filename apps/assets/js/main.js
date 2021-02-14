@@ -5,7 +5,6 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import createAuth0Client from "@auth0/auth0-spa-js";
-import emptyTemplate from "./templates/empty.handlebars";
 import locationTemplate from "./templates/location.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
 import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
@@ -13,9 +12,10 @@ import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
-import rewindCallTemplate from "./templates/rewindCall.handlebars";
+import toastTemplate from "./templates/toast.handlebars";
 import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
+import errorModalTemplate from "./templates/errorModal.handlebars";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
@@ -128,13 +128,13 @@ const showElement = (selector) => {
 };
 
 const authOrLoadAndFillCall = async () => {
-      const user = await  auth0.getUser();
-	if (user && user.email )  {
-		loadAndFillCall();
-	} else {
-		doLogin();
-	}
-}
+  const user = await auth0.getUser();
+  if (user && user.email) {
+    loadAndFillCall();
+  } else {
+    doLogin();
+  }
+};
 
 const loadAndFillCall = async () => {
   showLoadingScreen();
@@ -142,24 +142,61 @@ const loadAndFillCall = async () => {
   currentLocation = await fetchJsonFromEndpoint(
     "/.netlify/functions/requestCall"
   );
-  loadAndFill(currentLocation);
+  const user = await auth0.getUser();
+  if (currentLocation.error) {
+    showErrorModal(
+      "Error fetching a call",
+      "It looks like you might not yet have permission to use this tool. Please show this error message to your captain or lead on Slack: '" +
+        currentLocation.error_description +
+        "'. They may also need to know that you are logged in as " +
+        user?.email +
+        ".",
+      { user: user, error: currentLocation }
+    );
+  } else {
+    loadAndFill(currentLocation);
+  }
 };
 
 const loadAndFillPreviousCall = () => {
+  hideToast(); // should do this somewhere smarter.
   currentLocation = previousLocation;
   previousLocation = null;
   loadAndFill(currentLocation);
 };
 
+// assumes we only have one toast at a time
+const showToast = (title, body, buttonLabel, clickHandler) => {
+  fillTemplateIntoDom(toastTemplate, "#toastContainer", {
+    body: body,
+    title: title,
+    buttonLabel: buttonLabel,
+  });
+
+  bindClick("#onlyToastButton", clickHandler);
+  const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
+    autohide: false,
+  });
+  t.show();
+};
+
+const hideToast = () => {
+  const el = document.querySelector("#onlyToast");
+  if (el) {
+    el.classList.add("hide");
+    console.log("found the toast");
+  }
+};
+
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null) {
-    fillTemplateIntoDom(rewindCallTemplate, "#undoCall", {
-      locationName: previousLocation.Name,
-    });
-    bindClick("#replaceReport", loadAndFillPreviousCall);
-  } else {
-    fillTemplateIntoDom(emptyTemplate, "#undoCall", {});
+    showToast(
+      previousLocation.Name,
+      "Thanks for your report!",
+      "Submit updated report",
+      loadAndFillPreviousCall
+    );
   }
   initializeReport(place["id"]);
   hideLoadingScreen();
@@ -193,12 +230,30 @@ const hideLoadingScreen = () => {
 };
 
 const recordCall = async (callReport) => {
-  console.log(callReport);
+  hideToast();
+  showLoadingScreen();
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
+
   const data = await fetchJsonFromEndpoint(
     "/.netlify/functions/submitReport",
     "POST",
     JSON.stringify(callReport)
   );
+  hideLoadingScreen();
+  if (data.error) {
+    showErrorModal(
+      "Error submitting your report",
+      "I'm really sorry, but it looks like something has gone wrong while trying to submit your report. The specific error the system sent back was '" +
+        data.error_description +
+        "'. This is not your fault. You can try clicking the 'Close' button on this box and submitting your report again. If that doesn't work, copy the technical information below and paste it into Slack, so we can get this sorted out for you",
+      { report: callReport, result: data }
+    );
+  }
+
   if (data.created) {
     logDebug("Created a call");
     logDebug(data.created[0]);
@@ -241,8 +296,9 @@ const fillReportFromDom = () => {
 
   const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")
     ?.value;
-  answers.push("Yes: vaccinating " + minAgeAnswer + "+");
-
+  if (minAgeAnswer) {
+    answers.push("Yes: vaccinating " + minAgeAnswer + "+");
+  }
   const apptRequired = document.querySelector(
     "[name=appointmentRequired]:checked"
   )?.value;
@@ -268,7 +324,7 @@ const fillReportFromDom = () => {
     )?.value;
     switch (apptMethod) {
       case "phone":
-        currentReport["Appointments by phone?"] = 1;
+        currentReport["Appointments by phone?"] = true;
         currentReport[
           "Appointment scheduling instructions"
         ] = document.querySelector("#appointmentPhone")?.value;
@@ -425,7 +481,7 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
-  let affiliation = data.Affiliation;
+  let affiliation = data.Affiliation || "";
   affiliation = affiliation.replace(/\W/g, "").toLowerCase();
   console.log(affiliation);
 
@@ -436,13 +492,11 @@ const prepareCallTemplate = (data) => {
     });
   }
 
-  const af = document.querySelector(
-    "#affiliationNotes .provider." + affiliation
-  );
-  if (af !== null) {
-    af.classList.remove("hidden");
+  if (affiliation && affiliation !== "") {
+    document
+      .querySelector("#affiliationNotes .provider." + affiliation)
+      ?.classList.remove("hidden");
   }
-
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
@@ -454,14 +508,15 @@ const prepareCallTemplate = (data) => {
     locationPublicNotes: data["Latest report notes"],
     locationPrivateNotes: data["Latest Internal Notes"],
   });
-  if (data.Address === '' || ! data.Address) {
-	hideElement("#confirmAddress");
-	showElement("#requestAddress");
+  if (data.Address === "" || !data.Address) {
+    hideElement("#confirmAddress");
+    showElement("#requestAddress");
   }
-
 
   enableShowAlso();
   enableHideOnSelect();
+
+  bindClick("#scoobyRecordCall", saveCallReport);
 
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
@@ -469,6 +524,7 @@ const prepareCallTemplate = (data) => {
   bindClick("#phoneBusy", submitBusy);
   bindClick("#closedForTheDay", submitCallTomorrow);
   bindClick("#closedForTheWeekend", submitCallMonday);
+  bindClick("#longHold", submitLongHold);
 
   // don't show "on hold for more than 2 minutes" until 2 min have elapsed
   const el = document.querySelector("#longHold");
@@ -476,11 +532,23 @@ const prepareCallTemplate = (data) => {
     el.style.visibility = "hidden";
     setTimeout(function () {
       el.style.visibility = "visible";
-      bindClick("#longHold", submitLongHold);
     }, 120000);
   }
+};
 
-  bindClick("#scoobyRecordCall", saveCallReport);
+const showErrorModal = (title, body, json) => {
+  hideLoadingScreen();
+  fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
+    title: title,
+    body: body,
+    json: JSON.stringify(json, null, 2),
+  });
+
+  const myModal = new bootstrap.Modal(
+    document.getElementById("errorModal"),
+    {}
+  );
+  myModal.show();
 };
 
 const enableShowAlso = () => {
@@ -494,7 +562,13 @@ const enableShowAlso = () => {
           const selector = "#" + x.getAttribute("data-show-also");
           if (x.checked) {
             showElement(selector);
-          } else {
+          } else if (
+            !document.querySelector(
+              "[data-show-also=" +
+                x.getAttribute("data-show-also") +
+                "]:checked"
+            )
+          ) {
             hideElement(selector);
           }
         });
@@ -508,7 +582,7 @@ const enableHideOnSelect = () => {
   document.querySelectorAll("[data-hide-on-select]").forEach(function (sel) {
     document
       .querySelectorAll('input[name="' + sel.name + '"]')
-      .forEach(function (x) {
+      ?.forEach(function (x) {
         addEventListener("change", function () {
           const selector = "#" + x.getAttribute("data-hide-on-select");
           if (x.checked) {
