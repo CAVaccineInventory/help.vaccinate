@@ -5,13 +5,14 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-import {        bindClick,
-        fillTemplateIntoDom,
-        enableShowAlso,
-        enableHideOnSelect,
-        hideElement,
-        showElement } from "./fauxFramework.js";
-
+import {
+  bindClick,
+  fillTemplateIntoDom,
+  enableShowAlso,
+  enableHideOnSelect,
+  hideElement,
+  showElement,
+} from "./fauxFramework.js";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
 import locationTemplate from "./templates/location.handlebars";
@@ -109,7 +110,6 @@ const handleAuth0Login = async () => {
 const logDebug = (msg) => {
   console.log(msg);
 };
-
 
 const authOrLoadAndFillCall = async () => {
   const user = await auth0.getUser();
@@ -303,23 +303,33 @@ const fillReportFromDom = () => {
       answers.push("Yes: appointment calendar currently full");
     }
 
-    const apptMethod = document.querySelector( "[name=appointmentMethod]:checked")?.value;
+    const apptMethod = document.querySelector(
+      "[name=appointmentMethod]:checked"
+    )?.value;
     switch (apptMethod) {
       case "phone":
         currentReport["Appointments by phone?"] = true;
-        currentReport[ "Appointment scheduling instructions" ] = document.querySelector("#appointmentPhone")?.value;
+        currentReport[
+          "Appointment scheduling instructions"
+        ] = document.querySelector("#appointmentPhone")?.value;
         break;
       case "county":
-        currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
+        currentReport["Appointment scheduling instructions"] =
+          "Uses county scheduling system";
         break;
       case "myturn":
-        currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
+        currentReport["Appointment scheduling instructions"] =
+          "https://myturn.ca.gov/";
         break;
       case "web":
-        currentReport[ "Appointment scheduling instructions" ] = document.querySelector("#appointmentWebsite")?.value;
+        currentReport[
+          "Appointment scheduling instructions"
+        ] = document.querySelector("#appointmentWebsite")?.value;
         break;
       case "other":
-        currentReport[ "Appointment scheduling instructions" ] = document.querySelector("#appointmentOtherInstructions")?.value;
+        currentReport[
+          "Appointment scheduling instructions"
+        ] = document.querySelector("#appointmentOtherInstructions")?.value;
         break;
       default:
         break;
@@ -341,8 +351,12 @@ const fillReportFromDom = () => {
   }
 
   currentReport["Availability"] = answers;
-  currentReport["Notes"] = document.querySelector( "#callScriptPublicNotes")?.innerText;
-  currentReport["Internal Notes"] = document.querySelector( "#callScriptPrivateNotes")?.innerText;
+  currentReport["Notes"] = document.querySelector(
+    "#callScriptPublicNotes"
+  )?.innerText;
+  currentReport["Internal Notes"] = document.querySelector(
+    "#callScriptPrivateNotes"
+  )?.innerText;
   logDebug(currentReport);
 };
 
@@ -520,7 +534,6 @@ const showErrorModal = (title, body, json) => {
   );
   myModal.show();
 };
-
 
 export {
   doLogin,

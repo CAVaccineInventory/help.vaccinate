@@ -78,10 +78,10 @@ const enableHideOnSelect = () => {
 };
 
 export {
-	bindClick,
-	fillTemplateIntoDom,
-	enableShowAlso,
-	enableHideOnSelect,
-	hideElement,
-	showElement
+  bindClick,
+  fillTemplateIntoDom,
+  enableShowAlso,
+  enableHideOnSelect,
+  hideElement,
+  showElement,
 };
