@@ -97,18 +97,13 @@ const doLogout = () => {
 
 const handleAuth0Login = async () => {
   if (auth0) {
-    const redirectResult = await auth0.handleRedirectCallback();
+    await auth0.handleRedirectCallback();
     // XXX maybe remove url paramaters now?
-    logDebug(redirectResult);
     const user = await auth0.getUser();
     if (user) {
       updateLogin(user);
     }
   }
-};
-
-const logDebug = (msg) => {
-  console.log(msg);
 };
 
 const authOrLoadAndFillCall = async () => {
@@ -168,7 +163,6 @@ const hideToast = () => {
   const el = document.querySelector("#onlyToast");
   if (el) {
     el.classList.add("hide");
-    console.log("found the toast");
   }
 };
 
@@ -238,10 +232,6 @@ const recordCall = async (callReport) => {
     );
   }
 
-  if (data.created) {
-    logDebug("Created a call");
-    logDebug(data.created[0]);
-  }
   return data.created;
 };
 
@@ -275,7 +265,7 @@ const fillReportFromDom = () => {
       break;
 
     default:
-      logDebug("No top level answer selected");
+      console.log("No top level answer selected");
   }
 
   const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")
@@ -295,7 +285,7 @@ const fillReportFromDom = () => {
       answers.push("Yes: appointment required");
       break;
     default:
-      logDebug("no appt required selected");
+      console.log("no appt required selected");
   }
 
   if (apptRequired === "required") {
@@ -357,7 +347,7 @@ const fillReportFromDom = () => {
   currentReport["Internal Notes"] = document.querySelector(
     "#callScriptPrivateNotes"
   )?.innerText;
-  logDebug(currentReport);
+  console.log(currentReport);
 };
 
 const saveCallReport = async () => {
@@ -433,7 +423,6 @@ const submitCallMonday = async () => {
 };
 
 const submitCallReport = async () => {
-  logDebug("loading");
   console.log(currentReport);
   const callId = await recordCall(currentReport);
   logCallLocally(callId);
