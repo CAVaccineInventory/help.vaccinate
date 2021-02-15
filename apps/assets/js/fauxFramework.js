@@ -70,7 +70,6 @@ const enablePopups = (selector) => {
   const popupOptions = "status=no,location=no,toolbar=no,menubar=no,width=400,height=500,left=100,top=100";
   document.querySelectorAll(selector + " a.open-as-popup").forEach(function (el) {
     el.addEventListener("click", (event) => {
-      console.log(el.href);
       event.preventDefault();
       const popup = window.open(el.href, "corrections", popupOptions);
       if (window.focus) {
