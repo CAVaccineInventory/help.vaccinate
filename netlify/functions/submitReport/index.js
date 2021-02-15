@@ -5,6 +5,10 @@ const { requirePermission, getUserinfo } = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
 const { logEvent } = require("../../lib/log.js");
 
+
+const SKIP_TAG_PREFIX = "Skip: call back later";
+
+
 const handler = loggedHandler(
   requirePermission("caller", async (event, context, logger) => {
     // save off a raw report in case something goes wrong below.
@@ -97,7 +101,7 @@ const handler = loggedHandler(
     // https://github.com/CAVaccineInventory/airtableApps/blob/1e5fe26a437e2d2ea885acb480694f467178d5f8/caller/frontend/CallFlow.tsx#L474
     try {
       // if the call is non-skip, updated some other tables.
-      if (input.Availability && !input.Availability.some((x) => x.startsWith("Skip:"))) {
+      if (input.Availability && !input.Availability.some((x) => x.startsWith(SKIP_TAG_PREFIX))) {
         const locationId = input.Location[0];
         logger.info("non-skip, updating location id", locationId);
         // kick off location update to set force-prioritize to false.
