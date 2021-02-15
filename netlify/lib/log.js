@@ -1,4 +1,4 @@
-const { base } = require("./airtable.js");
+const { logBase } = require("./airtable.js");
 
 // It might be nice if this wrote to something other than airtable.
 // Both for performace reasons (API rate limits) and for reliability
@@ -21,7 +21,7 @@ module.exports.logEvent = ({ event, context, endpoint, payload, name }) => {
       hostname: event.headers.host,
       remote_ip: event.headers["client-ip"],
     };
-    base("call_report_event_log")
+    logBase("call_report_event_log")
       .create([{ fields }])
       .then((results) => {
         if (results && results.length > 0) {
