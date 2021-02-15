@@ -230,7 +230,7 @@ const initializeReport = (locationId) => {
 
 const fillReportFromDom = () => {
   const answers = [];
-
+  var isYes = false;
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
   switch (topLevelAnswer) {
     case "never":
@@ -246,9 +246,11 @@ const fillReportFromDom = () => {
       answers.push("No: only vaccinating health care workers");
       break;
     case "yesJustYes":
+      isYes = true;
       // We don't have a tag for this one
       break;
     case "yesSoon":
+      isYes = true;
       answers.push("Yes: coming soon");
       break;
 
@@ -256,6 +258,8 @@ const fillReportFromDom = () => {
       console.log("No top level answer selected");
   }
 
+
+  if (isYes === true) {
   const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
   if (minAgeAnswer) {
     answers.push("Yes: vaccinating " + minAgeAnswer + "+");
@@ -270,7 +274,8 @@ const fillReportFromDom = () => {
       answers.push("Yes: appointment required");
       break;
     default:
-      console.log("no appt required selected");
+      answers.push("Yes: appointment required");
+      console.log("no appt required selected - defaulting to appt required");
   }
 
   if (apptRequired === "required") {
@@ -321,7 +326,7 @@ const fillReportFromDom = () => {
     answers.push(AVAIL_SECOND_DOSE_ONLY);
   }
 
-
+  }
 
   currentReport["Availability"] = answers;
   currentReport["Notes"] = document.querySelector("#callScriptPublicNotes")?.innerText;
