@@ -317,6 +317,12 @@ const fillReportFromDom = () => {
     answers.push("Yes: restricted to county residents");
   }
 
+  if (document.querySelector("#secondDoseOnly")?.checked) {
+    answers.push(AVAIL_SECOND_DOSE_ONLY);
+  }
+
+
+
   currentReport["Availability"] = answers;
   currentReport["Notes"] = document.querySelector("#callScriptPublicNotes")?.innerText;
   currentReport["Internal Notes"] = document.querySelector("#callScriptPrivateNotes")?.innerText;
@@ -331,6 +337,11 @@ const saveCallReport = async () => {
 const AVAIL_BAD_CONTACT_INFO = "No: incorrect contact information";
 const AVAIL_PERMANENTLY_CLOSED = "No: location permanently closed";
 const AVAIL_SKIP = "Skip: call back later";
+const AVAIL_SECOND_DOSE_ONLY =  "Scheduling second dose only";
+
+
+
+
 
 const submitBadContactInfo = async () => {
   submitWithAvail(AVAIL_BAD_CONTACT_INFO);
