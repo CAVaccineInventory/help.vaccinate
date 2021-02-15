@@ -116,8 +116,39 @@
       <div id="appointmentDetails">
         <div class="surveyQuestion">
           <div class="yousay">Do you know if you have any appointments available in the next two weeks?</div>
-          <input type="checkbox" name="appointmentsFull" id="appointmentsFull" />
-          <label class="" for="appointmentsFull">The schedule is full for the next two weeks</label>
+
+
+
+          <div class="btn-group" role="group">
+            <input
+              class="btn-check"
+              type="radio"
+              name="appointmentsAvailable"
+              id="appointmentsAvailableFull"
+              value="full"
+            />
+            <label for="appointmentsAvailableFull" class="btn btn-outline-secondary">Full for the next two weeks</label>
+
+            <input
+              class="btn-check"
+              type="radio"
+              name="appointmentsAvailable"
+              id="appointmentsAvailableOpen"
+              value="open"
+            />
+            <label for="appointmentsAvailableOpen" class="btn btn-outline-secondary">Appointments available</label>
+
+            <input
+              class="btn-check"
+              type="radio"
+              name="appointmentsAvailable"
+              id="appointmentsAvailableUnknown"
+              value="unknown"
+            />
+            <label for="appointmentsAvailableUnknown" class="btn btn-outline-secondary">Not sure</label>
+
+	</div>
+
         </div>
         <div class="surveyQuestion">
           <div class="yousay">How should they make the appointment?</div>

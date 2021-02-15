@@ -279,7 +279,7 @@ const fillReportFromDom = () => {
   }
 
   if (apptRequired === "required") {
-    if (document.querySelector("#appointmentsFull")?.checked) {
+    if (document.querySelector("[name=appointmentsAvailable]:checked")?.value === 'full') {
       answers.push("Yes: appointment calendar currently full");
     }
 
