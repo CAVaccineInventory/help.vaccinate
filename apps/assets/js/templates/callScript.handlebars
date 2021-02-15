@@ -79,211 +79,201 @@
       <label class="btn btn-outline-success" for="yesSoon">We will be soon</label>
     </div>
   </div>
-  <div>
-    <div id="vaccinatingPublicScript">
-      <div class="surveyQuestion">
-        <div class="yousay">How old do seniors need to be to get vaccinated?</div>
-        <div class="btn-group" role="group">
-          <input class="btn-check" type="radio" name="minAgeSelect" value="65" id="minAge65" />
-          <label class="btn btn-outline-secondary" for="minAge65">65+</label>
-          <input class="btn-check" type="radio" name="minAgeSelect" value="70" id="minAge70" />
-          <label class="btn btn-outline-secondary" for="minAge70">70+</label>
-          <input class="btn-check" type="radio" name="minAgeSelect" value="75" id="minAge75" />
-          <label class="btn btn-outline-secondary" for="minAge75">75+</label>
-          <input class="btn-check" type="radio" name="minAgeSelect" value="80" id="minAge80" />
-          <label class="btn btn-outline-secondary" for="minAge80">80+</label>
-          <input class="btn-check" type="radio" name="minAgeSelect" value="85" id="minAge85" />
-          <label class="btn btn-outline-secondary" for="minAge85">85+</label>
-        </div>
+  <div id="vaccinatingPublicScript">
+    <div class="surveyQuestion">
+      <div class="yousay">How old do seniors need to be to get vaccinated?</div>
+      <div class="btn-group" role="group">
+        <input class="btn-check" type="radio" name="minAgeSelect" value="65" id="minAge65" />
+        <label class="btn btn-outline-secondary" for="minAge65">65+</label>
+        <input class="btn-check" type="radio" name="minAgeSelect" value="70" id="minAge70" />
+        <label class="btn btn-outline-secondary" for="minAge70">70+</label>
+        <input class="btn-check" type="radio" name="minAgeSelect" value="75" id="minAge75" />
+        <label class="btn btn-outline-secondary" for="minAge75">75+</label>
+        <input class="btn-check" type="radio" name="minAgeSelect" value="80" id="minAge80" />
+        <label class="btn btn-outline-secondary" for="minAge80">80+</label>
+        <input class="btn-check" type="radio" name="minAgeSelect" value="85" id="minAge85" />
+        <label class="btn btn-outline-secondary" for="minAge85">85+</label>
       </div>
+    </div>
+    <div class="surveyQuestion">
+      <div class="yousay">Thanks! Do they need an appointment?</div>
+
+      <div class="btn-group" role="group">
+        <input
+          class="btn-check"
+          type="radio"
+          name="appointmentRequired"
+          value="walkinOk"
+          id="apptWalkin"
+          data-hide-on-select="appointmentDetails"
+        />
+        <label class="btn btn-outline-secondary" for="apptWalkin">Walkins are welcome</label>
+        <input class="btn-check" type="radio" name="appointmentRequired" value="required" id="appointmentRequired" />
+        <label class="btn btn-outline-secondary" for="appointmentRequired">Appointment Required</label>
+      </div>
+    </div>
+    <div id="appointmentDetails">
       <div class="surveyQuestion">
-        <div class="yousay">Thanks! Do they need an appointment?</div>
+        <div class="yousay">Do you know if you have any appointments available in the next two weeks?</div>
 
         <div class="btn-group" role="group">
           <input
             class="btn-check"
             type="radio"
-            name="appointmentRequired"
-            value="walkinOk"
-            id="apptWalkin"
-            data-hide-on-select="appointmentDetails"
+            name="appointmentsAvailable"
+            id="appointmentsAvailableFull"
+            value="full"
           />
-          <label class="btn btn-outline-secondary" for="apptWalkin">Walkins are welcome</label>
-          <input class="btn-check" type="radio" name="appointmentRequired" value="required" id="appointmentRequired" />
-          <label class="btn btn-outline-secondary" for="appointmentRequired">Appointment Required</label>
+          <label for="appointmentsAvailableFull" class="btn btn-outline-secondary">Full for the next two weeks</label>
+
+          <input
+            class="btn-check"
+            type="radio"
+            name="appointmentsAvailable"
+            id="appointmentsAvailableOpen"
+            value="open"
+          />
+          <label for="appointmentsAvailableOpen" class="btn btn-outline-secondary">Appointments available</label>
+
+          <input
+            class="btn-check"
+            type="radio"
+            name="appointmentsAvailable"
+            id="appointmentsAvailableUnknown"
+            value="unknown"
+          />
+          <label for="appointmentsAvailableUnknown" class="btn btn-outline-secondary">Not sure</label>
         </div>
       </div>
-      <div id="appointmentDetails">
-        <div class="surveyQuestion">
-          <div class="yousay">Do you know if you have any appointments available in the next two weeks?</div>
-
-          <div class="btn-group" role="group">
-            <input
-              class="btn-check"
-              type="radio"
-              name="appointmentsAvailable"
-              id="appointmentsAvailableFull"
-              value="full"
-            />
-            <label for="appointmentsAvailableFull" class="btn btn-outline-secondary">Full for the next two weeks</label>
-
-            <input
-              class="btn-check"
-              type="radio"
-              name="appointmentsAvailable"
-              id="appointmentsAvailableOpen"
-              value="open"
-            />
-            <label for="appointmentsAvailableOpen" class="btn btn-outline-secondary">Appointments available</label>
-
-            <input
-              class="btn-check"
-              type="radio"
-              name="appointmentsAvailable"
-              id="appointmentsAvailableUnknown"
-              value="unknown"
-            />
-            <label for="appointmentsAvailableUnknown" class="btn btn-outline-secondary">Not sure</label>
-          </div>
+      <div class="surveyQuestion">
+        <div class="yousay">How should they make the appointment?</div>
+        <div class="btn-group" role="group">
+          <input class="btn-check" type="radio" name="appointmentMethod" id="appointmentMethodCounty" value="county" />
+          <label for="appointmentMethodCounty" class="btn btn-outline-secondary">County website</label>
+          <input class="btn-check" type="radio" name="appointmentMethod" id="appointmentMethodMyTurn" value="myturn" />
+          <label for="appointmentMethodMyTurn" class="btn btn-outline-secondary">myturn.ca.gov</label>
+          <input
+            class="btn-check"
+            type="radio"
+            name="appointmentMethod"
+            id="appointmentMethodWeb"
+            data-show-also="appointmentWebsite"
+            value="web"
+          />
+          <label for="appointmentMethodWeb" class="btn btn-outline-secondary">web</label>
+          <input
+            type="radio"
+            class="btn-check"
+            name="appointmentMethod"
+            id="appointmentMethodPhone"
+            data-show-also="appointmentPhone"
+            value="phone"
+          />
+          <label for="appointmentMethodPhone" class="btn btn-outline-secondary">phone</label>
+          <input
+            class="btn-check"
+            type="radio"
+            name="appointmentMethod"
+            id="appointmentMethodOther"
+            data-show-also="appointmentOtherInstructions"
+            value="other"
+          />
+          <label for="appointmentMethodOther" class="btn btn-outline-secondary">Another way</label>
         </div>
-        <div class="surveyQuestion">
-          <div class="yousay">How should they make the appointment?</div>
-          <div class="btn-group" role="group">
-            <input
-              class="btn-check"
-              type="radio"
-              name="appointmentMethod"
-              id="appointmentMethodCounty"
-              value="county"
-            />
-            <label for="appointmentMethodCounty" class="btn btn-outline-secondary">County website</label>
-            <input
-              class="btn-check"
-              type="radio"
-              name="appointmentMethod"
-              id="appointmentMethodMyTurn"
-              value="myturn"
-            />
-            <label for="appointmentMethodMyTurn" class="btn btn-outline-secondary">myturn.ca.gov</label>
-            <input
-              class="btn-check"
-              type="radio"
-              name="appointmentMethod"
-              id="appointmentMethodWeb"
-              data-show-also="appointmentWebsite"
-              value="web"
-            />
-            <label for="appointmentMethodWeb" class="btn btn-outline-secondary">web</label>
-            <input
-              type="radio"
-              class="btn-check"
-              name="appointmentMethod"
-              id="appointmentMethodPhone"
-              data-show-also="appointmentPhone"
-              value="phone"
-            />
-            <label for="appointmentMethodPhone" class="btn btn-outline-secondary">phone</label>
-            <input
-              class="btn-check"
-              type="radio"
-              name="appointmentMethod"
-              id="appointmentMethodOther"
-              data-show-also="appointmentOtherInstructions"
-              value="other"
-            />
-            <label for="appointmentMethodOther" class="btn btn-outline-secondary">Another way</label>
-          </div>
-          <div id="appointmentMethodDetail">
-            <input
-              type="text"
-              id="appointmentPhone"
-              class="form-control hidden"
-              placeholder="Appointment phone number"
-              value="{{locationPhone}}"
-            />
-            <input
-              type="text"
-              id="appointmentOtherInstructions"
-              class="form-control hidden"
-              placeholder="Scheduling instructions"
-            />
-            <input
-              type="text"
-              id="appointmentWebsite"
-              class="form-control hidden"
-              placeholder="Appointment website"
-              value="{{locationWebsite}}"
-            />
-          </div>
+        <div id="appointmentMethodDetail">
+          <input
+            type="text"
+            id="appointmentPhone"
+            class="form-control hidden"
+            placeholder="Appointment phone number"
+            value="{{locationPhone}}"
+          />
+          <input
+            type="text"
+            id="appointmentOtherInstructions"
+            class="form-control hidden"
+            placeholder="Scheduling instructions"
+          />
+          <input
+            type="text"
+            id="appointmentWebsite"
+            class="form-control hidden"
+            placeholder="Appointment website"
+            value="{{locationWebsite}}"
+          />
         </div>
       </div>
-      <div class="expansions">
-        <div class="surveyQuestion">
-          <div class="yousay">Are there any other groups you are able to offer vaccines to?</div>
-          <input class="btn-check" type="checkbox" id="essentialWorkersAccepted" />
-          <label class="btn btn-outline-primary" for="essentialWorkersAccepted">Essential workers</label>
+    </div>
+    <div class="expansions">
+      <div class="surveyQuestion">
+        <div class="yousay">Are there any other groups you are able to offer vaccines to?</div>
+        <input class="btn-check" type="checkbox" id="essentialWorkersAccepted" />
+        <label class="btn btn-outline-primary" for="essentialWorkersAccepted">Essential workers</label>
 
+        <div class="instructions small secondary">
+          If they say anything that's not on the list, mention it in the public notes.
+        </div>
+      </div>
+      <div class="restrictions">
+        <div class="surveyQuestion">
+          <div class="yousay">Are there limits on who you can accomodate right now?</div>
+          <div class="">
+            <input class="btn-check" type="checkbox" id="veteransOnly" />
+            <label class="btn btn-outline-primary" for="veteransOnly">Veterans only</label>
+            <input class="btn-check" type="checkbox" id="patientsOnly" />
+            <label class="btn btn-outline-primary" for="patientsOnly">Current patients only</label>
+            <input class="btn-check" type="checkbox" id="countyOnly" />
+            <label class="btn btn-outline-primary" for="countyOnly">County residents only</label>
+            <input class="btn-check" type="checkbox" id="secondDoseOnly" />
+            <label class="btn btn-outline-primary" for="secondDoseOnly">Second dose only</label>
+          </div>
           <div class="instructions small secondary">
             If they say anything that's not on the list, mention it in the public notes.
           </div>
         </div>
-        <div class="restrictions">
-          <div class="surveyQuestion">
-            <div class="yousay">Are there limits on who you can accomodate right now?</div>
-            <div class="">
-              <input class="btn-check" type="checkbox" id="veteransOnly" />
-              <label class="btn btn-outline-primary" for="veteransOnly">Veterans only</label>
-              <input class="btn-check" type="checkbox" id="patientsOnly" />
-              <label class="btn btn-outline-primary" for="patientsOnly">Current patients only</label>
-              <input class="btn-check" type="checkbox" id="countyOnly" />
-              <label class="btn btn-outline-primary" for="countyOnly">County residents only</label>
-              <input class="btn-check" type="checkbox" id="secondDoseOnly" />
-              <label class="btn btn-outline-primary" for="secondDoseOnly">Second dose only</label>
-            </div>
-            <div class="instructions small secondary">
-              If they say anything that's not on the list, mention it in the public notes.
-            </div>
-          </div>
 
-          <div id="confirmAddress">
-            <div class="surveyQuestion">
-              <div class="yousay">Can you confirm that your address is {{ locationAddress }}</div>
-              <div class="instructions">
-                If any of our information about this location is wrong,
-                <a
-                  target="_blank"
-                  class="text-muted"
-                  href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
-                  >please request a correction.</a
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="requestAddress" class="hidden">
+        <div id="confirmAddress">
           <div class="surveyQuestion">
-            <div class="yousay">Would you mind telling me what your address is?</div>
+            <div class="yousay">Can you confirm that your address is {{ locationAddress }}</div>
             <div class="instructions">
+              If any of our information about this location is wrong,
               <a
                 target="_blank"
-                class="text-muted small open-as-popup"
+                class="text-muted"
                 href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
-                >Request a database update</a
+                >please request a correction.</a
               >
             </div>
           </div>
         </div>
       </div>
+      <div id="requestAddress" class="hidden">
+        <div class="surveyQuestion">
+          <div class="yousay">Would you mind telling me what your address is?</div>
+          <div class="instructions">
+            <a
+              target="_blank"
+              class="text-muted small open-as-popup"
+              href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
+              >Request a database update</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="surveyQuestion">
-      <div class="yousay">Thanks so much for your time! Have a great day.</div>
-    </div>
-    <div class="surveyQuestion">
-      <div class="">
-        <label for="callScriptPublicNotes">Public notes</label>
-	<div class="small p-1 text-muted">What do our readers need to know about this location? You don't need to repeat anything you filled in above.</div>
-	<div class="small p-1">Please <b>do not write names or phone numbers in this box</b>. Everything in this box will be on our public website.<div>
+  <div class="surveyQuestion">
+    <div class="yousay">Thanks so much for your time! Have a great day.</div>
+  </div>
+  <div class="surveyQuestion">
+    <label for="callScriptPublicNotes">Public notes</label>
+    <div class="small p-1 text-muted"
+      >What do our readers need to know about this location? You don't need to repeat anything you filled in above.</div
+    >
+    <div class="small"
+      >Please <b>do not write names or phone numbers in this box</b>. Everything in this box will be on our public
+      website.<div>
         <div id="callScriptPublicNotes" class="input form-control form-control-sm" role="textbox" contenteditable
           >{{ locationPublicNotes }}</div
         >
@@ -294,7 +284,9 @@
       <div class="surveyQuestion">
         <div class="">
           <label for="callScriptPrivateNotes">Private notes</label>
-	<div class="small p-1 text-muted">What should team members know about this call or location? We won't publish this information.</div>
+          <div class="small p-1 text-muted"
+            >What should team members know about this call or location? We won't publish this information.</div
+          >
           <div
             id="callScriptPrivateNotes"
             class="input border border-secondary form-control form-control-sm"
