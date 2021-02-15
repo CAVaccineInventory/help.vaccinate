@@ -282,6 +282,8 @@
     <div class="surveyQuestion">
       <div class="">
         <label for="callScriptPublicNotes">Public notes</label>
+	<div class="small p-1 text-muted">What do our readers need to know about this location? You don't need to repeat anything you filled in above.</div>
+	<div class="small p-1">Please <b>do not write names or phone numbers in this box</b>. Everything in this box will be on our public website.<div>
         <div id="callScriptPublicNotes" class="input form-control form-control-sm" role="textbox" contenteditable
           >{{ locationPublicNotes }}</div
         >
@@ -292,6 +294,7 @@
       <div class="surveyQuestion">
         <div class="">
           <label for="callScriptPrivateNotes">Private notes</label>
+	<div class="small p-1 text-muted">What should team members know about this call or location? We won't publish this information.</div>
           <div
             id="callScriptPrivateNotes"
             class="input border border-secondary form-control form-control-sm"
