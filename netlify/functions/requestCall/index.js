@@ -37,17 +37,22 @@ const PROVIDER_FIELDS_TO_LOAD = [
 ];
 
 // someday soon we might load this dynamically from airtable.
+//
+// The order of this list is important. We pick the first view of
+// these that has any entries.
+//
+// This should match the logic from:
+// https://github.com/CAVaccineInventory/airtableApps/blob/main/caller/frontend/index.tsx
+
 const VIEWS_TO_LOAD = [
   "Stale reports (with Eva tip)",
-  "To-call from Eva reports list (internal)",
   "To-call priority list (internal)",
+  "To-call from Eva reports list (internal)",
   "To-call list (internal)",
 ];
 
 const handler = loggedHandler(
   requirePermission("caller", async (event, context, logger) => {
-    // logic copied from:
-    // https://github.com/CAVaccineInventory/airtableApps/blob/main/caller/frontend/index.tsx
 
     // NOTE: there is a race condition here where two callers could get the same location.
     // this is no worse than the current app, though.
