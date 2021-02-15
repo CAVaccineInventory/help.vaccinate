@@ -230,7 +230,7 @@ const initializeReport = (locationId) => {
 
 const fillReportFromDom = () => {
   const answers = [];
-  var isYes = false;
+  let isYes = false;
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
   switch (topLevelAnswer) {
     case "never":
@@ -258,74 +258,72 @@ const fillReportFromDom = () => {
       console.log("No top level answer selected");
   }
 
-
   if (isYes === true) {
-  const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
-  if (minAgeAnswer) {
-    answers.push("Yes: vaccinating " + minAgeAnswer + "+");
-  }
-  const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
-
-  switch (apptRequired) {
-    case "walkinOk":
-      answers.push("Yes: walk-ins accepted");
-      break;
-    case "required":
-      answers.push("Yes: appointment required");
-      break;
-    default:
-      answers.push("Yes: appointment required");
-      console.log("no appt required selected - defaulting to appt required");
-  }
-
-  if (apptRequired === "required") {
-    if (document.querySelector("[name=appointmentsAvailable]:checked")?.value === 'full') {
-      answers.push("Yes: appointment calendar currently full");
+    const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
+    if (minAgeAnswer) {
+      answers.push("Yes: vaccinating " + minAgeAnswer + "+");
     }
+    const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
 
-    const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
-    switch (apptMethod) {
-      case "phone":
-        currentReport["Appointments by phone?"] = true;
-        currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
+    switch (apptRequired) {
+      case "walkinOk":
+        answers.push("Yes: walk-ins accepted");
         break;
-      case "county":
-        currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
-        break;
-      case "myturn":
-        currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
-        break;
-      case "web":
-        currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
-        break;
-      case "other":
-        currentReport["Appointment scheduling instructions"] = document.querySelector(
-          "#appointmentOtherInstructions"
-        )?.value;
+      case "required":
+        answers.push("Yes: appointment required");
         break;
       default:
-        break;
+        answers.push("Yes: appointment required");
+        console.log("no appt required selected - defaulting to appt required");
     }
-  }
-  if (document.querySelector("#essentialWorkersAccepted")?.checked) {
-    answers.push("Vaccinating essential workers");
-  }
 
-  if (document.querySelector("#veteransOnly")?.checked) {
-    answers.push("Yes: must be a veteran");
-  }
+    if (apptRequired === "required") {
+      if (document.querySelector("[name=appointmentsAvailable]:checked")?.value === "full") {
+        answers.push("Yes: appointment calendar currently full");
+      }
 
-  if (document.querySelector("#patientsOnly")?.checked) {
-    answers.push("Yes: must be a current patient");
-  }
-  if (document.querySelector("#countyOnly")?.checked) {
-    answers.push("Yes: restricted to county residents");
-  }
+      const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
+      switch (apptMethod) {
+        case "phone":
+          currentReport["Appointments by phone?"] = true;
+          currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
+          break;
+        case "county":
+          currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
+          break;
+        case "myturn":
+          currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
+          break;
+        case "web":
+          currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
+          break;
+        case "other":
+          currentReport["Appointment scheduling instructions"] = document.querySelector(
+            "#appointmentOtherInstructions"
+          )?.value;
+          break;
+        default:
+          break;
+      }
+    }
+    if (document.querySelector("#essentialWorkersAccepted")?.checked) {
+      answers.push("Vaccinating essential workers");
+    }
 
-  if (document.querySelector("#secondDoseOnly")?.checked) {
-    answers.push(AVAIL_SECOND_DOSE_ONLY);
-  }
+    if (document.querySelector("#veteransOnly")?.checked) {
+      answers.push("Yes: must be a veteran");
+    }
 
+    if (document.querySelector("#patientsOnly")?.checked) {
+      answers.push("Yes: must be a current patient");
+    }
+    if (document.querySelector("#countyOnly")?.checked) {
+      answers.push("Yes: restricted to county residents");
+    }
+
+    if (document.querySelector("#secondDoseOnly")?.checked) {
+      answers.push(AVAIL_SECOND_DOSE_ONLY);
+    }
   }
 
   currentReport["Availability"] = answers;
@@ -342,11 +340,7 @@ const saveCallReport = async () => {
 const AVAIL_BAD_CONTACT_INFO = "No: incorrect contact information";
 const AVAIL_PERMANENTLY_CLOSED = "No: location permanently closed";
 const AVAIL_SKIP = "Skip: call back later";
-const AVAIL_SECOND_DOSE_ONLY =  "Scheduling second dose only";
-
-
-
-
+const AVAIL_SECOND_DOSE_ONLY = "Scheduling second dose only";
 
 const submitBadContactInfo = async () => {
   submitWithAvail(AVAIL_BAD_CONTACT_INFO);
