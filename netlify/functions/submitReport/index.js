@@ -112,16 +112,17 @@ const handler = loggedHandler(
           // the latest Eva report and maybe update that.
           const updatedId = results && results[0] && results[0].id;
           const updatedEva = updatedId && results[0].get("Latest Eva Report ID");
-          logger.info("updated location", updatedId, "got eva id", updatedEva);
+          const updatedEvaId = updatedEva && updatedEva[0];
+          logger.info("updated location", updatedId, "got eva id", updatedEvaId);
           // if we have an eva report, update it.
-          if (updatedEva) {
+          if (updatedEvaId) {
             // kick off eva update.
-            base("Eva Reports").update([{id: updatedEva, fields: {
+            base("Eva Reports").update([{id: updatedEvaId, fields: {
               "Handled?": true
             }}]).then((results) => {
               // success! all good.
               const updatedEvaRet = results && results[0] && results[0].id;
-              logger.info("updated eva", updatedEva, updatedEvaRet);
+              logger.info("updated eva", updatedEvaId, updatedEvaRet);
             }).catch((err) => {
               logger.error("failed to update eva on non-skip report", updatedEva, err);
             });
