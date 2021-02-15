@@ -16,6 +16,9 @@ const fillTemplateIntoDom = (template, selector, data) => {
   } else {
     console.log("Could not find element with selector " + selector);
   }
+
+  enableTooltips(selector);
+  enablePopups(selector);
 };
 
 const hideElement = (selector) => {
@@ -60,6 +63,28 @@ const enableHideOnSelect = () => {
         }
       });
     });
+  });
+};
+
+const enablePopups = (selector) => {
+  const popupOptions = "status=no,location=no,toolbar=no,menubar=no,width=400,height=500,left=100,top=100";
+  document.querySelectorAll(selector + " a.open-as-popup").forEach(function (el) {
+    el.addEventListener("click", (event) => {
+      event.preventDefault();
+      const popup = window.open(el.href, "corrections", popupOptions);
+      if (window.focus) {
+        popup.focus();
+      }
+      return false;
+    });
+  });
+};
+
+const enableTooltips = (selector) => {
+  // enable tooltips inside the new template
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll(selector + ' [data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
   });
 };
 

@@ -4,14 +4,51 @@
     <input id="permanentlyClosed" class="btn btn-sm btn-danger col" type="button" value="Permanently closed" />
   </div>
   <div class="row g-2 p-2 gx-5" role="group">
-    <input id="closedForTheDay" class="btn btn-sm btn-secondary col" type="button" value="Closed for the day" />
-    <input id="closedForTheWeekend" class="btn btn-sm btn-secondary col" type="button" value="Closed for the weekend" />
+    <input
+      id="closedForTheDay"
+      class="btn btn-sm btn-secondary col"
+      type="button"
+      value="Closed for the day"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Skip until tomorrow"
+    />
+    <input
+      id="closedForTheWeekend"
+      class="btn btn-sm btn-secondary col"
+      type="button"
+      value="Closed for the weekend"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Skip until Monday"
+    />
   </div>
   <div class="row g-2 p-2 gx-5" role="group">
-    <input id="phoneBusy" class="btn btn-sm btn-secondary col" value="Busy" />
-    <input id="noAnswer" class="btn btn-sm btn-secondary col" value="No answer" />
+    <input
+      id="phoneBusy"
+      class="btn btn-sm btn-secondary col"
+      value="Busy"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Skip for 15 minutes"
+    />
+    <input
+      id="noAnswer"
+      class="btn btn-sm btn-secondary col"
+      value="No answer / voicemail"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Skip for an hour"
+    />
   </div>
   <div class="row g-2 p-2 gx-5" role="group">
-    <input id="longHold" class="btn btn-sm btn-secondary col" value="On hold for more than 2 minutes" />
+    <input
+      id="longHold"
+      class="btn btn-sm btn-secondary col"
+      value="On hold for more than 2 minutes"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Call back later?"
+    />
   </div>
 </div>
