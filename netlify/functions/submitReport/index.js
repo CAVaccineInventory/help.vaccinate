@@ -64,14 +64,12 @@ const handler = loggedHandler(
       logger.error({ err: err }, "Failed to get userinfo"); // XXX
     }
 
+    let output = {};
+
     try {
       const result = await base("Reports").create([{ fields: input }]);
       const resultIds = (result && result.map((r) => r.id)) || [];
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ created: resultIds }),
-      };
+      output.created = resultIds;
     } catch (err) {
       logger.error({ err: err }, "Failed to insert to airtable"); // XXX
 
@@ -91,6 +89,52 @@ const handler = loggedHandler(
         }),
       };
     }
+
+    // kick off updates to eva and locations table, but don't block on
+    // them.
+    //
+    // this copies logic from:
+    // https://github.com/CAVaccineInventory/airtableApps/blob/1e5fe26a437e2d2ea885acb480694f467178d5f8/caller/frontend/CallFlow.tsx#L474
+    try {
+      // if the call is non-skip, updated some other tables.
+      if (input.Availability && !input.Availability.some((x) => x.startsWith("Skip:"))) {
+        const locationId = input.Location[0];
+        logger.info("non-skip, updating location id", locationId);
+        // kick off location update to set force-prioritize to false.
+        base("Locations").update([{id: locationId, fields: {
+          "Force-prioritize in next call": false,
+        }}]).then((results) => {
+          // update returns the object as a result, use this to get
+          // the latest Eva report and maybe update that.
+          const updatedId = results && results[0] && results[0].id;
+          const updatedEva = updatedId && results[0].get("Latest Eva Report ID");
+          logger.info("updated location", updatedId, "got eva id", updatedEva);
+          // if we have an eva report, update it.
+          if (updatedEva) {
+            // kick off eva update.
+            base("Eva Reports").update([{id: updatedEva, fields: {
+              "Handled?": true
+            }}]).then((results) => {
+              // success! all good.
+              const updatedEvaRet = results && results[0] && results[0].id;
+              logger.info("updated eva", updatedEva, updatedEvaRet);
+            }).catch((err) => {
+              logger.error("failed to update eva on non-skip report", updatedEva, err);
+            });
+          }
+        }).catch((err) => {
+          logger.error("failed to update location on non-skip report", err);
+        });
+      }
+    } catch (err) {
+      logger.error("failed to initiate update location on non-skip report", err);
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(output),
+    };
+
   })
 );
 
