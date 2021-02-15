@@ -220,12 +220,12 @@
             <div class="surveyQuestion">
               <div class="yousay">Can you confirm that your address is {{ locationAddress }}</div>
               <div class="instructions">
-                If that's wrong,
+                If any of our information about this location is wrong,
                 <a
                   target="_blank"
-                  class="text-muted small"
+                  class="text-muted"
                   href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
-                  >report an error</a
+                  >please request a correction.</a
                 >
               </div>
             </div>
@@ -246,9 +246,11 @@
         </div>
       </div>
 
-      <div class="yousay">Thanks so much for your time! Have a great day.</div>
     </div>
 
+    <div class="surveyQuestion">
+      <div class="yousay">Thanks so much for your time! Have a great day.</div>
+    </div>
     <div class="surveyQuestion">
       <div class="">
         <label for="callScriptPublicNotes">Public notes</label>
