@@ -105,34 +105,29 @@ const handler = loggedHandler(
         const locationId = input.Location[0];
         logger.info("non-skip, updating location id", locationId);
         // kick off location update to set force-prioritize to false.
-        base("Locations").update([{id: locationId, fields: {
-          "Force-prioritize in next call": false,
-        }}]).then((results) => {
-          // update returns the object as a result, use this to get
-          // the latest Eva report and maybe update that.
-          const updatedId = results && results[0] && results[0].id;
-          const updatedEva = updatedId && results[0].get("Latest Eva Report ID");
-          const updatedEvaId = updatedEva && updatedEva[0];
-          logger.info("updated location", updatedId, "got eva id", updatedEvaId);
-          // if we have an eva report, update it.
-          if (updatedEvaId) {
-            // kick off eva update.
-            base("Eva Reports").update([{id: updatedEvaId, fields: {
+        const results = await base("Locations").update(
+          [{id: locationId, fields: {
+            "Force-prioritize in next call": false,
+          }}]);
+
+        const updatedId = results && results[0] && results[0].id;
+        const updatedEva = updatedId && results[0].get("Latest Eva Report ID");
+        const updatedEvaId = updatedEva && updatedEva[0];
+        logger.info("updated location", updatedId, "got eva id", updatedEvaId);
+        // if we have an eva report, update it.
+        if (updatedEvaId) {
+          // kick off eva update.
+          const results = await base("Eva Reports").update(
+            [{id: updatedEvaId, fields: {
               "Handled?": true
-            }}]).then((results) => {
-              // success! all good.
-              const updatedEvaRet = results && results[0] && results[0].id;
-              logger.info("updated eva", updatedEvaId, updatedEvaRet);
-            }).catch((err) => {
-              logger.error("failed to update eva on non-skip report", updatedEva, err);
-            });
-          }
-        }).catch((err) => {
-          logger.error("failed to update location on non-skip report", err);
-        });
+            }}]);
+          // success! all good.
+          const updatedEvaRet = results && results[0] && results[0].id;
+          logger.info("updated eva", updatedEvaId, updatedEvaRet);
+        }
       }
     } catch (err) {
-      logger.error("failed to initiate update location on non-skip report", err);
+      logger.error("failed to update location on non-skip report", err);
     }
 
     return {
