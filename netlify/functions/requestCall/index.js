@@ -51,6 +51,10 @@ const VIEWS_TO_LOAD = [
   "To-call list (internal)",
 ];
 
+// how long to lock a location after returning it before returning to
+// the next person.
+const LOCK_MINUTES = 20;
+
 const handler = loggedHandler(
   requirePermission("caller", async (event, context, logger) => {
 
@@ -98,9 +102,9 @@ const handler = loggedHandler(
     const locationIndex = Math.floor(Math.random() * locationsToCall.length);
     const locationToCall = locationsToCall[locationIndex];
 
-    // Defer checking on this record for 10 minutes, to avoid multiple people picking up the same row:
+    // Defer checking on this record for N minutes, to avoid multiple people picking up the same row:
     const today = new Date();
-    today.setMinutes(today.getMinutes() + 10);
+    today.setMinutes(today.getMinutes() + LOCK_MINUTES);
 
     try {
       await base("Locations").update([

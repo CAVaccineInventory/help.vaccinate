@@ -21,7 +21,17 @@ layout: base.html
           <div id="locationInfo"></div>
           <div class="hidden" id="latestReport"></div>
           <div id="countyInfo"></div>
-          <div id="cta" class="call-to-action"></div>
+          <div id="dialer">
+            <div id="cta" class="call-to-action"></div>
+            <div id="autodial-wrapper" class="p-2">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="autodial" />
+                <label class="form-check-label small text-secondary" for="autodial">
+                  Autodial (if your browser supports it)
+                </label>
+              </div>
+            </div>
+          </div>
           <div id="affiliationNotes"></div>
           <div id="dialResult"></div>
           <div class="afterDialInstructions small">

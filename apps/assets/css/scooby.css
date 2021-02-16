@@ -2,6 +2,11 @@
 	font-style: italic;	
 }
 
+#dialer {
+	padding-top: 2em;
+	padding-bottom: 2em;
+}
+
 .surveyQuestion {
 	padding-bottom: 2.5em;
 

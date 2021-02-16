@@ -189,6 +189,12 @@ const initScooby = () => {
     handleAuth0Login();
     hideLoadingScreen();
     showNextCallPrompt();
+    // this shouldn't be here, but it only needs to get run once. So maybe it's ok?
+    document.querySelector("#autodial")?.addEventListener("change", function () {
+      if (this.checked) {
+        document.querySelector("#location-phone-url")?.click();
+      }
+    });
   });
 };
 
@@ -453,7 +459,6 @@ const prepareCallTemplate = (data) => {
   console.log(data);
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
-
   let affiliation = data.Affiliation || "";
   affiliation = affiliation.replace(/\W/g, "").toLowerCase();
 
@@ -509,6 +514,9 @@ const prepareCallTemplate = (data) => {
     setTimeout(function () {
       el.style.visibility = "visible";
     }, 120000);
+  }
+  if (document.querySelector("#autodial")?.checked) {
+    document.querySelector("#location-phone-url")?.click();
   }
 };
 
