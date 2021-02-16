@@ -13,51 +13,18 @@
   <div class="surveyQuestion">
     <div class="instructions">Once you reach the right person, ask:</div>
     <div class="yousay">Are you currently offering COVID-19 vaccines to members of the public?</div>
-    <div id="noOptions" class="btn-group" role="group">
+    <div id="noOption" class="btn-group" role="group">
       <input
-        class="btn-check"
-        type="radio"
-        id="noNever"
-        data-hide-on-select="vaccinatingPublicScript"
-        name="yesNoSelect"
-        value="never"
-        data-show-also="scoobyRecordCall"
-      />
-      <label class="btn btn-outline-danger" for="noNever">Never</label>
-
-      <input
-        class="btn-check"
-        type="radio"
-        id="noPrivate"
-        name="yesNoSelect"
-        value="private"
-        data-hide-on-select="vaccinatingPublicScript"
-        data-show-also="scoobyRecordCall"
-      />
-      <label class="btn btn-outline-danger" for="noPrivate">Private facility</label>
-      <input
-        class="btn-check"
         type="radio"
         name="yesNoSelect"
-        data-hide-on-select="vaccinatingPublicScript"
-        id="noStaffOnly"
-        value="staffOnly"
-        data-show-also="scoobyRecordCall"
-      />
-      <label class="btn btn-outline-danger" for="noStaffOnly">Only staff</label>
-
-      <input
+        value="noJustNo"
+        id="noJustNo"
         class="btn-check"
-        type="radio"
-        name="yesNoSelect"
         data-hide-on-select="vaccinatingPublicScript"
-        id="noHCWOnly"
-        value="hcwOnly"
-        data-show-also="scoobyRecordCall"
+        data-show-also="noDetails"
       />
-      <label class="btn btn-outline-danger" for="noHCWOnly">Only health care workers</label>
+      <label class="btn btn-outline-danger" for="noJustNo">No</label>
     </div>
-
     <div id="yesOptions" class="btn-group" role="group">
       <input
         type="radio"
@@ -67,7 +34,7 @@
         class="btn-check"
         data-show-also="scoobyRecordCall"
       />
-      <label class="btn btn-outline-success" for="yesJustYes">Yes we are</label>
+      <label class="btn btn-outline-success" for="yesJustYes">Yes</label>
       <input
         type="radio"
         id="yesSoon"
@@ -76,7 +43,61 @@
         name="yesNoSelect"
         data-show-also="scoobyRecordCall"
       />
-      <label class="btn btn-outline-success" for="yesSoon">We will be soon</label>
+      <label class="btn btn-outline-success" for="yesSoon">Probably within 2 weeks</label>
+    </div>
+  </div>
+
+  <div class="surveyQuestion">
+    <div id="noDetails" class="hidden">
+      <div class="yousay">Do you expect to in the future?</div>
+      <div id="noOptions" class="btn-group" role="group">
+        <input
+          class="btn-check"
+          type="radio"
+          id="noNever"
+          name="noReasonSelect"
+          value="never"
+          data-show-also="scoobyRecordCall"
+        />
+        <label class="btn btn-outline-danger" for="noNever">No, never</label>
+
+        <input
+          class="btn-check"
+          type="radio"
+          id="noPrivate"
+          name="noReasonSelect"
+          value="private"
+          data-show-also="scoobyRecordCall"
+        />
+        <label class="btn btn-outline-danger" for="noPrivate">Private site</label>
+        <input
+          class="btn-check"
+          type="radio"
+          name="noReasonSelect"
+          id="noStaffOnly"
+          value="staffOnly"
+          data-show-also="scoobyRecordCall"
+        />
+        <label class="btn btn-outline-danger" for="noStaffOnly">Only staff</label>
+        <input
+          class="btn-check"
+          type="radio"
+          name="noReasonSelect"
+          id="noHCWOnly"
+          value="hcwOnly"
+          data-show-also="scoobyRecordCall"
+        />
+        <label class="btn btn-outline-danger" for="noHCWOnly">Only healthcare workers</label>
+        <input
+          class="btn-check"
+          type="radio"
+          name="noReasonSelect"
+          id="noNotYet"
+          value="notYet"
+          data-show-also="scoobyRecordCall"
+        />
+        <label class="btn btn-outline-danger" for="noNotYet">Maybe, but not within 2 weeks</label>
+      </div>
     </div>
   </div>
   <div id="vaccinatingPublicScript">

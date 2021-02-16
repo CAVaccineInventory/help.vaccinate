@@ -231,20 +231,9 @@ const initializeReport = (locationId) => {
 const fillReportFromDom = () => {
   const answers = [];
   let isYes = false;
+  let isNo = false;
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
   switch (topLevelAnswer) {
-    case "never":
-      answers.push("No: will never be a vaccination site");
-      break;
-    case "private":
-      answers.push("No: not open to the public");
-      break;
-    case "staffOnly":
-      answers.push("No: only vaccinating staff");
-      break;
-    case "hcwOnly":
-      answers.push("No: only vaccinating health care workers");
-      break;
     case "yesJustYes":
       isYes = true;
       // We don't have a tag for this one
@@ -253,9 +242,34 @@ const fillReportFromDom = () => {
       isYes = true;
       answers.push("Yes: coming soon");
       break;
-
+    case "noJustNo":
+      isNo = true;
+      break;
     default:
-      console.log("No top level answer selected");
+      console.log("No top level answer selected ");
+  }
+
+  if (isNo === true) {
+    const noReason = document.querySelector("[name=noReasonSelect]:checked")?.value;
+    switch (noReason) {
+      case "never":
+        answers.push("No: will never be a vaccination site");
+        break;
+      case "private":
+        answers.push("No: not open to the public");
+        break;
+      case "staffOnly":
+        answers.push("No: only vaccinating staff");
+        break;
+      case "hcwOnly":
+        answers.push("No: only vaccinating health care workers");
+        break;
+      case "notYet":
+        answers.push("No: may be a vaccination site in the future");
+        break;
+      default:
+        console.log("No 'no' reason selected");
+    }
   }
 
   if (isYes === true) {
