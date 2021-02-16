@@ -1,16 +1,16 @@
 <form id="callScriptForm">
-  <div class="instructions">
-    <p
-      >The person you're calling is working very hard to help people and may be fairly stressed out. Be friendly, kind,
-      &amp; compassionate.</p
-    >
-  </div>
-  <div class="yousay"
-    >Hi, I’m calling from VaccinateCA to confirm some details about your COVID-19 vaccination program. Could I please
-    speak to {{ responsiblePerson }}?</div
-  >
-
   <div class="surveyQuestion">
+    <div class="instructions">
+      <p
+        >The person you're calling is working very hard to help people and may be fairly stressed out. Be friendly,
+        kind, &amp; compassionate.</p
+      >
+    </div>
+    <div class="yousay"
+      >Hi, I’m calling from VaccinateCA to confirm some details about your COVID-19 vaccination program. Could I please
+      speak to {{ responsiblePerson }}?</div
+    >
+
     <div class="instructions">Once you reach the right person, ask:</div>
     <div class="yousay">Are you currently offering COVID-19 vaccines to members of the public?</div>
     <div id="noOption" class="btn-group" role="group">
@@ -47,8 +47,8 @@
     </div>
   </div>
 
-  <div class="surveyQuestion">
-    <div id="noDetails" class="hidden">
+  <div id="noDetails" class="hidden">
+    <div class="surveyQuestion">
       <div class="yousay">Do you expect to in the future?</div>
       <div id="noOptions" class="btn-group" role="group">
         <input
