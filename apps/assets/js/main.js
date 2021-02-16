@@ -320,6 +320,9 @@ const fillReportFromDom = () => {
     if (document.querySelector("#countyOnly")?.checked) {
       answers.push("Yes: restricted to county residents");
     }
+    if (document.querySelector("#cityOnly")?.checked) {
+      answers.push("Yes: restricted to city residents");
+    }
 
     if (document.querySelector("#secondDoseOnly")?.checked) {
       answers.push(AVAIL_SECOND_DOSE_ONLY);
