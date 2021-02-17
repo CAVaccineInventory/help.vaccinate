@@ -41,18 +41,12 @@ layout: base.html
 
       isAuthenticated = await auth0.isAuthenticated();
     }
-    if (isAuthenticated) {
-      document.getElementById("thanks").style.display = "block";
-      document.getElementById("volunteer").style.display = "none";
-    } else {
-      document.getElementById("thanks").style.display = "none";
-      document.getElementById("volunteer").style.display = "block";
-    }
   };
 </script>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">VaccinateCA</a>
+    <a class="navbar-brand" href="#"> <img src="/assets/img/logo.png" alt="VaccinateCA logo" height="24" /></a>
+
     <button
       class="navbar-toggler"
       type="button"
@@ -66,21 +60,21 @@ layout: base.html
     </button>
   </div>
 </nav>
-<div class="container-fluid">
-  <div class="d-flex" id="signup">
-    <div id="volunteer" style="display: none">
+<div class="container">
+  <div class="d-flex row" id="signup">
+    <div id="volunteer" class="">
       <h1>Volunteer for VaccinateCA</h1>
-      <h2> Thanks so much for your interest in helping Californians learn how to get access to COVID-19 vaccines. </h2>
+      <h2 class="py-3">
+        Thanks so much for your interest in helping Californians learn how to get access to COVID-19 vaccines.
+      </h2>
       <p>
-        The next step is to register for an account, so you can join us on Slack and start working on making calls
+        If you're just joining us, the next step is to register for an account so you can join us on Slack and start
+        making calls.
       </p>
-      <button id="btn-login" onclick="login()">Sign up for an account</button>
+      <p>If you've already signed up, click the button below to log into Slack.</p>
     </div>
-    <div id="thanks" style="display: none">
-      <h1>Thanks!</h1>
-      <p>
-        <a href="https://vaccinatecacallers.slack.com/sso/saml/start">Join us on Slack to start helping out.</a>
-      </p>
+    <div class="row d-grid gap-2 py-3">
+      <button class="btn btn-lg btn-primary btn-block" id="btn-login" onclick="login()">Sign up or log in</button>
     </div>
   </div>
 </div>
