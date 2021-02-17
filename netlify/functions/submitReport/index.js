@@ -94,8 +94,7 @@ const handler = loggedHandler(
       };
     }
 
-    // kick off updates to eva and locations table, but don't block on
-    // them.
+    // update Locations to de-force-prioritize a call
     //
     // this copies logic from:
     // https://github.com/CAVaccineInventory/airtableApps/blob/1e5fe26a437e2d2ea885acb480694f467178d5f8/caller/frontend/CallFlow.tsx#L474
@@ -111,20 +110,7 @@ const handler = loggedHandler(
           }}]);
 
         const updatedId = results && results[0] && results[0].id;
-        const updatedEva = updatedId && results[0].get("Latest Eva Report ID");
-        const updatedEvaId = updatedEva && updatedEva[0];
-        logger.info("updated location", updatedId, "got eva id", updatedEvaId);
-        // if we have an eva report, update it.
-        if (updatedEvaId) {
-          // kick off eva update.
-          const results = await base("Eva Reports").update(
-            [{id: updatedEvaId, fields: {
-              "Handled?": true
-            }}]);
-          // success! all good.
-          const updatedEvaRet = results && results[0] && results[0].id;
-          logger.info("updated eva", updatedEvaId, updatedEvaRet);
-        }
+        logger.info("updated location", updatedId);
       }
     } catch (err) {
       logger.error("failed to update location on non-skip report", err);
