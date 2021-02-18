@@ -438,8 +438,8 @@ const submitCallReport = async () => {
   }
 };
 
-const logCallLocally = (callId ) => {
-  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId});
+const logCallLocally = (callId) => {
+  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId });
 };
 const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
