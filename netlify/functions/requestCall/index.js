@@ -1,7 +1,7 @@
 "use strict";
 
 const { loggedHandler } = require("../../lib/logger.js");
-const { requirePermission } = require("../../lib/auth.js");
+const { requirePermission, extractRolesFromContext } = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
 const { logEvent } = require("../../lib/log.js");
 
@@ -44,12 +44,20 @@ const PROVIDER_FIELDS_TO_LOAD = [
 // This should match the logic from:
 // https://github.com/CAVaccineInventory/airtableApps/blob/main/caller/frontend/index.tsx
 
-const VIEWS_TO_LOAD = [
+const DEFAULT_VIEWS_TO_LOAD = [
   "Stale reports (with Eva tip)",
   "To-call priority list (internal)",
   "To-call from Eva reports list (internal)",
   "To-call list (internal)",
 ];
+
+const INTERNAL_CC_VIEWS_TO_LOAD = [
+  "Internal Caller List"
+];
+
+const ROLE_VIEW_MAP = new Map([ //List roles in decreasing priority
+  ["CC1 callers", INTERNAL_CC_VIEWS_TO_LOAD]
+]);
 
 // how long to lock a location after returning it before returning to
 // the next person.
@@ -63,7 +71,19 @@ const handler = loggedHandler(
 
     let locationsToCall = [];
 
-    for (const view of VIEWS_TO_LOAD) {
+    let viewsToLoad = [];
+
+    const roles = extractRolesFromContext(context);
+
+    ROLE_VIEW_MAP.forEach((views, role) => {
+      if(roles.includes(role)) {
+        viewsToLoad = viewsToLoad.concat(views);
+      }
+    });
+
+    viewsToLoad = viewsToLoad.concat(DEFAULT_VIEWS_TO_LOAD);
+
+    for (const view of viewsToLoad) {
       try {
         const locs = await base("Locations")
           .select({

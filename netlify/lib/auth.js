@@ -26,6 +26,23 @@ module.exports.requireAuth = verifyJwt;
 const ROLE_SCOPE = "https://help.vaccinateca.com/roles";
 module.exports.ROLE_SCOPE = ROLE_SCOPE;
 
+const extractUserInfoFromContext = (context) => {
+  const { claims } = context.identityContext;
+
+  const perms = claims && claims.permissions ? claims.permissions : [];
+  const roles = claims && claims[ROLE_SCOPE] ? claims[ROLE_SCOPE] : [];
+  const user = claims && claims.sub;
+
+  return { perms, roles, user };
+};
+
+const extractRolesFromContext = (context) => {
+  const { roles } = extractUserInfoFromContext(context);
+  return roles;
+};
+
+module.exports.extractRolesFromContext = extractRolesFromContext;
+
 /**
  * Require the token to contain a certain permissions.
  * @param {string} permission
@@ -34,11 +51,8 @@ module.exports.ROLE_SCOPE = ROLE_SCOPE;
  */
 module.exports.requirePermission = (permission, handler) =>
   verifyJwt(async (event, context, logger) => {
-    const { claims } = context.identityContext;
+    const { perms, roles, user } = extractUserInfoFromContext(context);
 
-    const perms = claims && claims.permissions ? claims.permissions : [];
-    const roles = claims && claims[ROLE_SCOPE] ? claims[ROLE_SCOPE] : [];
-    const user = claims && claims.sub;
     logger.info(
       { permissions: perms, roles: roles, user: user },
       "Authentication"
