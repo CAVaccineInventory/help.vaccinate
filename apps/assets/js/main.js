@@ -507,13 +507,13 @@ const prepareCallTemplate = (data) => {
   bindClick("#closedForTheWeekend", submitCallMonday);
   bindClick("#longHold", submitLongHold);
 
-  // don't show "on hold for more than 2 minutes" until 2 min have elapsed
+  // don't show "on hold for more than 2 minutes" until 4 min have elapsed
   const el = document.querySelector("#longHold");
   if (el !== null) {
     el.style.visibility = "hidden";
     setTimeout(function () {
       el.style.visibility = "visible";
-    }, 120000);
+    }, 240000);
   }
   if (document.querySelector("#autodial")?.checked) {
     document.querySelector("#location-phone-url")?.click();
