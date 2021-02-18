@@ -1,23 +1,22 @@
 <div class="location">
   <div class="h6" id="location-name">{{locationName}}</div>
   <address class="small" id="location-address">{{locationAddress}}</address>
+</div>
 
-  <div class="small" id="location-hours">{{locationHours}}</div>
-  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <a
-      target="_blank"
-      class="text-muted small open-as-popup"
-      data-bs-toggle="tooltip"
-      data-bs-placement="top"
-      title="Location, Phone #, or Hours"
-      href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
-      >Report an error</a
-    >
-  </div>
-  <div class="countyInfo">
-    <div class="small" id="locationCountyName">
-      <a class="text-muted" href="{{countyURL}}" target="_blank">{{countyName}}</a>
-    </div>
-    <div class="small overflow-scroll" style="max-height: 6em"> {{countyInfo}} </div>
+<div class="small" id="location-hours">{{locationHours}}</div>
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+  <a
+    target="_blank"
+    class="text-muted small open-as-popup"
+    data-bs-toggle="tooltip"
+    data-bs-placement="top"
+    title="Location, Phone #, or Hours"
+    href="https://airtable.com/shrY44NvEjHBscrOH?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
+    >Report an error</a
+  >
+</div>
+<div class="countyInfo">
+  <div class="small" id="locationCountyName">
+    <a class="text-muted" href="{{countyURL}}" target="_blank">{{countyName}}</a>.
   </div>
 </div>
