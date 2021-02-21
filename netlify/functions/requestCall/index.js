@@ -70,7 +70,7 @@ const handler = async (event, context, logger) => {
 
   let locationsToCall = [];
 
-  const locationOverride = event.queryStringParameters.locationID;
+  const locationOverride = event.queryStringParameters.location_id;
   if (locationOverride) {
     logger.info("got locationID override", locationOverride);
     try {
@@ -156,10 +156,10 @@ const handler = async (event, context, logger) => {
   today.setMinutes(today.getMinutes() + LOCK_MINUTES);
 
   try {
-    // use ?noClaim=1 in the URL to avoid writing the field that
+    // use ?no_claim=1 in the URL to avoid writing the field that
     // stops others from claiming this row. This is for debugging or
     // monitoring purposes.
-    if (event.queryStringParameters.noClaim !== '1') {
+    if (event.queryStringParameters.no_claim !== '1') {
       await base("Locations").update([
         {
           id: locationToCall.id,
