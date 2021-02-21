@@ -70,32 +70,62 @@ const handler = async (event, context, logger) => {
 
   let locationsToCall = [];
 
-  let viewsToLoad = [];
-
-  const roles = extractRolesFromContext(context);
-
-  ROLE_VIEW_MAP.forEach((views, role) => {
-    if(roles.includes(role)) {
-      viewsToLoad = viewsToLoad.concat(views);
-    }
-  });
-
-  viewsToLoad = viewsToLoad.concat(DEFAULT_VIEWS_TO_LOAD);
-
-  for (const view of viewsToLoad) {
+  const locationOverride = event.queryStringParameters.locationID;
+  if (locationOverride) {
+    logger.info("got locationID override", locationOverride);
     try {
-      const locs = await base("Locations")
-        .select({
-          view,
-          fields: LOCATION_FIELDS_TO_LOAD,
-        })
-        .firstPage();
-      if (locs.length > 0) {
-        locationsToCall = locs;
-        break;
+      // use select() over find() so we can specify fields, and for consistency of API.
+      //
+      // The `escape` should help prevent people from doing anything funny.
+      // All legit airtable IDs should not contain any characters.
+      const locs = await base("Locations").select({
+        filterByFormula: `RECORD_ID() = "${escape(locationOverride)}"`,
+        fields: LOCATION_FIELDS_TO_LOAD,
+      }).firstPage();
+      if (locs.length === 0) {
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            error: `Couldn't find override location: "${locationOverride}"`,
+          }),
+        };
       }
+      // got a valid location.
+      locationsToCall = locs;
     } catch (err) {
-      logger.error({ err: err, view: view }, "Failed to load location view");
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: `Failed to find location override "${locationOverride}"`,
+          message: err.message,
+        }),
+      };
+    }
+  } else {
+    let viewsToLoad = [];
+
+    const roles = extractRolesFromContext(context);
+
+    ROLE_VIEW_MAP.forEach((views, role) => {
+      if(roles.includes(role)) {
+        viewsToLoad = viewsToLoad.concat(views);
+      }
+    });
+
+    viewsToLoad = viewsToLoad.concat(DEFAULT_VIEWS_TO_LOAD);
+
+    for (const view of viewsToLoad) {
+      try {
+        const locs = await base("Locations").select({
+          view, fields: LOCATION_FIELDS_TO_LOAD,
+        }).firstPage();
+        if (locs.length > 0) {
+          locationsToCall = locs;
+          break;
+        }
+      } catch (err) {
+        logger.error({ err: err, view: view }, "Failed to load location view");
+      }
     }
   }
 
@@ -126,12 +156,19 @@ const handler = async (event, context, logger) => {
   today.setMinutes(today.getMinutes() + LOCK_MINUTES);
 
   try {
-    await base("Locations").update([
-      {
-        id: locationToCall.id,
-        fields: { "Next available to app flow": today },
-      },
-    ]);
+    // use ?noClaim=1 in the URL to avoid writing the field that
+    // stops others from claiming this row. This is for debugging or
+    // monitoring purposes.
+    if (event.queryStringParameters.noClaim !== '1') {
+      await base("Locations").update([
+        {
+          id: locationToCall.id,
+          fields: { "Next available to app flow": today },
+        },
+      ]);
+    } else {
+      logger.info("not writing claim for record", locationToCall.id);
+    }
   } catch (err) {
     // this is unexpected. return an error to the client.
     logger.error(
