@@ -63,144 +63,142 @@ const ROLE_VIEW_MAP = new Map([ //List roles in decreasing priority
 // the next person.
 const LOCK_MINUTES = 20;
 
-const handler = loggedHandler(
-  requirePermission("caller", async (event, context, logger) => {
+const handler = async (event, context, logger) => {
 
-    // NOTE: there is a race condition here where two callers could get the same location.
-    // this is no worse than the current app, though.
+  // NOTE: there is a race condition here where two callers could get the same location.
+  // this is no worse than the current app, though.
 
-    let locationsToCall = [];
+  let locationsToCall = [];
 
-    let viewsToLoad = [];
+  let viewsToLoad = [];
 
-    const roles = extractRolesFromContext(context);
+  const roles = extractRolesFromContext(context);
 
-    ROLE_VIEW_MAP.forEach((views, role) => {
-      if(roles.includes(role)) {
-        viewsToLoad = viewsToLoad.concat(views);
-      }
-    });
-
-    viewsToLoad = viewsToLoad.concat(DEFAULT_VIEWS_TO_LOAD);
-
-    for (const view of viewsToLoad) {
-      try {
-        const locs = await base("Locations")
-          .select({
-            view,
-            fields: LOCATION_FIELDS_TO_LOAD,
-          })
-          .firstPage();
-        if (locs.length > 0) {
-          locationsToCall = locs;
-          break;
-        }
-      } catch (err) {
-        logger.error({ err: err, view: view }, "Failed to load location view");
-      }
+  ROLE_VIEW_MAP.forEach((views, role) => {
+    if(roles.includes(role)) {
+      viewsToLoad = viewsToLoad.concat(views);
     }
+  });
 
-    // Can't find anyone to call?
-    if (locationsToCall.length === 0) {
-      logEvent({
-        event,
-        context,
-        endpoint: "requestCall",
-        name: "empty",
-        payload: "",
-      });
-      logger.warn("No locations to call");
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          error: "Couldn't find somewhere to call",
-        }),
-      };
-    }
+  viewsToLoad = viewsToLoad.concat(DEFAULT_VIEWS_TO_LOAD);
 
-    // pick a row
-    const locationIndex = Math.floor(Math.random() * locationsToCall.length);
-    const locationToCall = locationsToCall[locationIndex];
-
-    // Defer checking on this record for N minutes, to avoid multiple people picking up the same row:
-    const today = new Date();
-    today.setMinutes(today.getMinutes() + LOCK_MINUTES);
-
+  for (const view of viewsToLoad) {
     try {
-      await base("Locations").update([
-        {
-          id: locationToCall.id,
-          fields: { "Next available to app flow": today },
-        },
-      ]);
-    } catch (err) {
-      // this is unexpected. return an error to the client.
-      logger.error(
-        { err: err, location: locationToCall },
-        "Failed to update location for locking"
-      );
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          error: "Failed to update location for locking",
-          message: err.message,
-        }),
-      };
-    }
-
-    const output = Object.assign(
-      { id: locationToCall.id },
-      locationToCall.fields
-    );
-
-    // get some additional infomation for the user
-
-    // try to fetch provider record
-    const aff = locationToCall.get("Affiliation");
-    if (aff && aff !== "None / Unknown / Unimportant") {
-      try {
-        const providerRecords = await base("Provider networks")
-          .select({
-            fields: PROVIDER_FIELDS_TO_LOAD,
-            // XXX there are single quotes in some names, so we use "
-            // here. Add real escaping before we add " to names.
-            filterByFormula: `{Provider} = "${aff}"`,
-            maxRecords: 1,
-          })
-          .firstPage();
-        if (providerRecords && providerRecords.length) {
-          output.provider_record = Object.assign(
-            { id: providerRecords[0].id },
-            providerRecords[0].fields
-          );
-        } else {
-          logger.error(
-            { location: locationToCall, affiliation: aff },
-            "No affiliation found for location"
-          );
-        }
-      } catch (err) {
-        logger.error(
-          { err: err, location: locationToCall },
-          "Failure getting provider for location"
-        );
+      const locs = await base("Locations")
+        .select({
+          view,
+          fields: LOCATION_FIELDS_TO_LOAD,
+        })
+        .firstPage();
+      if (locs.length > 0) {
+        locationsToCall = locs;
+        break;
       }
+    } catch (err) {
+      logger.error({ err: err, view: view }, "Failed to load location view");
     }
+  }
 
-    // save off an audit log entry noting that this caller got this location.
+  // Can't find anyone to call?
+  if (locationsToCall.length === 0) {
     logEvent({
       event,
       context,
       endpoint: "requestCall",
-      name: "assigned",
-      payload: JSON.stringify(output),
+      name: "empty",
+      payload: "",
     });
-
+    logger.warn("No locations to call");
     return {
       statusCode: 200,
-      body: JSON.stringify(output),
+      body: JSON.stringify({
+        error: "Couldn't find somewhere to call",
+      }),
     };
-  })
-);
+  }
 
-exports.handler = handler;
+  // pick a row
+  const locationIndex = Math.floor(Math.random() * locationsToCall.length);
+  const locationToCall = locationsToCall[locationIndex];
+
+  // Defer checking on this record for N minutes, to avoid multiple people picking up the same row:
+  const today = new Date();
+  today.setMinutes(today.getMinutes() + LOCK_MINUTES);
+
+  try {
+    await base("Locations").update([
+      {
+        id: locationToCall.id,
+        fields: { "Next available to app flow": today },
+      },
+    ]);
+  } catch (err) {
+    // this is unexpected. return an error to the client.
+    logger.error(
+      { err: err, location: locationToCall },
+      "Failed to update location for locking"
+    );
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: "Failed to update location for locking",
+        message: err.message,
+      }),
+    };
+  }
+
+  const output = Object.assign(
+    { id: locationToCall.id },
+    locationToCall.fields
+  );
+
+  // get some additional infomation for the user
+
+  // try to fetch provider record
+  const aff = locationToCall.get("Affiliation");
+  if (aff && aff !== "None / Unknown / Unimportant") {
+    try {
+      const providerRecords = await base("Provider networks")
+        .select({
+          fields: PROVIDER_FIELDS_TO_LOAD,
+          // XXX there are single quotes in some names, so we use "
+          // here. Add real escaping before we add " to names.
+          filterByFormula: `{Provider} = "${aff}"`,
+          maxRecords: 1,
+        })
+        .firstPage();
+      if (providerRecords && providerRecords.length) {
+        output.provider_record = Object.assign(
+          { id: providerRecords[0].id },
+          providerRecords[0].fields
+        );
+      } else {
+        logger.error(
+          { location: locationToCall, affiliation: aff },
+          "No affiliation found for location"
+        );
+      }
+    } catch (err) {
+      logger.error(
+        { err: err, location: locationToCall },
+        "Failure getting provider for location"
+      );
+    }
+  }
+
+  // save off an audit log entry noting that this caller got this location.
+  logEvent({
+    event,
+    context,
+    endpoint: "requestCall",
+    name: "assigned",
+    payload: JSON.stringify(output),
+  });
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify(output),
+  };
+};
+
+exports.handler = loggedHandler(requirePermission("caller", handler));
