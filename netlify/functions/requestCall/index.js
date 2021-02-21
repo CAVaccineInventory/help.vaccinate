@@ -156,12 +156,19 @@ const handler = async (event, context, logger) => {
   today.setMinutes(today.getMinutes() + LOCK_MINUTES);
 
   try {
-    await base("Locations").update([
-      {
-        id: locationToCall.id,
-        fields: { "Next available to app flow": today },
-      },
-    ]);
+    // use ?noClaim=1 in the URL to avoid writing the field that
+    // stops others from claiming this row. This is for debugging or
+    // monitoring purposes.
+    if (event.queryStringParameters.noClaim !== '1') {
+      await base("Locations").update([
+        {
+          id: locationToCall.id,
+          fields: { "Next available to app flow": today },
+        },
+      ]);
+    } else {
+      logger.info("not writing claim for record", locationToCall.id);
+    }
   } catch (err) {
     // this is unexpected. return an error to the client.
     logger.error(
