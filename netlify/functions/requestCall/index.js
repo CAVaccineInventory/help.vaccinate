@@ -63,14 +63,45 @@ const ROLE_VIEW_MAP = new Map([ //List roles in decreasing priority
 // the next person.
 const LOCK_MINUTES = 20;
 
-const handler = loggedHandler(
-  requirePermission("caller", async (event, context, logger) => {
+const handler = async (event, context, logger) => {
 
-    // NOTE: there is a race condition here where two callers could get the same location.
-    // this is no worse than the current app, though.
+  // NOTE: there is a race condition here where two callers could get the same location.
+  // this is no worse than the current app, though.
 
-    let locationsToCall = [];
+  let locationsToCall = [];
 
+  const locationOverride = event.queryStringParameters.location_id;
+  if (locationOverride) {
+    logger.info("got locationID override", locationOverride);
+    try {
+      // use select() over find() so we can specify fields, and for consistency of API.
+      //
+      // The `escape` should help prevent people from doing anything funny.
+      // All legit airtable IDs should not contain any characters.
+      const locs = await base("Locations").select({
+        filterByFormula: `RECORD_ID() = "${escape(locationOverride)}"`,
+        fields: LOCATION_FIELDS_TO_LOAD,
+      }).firstPage();
+      if (locs.length === 0) {
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            error: `Couldn't find override location: "${locationOverride}"`,
+          }),
+        };
+      }
+      // got a valid location.
+      locationsToCall = locs;
+    } catch (err) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: `Failed to find location override "${locationOverride}"`,
+          message: err.message,
+        }),
+      };
+    }
+  } else {
     let viewsToLoad = [];
 
     const roles = extractRolesFromContext(context);
@@ -85,12 +116,9 @@ const handler = loggedHandler(
 
     for (const view of viewsToLoad) {
       try {
-        const locs = await base("Locations")
-          .select({
-            view,
-            fields: LOCATION_FIELDS_TO_LOAD,
-          })
-          .firstPage();
+        const locs = await base("Locations").select({
+          view, fields: LOCATION_FIELDS_TO_LOAD,
+        }).firstPage();
         if (locs.length > 0) {
           locationsToCall = locs;
           break;
@@ -99,108 +127,115 @@ const handler = loggedHandler(
         logger.error({ err: err, view: view }, "Failed to load location view");
       }
     }
+  }
 
-    // Can't find anyone to call?
-    if (locationsToCall.length === 0) {
-      logEvent({
-        event,
-        context,
-        endpoint: "requestCall",
-        name: "empty",
-        payload: "",
-      });
-      logger.warn("No locations to call");
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          error: "Couldn't find somewhere to call",
-        }),
-      };
-    }
+  // Can't find anyone to call?
+  if (locationsToCall.length === 0) {
+    logEvent({
+      event,
+      context,
+      endpoint: "requestCall",
+      name: "empty",
+      payload: "",
+    });
+    logger.warn("No locations to call");
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        error: "Couldn't find somewhere to call",
+      }),
+    };
+  }
 
-    // pick a row
-    const locationIndex = Math.floor(Math.random() * locationsToCall.length);
-    const locationToCall = locationsToCall[locationIndex];
+  // pick a row
+  const locationIndex = Math.floor(Math.random() * locationsToCall.length);
+  const locationToCall = locationsToCall[locationIndex];
 
-    // Defer checking on this record for N minutes, to avoid multiple people picking up the same row:
-    const today = new Date();
-    today.setMinutes(today.getMinutes() + LOCK_MINUTES);
+  // Defer checking on this record for N minutes, to avoid multiple people picking up the same row:
+  const today = new Date();
+  today.setMinutes(today.getMinutes() + LOCK_MINUTES);
 
-    try {
+  try {
+    // use ?no_claim=1 in the URL to avoid writing the field that
+    // stops others from claiming this row. This is for debugging or
+    // monitoring purposes.
+    if (event.queryStringParameters.no_claim !== '1') {
       await base("Locations").update([
         {
           id: locationToCall.id,
           fields: { "Next available to app flow": today },
         },
       ]);
-    } catch (err) {
-      // this is unexpected. return an error to the client.
-      logger.error(
-        { err: err, location: locationToCall },
-        "Failed to update location for locking"
-      );
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          error: "Failed to update location for locking",
-          message: err.message,
-        }),
-      };
+    } else {
+      logger.info("not writing claim for record", locationToCall.id);
     }
-
-    const output = Object.assign(
-      { id: locationToCall.id },
-      locationToCall.fields
+  } catch (err) {
+    // this is unexpected. return an error to the client.
+    logger.error(
+      { err: err, location: locationToCall },
+      "Failed to update location for locking"
     );
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: "Failed to update location for locking",
+        message: err.message,
+      }),
+    };
+  }
 
-    // get some additional infomation for the user
+  const output = Object.assign(
+    { id: locationToCall.id },
+    locationToCall.fields
+  );
 
-    // try to fetch provider record
-    const aff = locationToCall.get("Affiliation");
-    if (aff && aff !== "None / Unknown / Unimportant") {
-      try {
-        const providerRecords = await base("Provider networks")
-          .select({
-            fields: PROVIDER_FIELDS_TO_LOAD,
-            // XXX there are single quotes in some names, so we use "
-            // here. Add real escaping before we add " to names.
-            filterByFormula: `{Provider} = "${aff}"`,
-            maxRecords: 1,
-          })
-          .firstPage();
-        if (providerRecords && providerRecords.length) {
-          output.provider_record = Object.assign(
-            { id: providerRecords[0].id },
-            providerRecords[0].fields
-          );
-        } else {
-          logger.error(
-            { location: locationToCall, affiliation: aff },
-            "No affiliation found for location"
-          );
-        }
-      } catch (err) {
+  // get some additional infomation for the user
+
+  // try to fetch provider record
+  const aff = locationToCall.get("Affiliation");
+  if (aff && aff !== "None / Unknown / Unimportant") {
+    try {
+      const providerRecords = await base("Provider networks")
+        .select({
+          fields: PROVIDER_FIELDS_TO_LOAD,
+          // XXX there are single quotes in some names, so we use "
+          // here. Add real escaping before we add " to names.
+          filterByFormula: `{Provider} = "${aff}"`,
+          maxRecords: 1,
+        })
+        .firstPage();
+      if (providerRecords && providerRecords.length) {
+        output.provider_record = Object.assign(
+          { id: providerRecords[0].id },
+          providerRecords[0].fields
+        );
+      } else {
         logger.error(
-          { err: err, location: locationToCall },
-          "Failure getting provider for location"
+          { location: locationToCall, affiliation: aff },
+          "No affiliation found for location"
         );
       }
+    } catch (err) {
+      logger.error(
+        { err: err, location: locationToCall },
+        "Failure getting provider for location"
+      );
     }
+  }
 
-    // save off an audit log entry noting that this caller got this location.
-    logEvent({
-      event,
-      context,
-      endpoint: "requestCall",
-      name: "assigned",
-      payload: JSON.stringify(output),
-    });
+  // save off an audit log entry noting that this caller got this location.
+  logEvent({
+    event,
+    context,
+    endpoint: "requestCall",
+    name: "assigned",
+    payload: JSON.stringify(output),
+  });
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(output),
-    };
-  })
-);
+  return {
+    statusCode: 200,
+    body: JSON.stringify(output),
+  };
+};
 
-exports.handler = handler;
+exports.handler = loggedHandler(requirePermission("caller", handler));

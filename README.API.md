@@ -21,6 +21,9 @@ Check the user's permissions.
 Gets a location for the user to call. 'Locks' the location for 10 minutes so it will not be returned to other users while this user is calling.
 
 - **Path**: `/.netlify/functions/requestCall`
+- **Parameters**:
+    - `location_id`: Override location selection. Pass the airtable ID of a Locations record (eg `recfPJuDROS46lPY9`) to skip the normal view selection code and return that ID specifically.
+    - `no_claim`: Pass `1` to skip updating the record to lock it from other callers. Use this for testing.
 - **Permissions**: Must have the `caller` permission.
 - **Req Type**: `POST`
 - **Req Body**: _none_
