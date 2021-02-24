@@ -7,7 +7,7 @@ const { logEvent } = require("../../lib/log.js");
 
 
 const SKIP_TAG_PREFIX = "Skip: call back later";
-
+const TRAINEE_ROLE_NAME = "Trainee";
 
 const handler = async (event, context, logger) => {
   // save off a raw report in case something goes wrong below.
@@ -62,6 +62,7 @@ const handler = async (event, context, logger) => {
     Object.assign(input, {
       auth0_reporter_name: userinfo.name,
       auth0_reporter_roles: roles.join(","),
+      is_pending_review: roles.includes(TRAINEE_ROLE_NAME)
     });
   } catch (err) {
     logger.error({ err: err }, "Failed to get userinfo"); // XXX

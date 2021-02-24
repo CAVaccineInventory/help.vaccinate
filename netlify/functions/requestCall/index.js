@@ -55,7 +55,12 @@ const INTERNAL_CC_VIEWS_TO_LOAD = [
   "Internal Caller List"
 ];
 
+const TRAINEE_VIEWS_TO_LOAD = [
+  "Training Call List"
+];
+
 const ROLE_VIEW_MAP = new Map([ //List roles in decreasing priority
+  ["Trainee", TRAINEE_VIEWS_TO_LOAD],
   ["CC1 callers", INTERNAL_CC_VIEWS_TO_LOAD]
 ]);
 
