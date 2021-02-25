@@ -74,6 +74,7 @@ const handler = async (event, context, logger) => {
   // this is no worse than the current app, though.
 
   let locationsToCall = [];
+  let pickedView = ""; // which view did we use. for debugging.
 
   const locationOverride = event.queryStringParameters.location_id;
   if (locationOverride) {
@@ -97,6 +98,7 @@ const handler = async (event, context, logger) => {
       }
       // got a valid location.
       locationsToCall = locs;
+      pickedView = "override";
     } catch (err) {
       return {
         statusCode: 500,
@@ -126,6 +128,7 @@ const handler = async (event, context, logger) => {
         }).firstPage();
         if (locs.length > 0) {
           locationsToCall = locs;
+          pickedView = view;
           break;
         }
       } catch (err) {
@@ -136,14 +139,18 @@ const handler = async (event, context, logger) => {
 
   // Can't find anyone to call?
   if (locationsToCall.length === 0) {
-    logEvent({
-      event,
-      context,
-      endpoint: "requestCall",
-      name: "empty",
-      payload: "",
-    });
     logger.warn("No locations to call");
+    try {
+      await logEvent({
+        event,
+        context,
+        endpoint: "requestCall",
+        name: "empty",
+        payload: "",
+      });
+    } catch (err) {
+      logger.error("error writing to event log", err);
+    }
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -228,14 +235,21 @@ const handler = async (event, context, logger) => {
     }
   }
 
-  // save off an audit log entry noting that this caller got this location.
-  logEvent({
-    event,
-    context,
-    endpoint: "requestCall",
-    name: "assigned",
-    payload: JSON.stringify(output),
-  });
+  // save off an audit log entry noting that this caller got this
+  // location.  note: we wait for this to complete because otherwise
+  // AWS Lambda (aka Netlify Functions) might shut things down and cut
+  // off the write to airtable.
+  try {
+    await logEvent({
+      event,
+      context,
+      endpoint: "requestCall",
+      name: "assigned",
+      payload: JSON.stringify(Object.assign({picked_view: pickedView}, output)),
+    });
+  } catch (err) {
+    logger.error("error writing to event log", err);
+  }
 
   return {
     statusCode: 200,
