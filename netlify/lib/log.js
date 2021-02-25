@@ -4,8 +4,6 @@ const { logBase } = require("./airtable.js");
 // Both for performace reasons (API rate limits) and for reliability
 // reasons (eg, not losing in-flight data if airtable hiccups).
 module.exports.logEvent = ({ event, context, endpoint, payload, name }) => {
-  // save off raw report ASAP. Note that we don't block on this
-  // completing, so it shouldn't slow things down too much.
   try {
     const auth0_reporter_id =
       context &&
@@ -21,7 +19,7 @@ module.exports.logEvent = ({ event, context, endpoint, payload, name }) => {
       hostname: event.headers.host,
       remote_ip: event.headers["client-ip"],
     };
-    logBase("call_report_event_log")
+    return logBase("call_report_event_log")
       .create([{ fields }])
       .then((results) => {
         if (results && results.length > 0) {
@@ -42,4 +40,6 @@ module.exports.logEvent = ({ event, context, endpoint, payload, name }) => {
   } catch (e) {
     console.log("ERR failed to kick off audit log entry.", e);
   }
+
+  return undefined;
 };
