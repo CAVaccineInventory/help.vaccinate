@@ -11,13 +11,21 @@ const TRAINEE_ROLE_NAME = "Trainee";
 
 const handler = async (event, context, logger) => {
   // save off a raw report in case something goes wrong below.
-  logEvent({
-    event,
-    context,
-    endpoint: "submitReport",
-    name: "raw",
-    payload: event.body,
-  });
+  //
+  // note: if we wanted to be extra fancy, rather than await here we
+  // could save off the promise and await it where we return.
+
+  try {
+    await logEvent({
+      event,
+      context,
+      endpoint: "submitReport",
+      name: "raw",
+      payload: event.body,
+    });
+  } catch (err) {
+    logger.error("error writing to event log", err);
+  }
 
   let input = null;
   try {
@@ -32,13 +40,18 @@ const handler = async (event, context, logger) => {
   // validation, such as it is
   if (!input.Location || !input.Availability) {
     const output = { error: "location validation failed" };
-    logEvent({
-      event,
-      context,
-      endpoint: "submitReport",
-      name: "err",
-      payload: JSON.stringify(output),
-    });
+    try {
+      await logEvent({
+        event,
+        context,
+        endpoint: "submitReport",
+        name: "err",
+        payload: JSON.stringify(output),
+      });
+    } catch (err) {
+      logger.error("error writing to event log", err);
+    }
+
     return {
       statusCode: 400,
       body: JSON.stringify(output),

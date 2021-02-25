@@ -136,14 +136,18 @@ const handler = async (event, context, logger) => {
 
   // Can't find anyone to call?
   if (locationsToCall.length === 0) {
-    logEvent({
-      event,
-      context,
-      endpoint: "requestCall",
-      name: "empty",
-      payload: "",
-    });
     logger.warn("No locations to call");
+    try {
+      await logEvent({
+        event,
+        context,
+        endpoint: "requestCall",
+        name: "empty",
+        payload: "",
+      });
+    } catch (err) {
+      logger.error("error writing to event log", err);
+    }
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -228,14 +232,21 @@ const handler = async (event, context, logger) => {
     }
   }
 
-  // save off an audit log entry noting that this caller got this location.
-  logEvent({
-    event,
-    context,
-    endpoint: "requestCall",
-    name: "assigned",
-    payload: JSON.stringify(output),
-  });
+  // save off an audit log entry noting that this caller got this
+  // location.  note: we wait for this to complete because otherwise
+  // AWS Lambda (aka Netlify Functions) might shut things down and cut
+  // off the write to airtable.
+  try {
+    await logEvent({
+      event,
+      context,
+      endpoint: "requestCall",
+      name: "assigned",
+      payload: JSON.stringify(output),
+    });
+  } catch (err) {
+    logger.error("error writing to event log", err);
+  }
 
   return {
     statusCode: 200,
