@@ -74,6 +74,7 @@ const handler = async (event, context, logger) => {
   // this is no worse than the current app, though.
 
   let locationsToCall = [];
+  let pickedView = ""; // which view did we use. for debugging.
 
   const locationOverride = event.queryStringParameters.location_id;
   if (locationOverride) {
@@ -97,6 +98,7 @@ const handler = async (event, context, logger) => {
       }
       // got a valid location.
       locationsToCall = locs;
+      pickedView = "override";
     } catch (err) {
       return {
         statusCode: 500,
@@ -126,6 +128,7 @@ const handler = async (event, context, logger) => {
         }).firstPage();
         if (locs.length > 0) {
           locationsToCall = locs;
+          pickedView = view;
           break;
         }
       } catch (err) {
@@ -242,7 +245,7 @@ const handler = async (event, context, logger) => {
       context,
       endpoint: "requestCall",
       name: "assigned",
-      payload: JSON.stringify(output),
+      payload: JSON.stringify(Object.assign({picked_view: pickedView}, output)),
     });
   } catch (err) {
     logger.error("error writing to event log", err);
