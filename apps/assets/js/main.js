@@ -31,7 +31,7 @@ import errorModalTemplate from "./templates/errorModal.handlebars";
 // global auth0 object. probably a better way to do this
 let auth0 = null;
 
-const currentReport = {};
+let currentReport = {};
 let currentLocation = null;
 let previousLocation = null;
 
@@ -232,6 +232,7 @@ const recordCall = async (callReport) => {
 };
 
 const initializeReport = (locationId) => {
+  currentReport = {};
   currentReport["Location"] = locationId;
 };
 
