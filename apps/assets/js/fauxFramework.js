@@ -88,21 +88,6 @@ const enableTooltips = (selector) => {
   });
 };
 
-
-
-
-const showErrorModal = (title, body, json) => {
-  hideLoadingScreen();
-  fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
-    title: title,
-    body: body,
-    json: JSON.stringify(json, null, 2),
-  });
-
-  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
-  myModal.show();
-};
-
 const showLoadingScreen = () => {
   showElement("#loading");
   window.scrollTo({
@@ -110,11 +95,19 @@ const showLoadingScreen = () => {
     left: 0,
     behavior: "smooth",
   });
-
 };
 
 const hideLoadingScreen = () => {
   hideElement("#loading");
 };
 
-export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement, showErrorModal, showLoadingScreen, hideLoadingScreen };
+export {
+  bindClick,
+  fillTemplateIntoDom,
+  enableShowAlso,
+  enableHideOnSelect,
+  hideElement,
+  showElement,
+  showLoadingScreen,
+  hideLoadingScreen,
+};

@@ -12,7 +12,6 @@ import {
   enableHideOnSelect,
   hideElement,
   showElement,
-  showErrorModal,
   showLoadingScreen,
   hideLoadingScreen
 } from "./fauxFramework.js";
@@ -110,6 +109,19 @@ const handleAuth0Login = async () => {
     }
   }
 };
+
+const showErrorModal = (title, body, json) => {
+  hideLoadingScreen();
+  fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
+    title: title,
+    body: body,
+    json: JSON.stringify(json, null, 2),
+  });
+
+  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
+  myModal.show();
+};
+
 
 const authOrLoadAndFillCall = async () => {
   const user = await auth0.getUser();
