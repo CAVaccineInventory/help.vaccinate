@@ -13,7 +13,8 @@ import {
   hideElement,
   showElement,
   showToast,
-  hideToast
+  hideToast,
+  showErrorModal
 } from "./fauxFramework.js";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
@@ -501,18 +502,6 @@ const prepareCallTemplate = (data) => {
   if (document.querySelector("#autodial")?.checked) {
     document.querySelector("#location-phone-url")?.click();
   }
-};
-
-const showErrorModal = (title, body, json) => {
-  hideLoadingScreen();
-  fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
-    title: title,
-    body: body,
-    json: JSON.stringify(json, null, 2),
-  });
-
-  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
-  myModal.show();
 };
 
 export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint, handleAuth0Login, initAuth0 };

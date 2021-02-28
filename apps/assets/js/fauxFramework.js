@@ -113,6 +113,17 @@ const hideToast = () => {
   }
 };
 
+const showErrorModal = (title, body, json) => {
+  hideLoadingScreen();
+  fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
+    title: title,
+    body: body,
+    json: JSON.stringify(json, null, 2),
+  });
+
+  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
+  myModal.show();
+};
 
 
-export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement, hideToast, showToast };
+export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement, hideToast, showToast, showErrorModal };
