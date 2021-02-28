@@ -157,7 +157,7 @@ const loadAndFill = (place) => {
   hideElement("#nextCallPrompt");
   prepareCallTemplate(place);
   showElement("#callerTool");
-  logCallLocally(place["id"]);
+  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: place["id"] });
 };
 
 const showNextCallPrompt = () => {
@@ -408,9 +408,6 @@ const submitCallReport = async () => {
   }
 };
 
-const logCallLocally = (callId) => {
-  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId });
-};
 const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
