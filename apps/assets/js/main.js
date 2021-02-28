@@ -152,7 +152,9 @@ const loadAndFill = (place) => {
   if (previousLocation !== null) {
     showToast(previousLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
   }
-  initializeReport(place["id"]);
+  // Initialize the report
+  currentReport = {};
+  currentReport["Location"] = locationId;
   hideLoadingScreen();
   hideElement("#nextCallPrompt");
   prepareCallTemplate(place);
@@ -198,11 +200,6 @@ const recordCall = async (callReport) => {
   }
 
   return data.created;
-};
-
-const initializeReport = (locationId) => {
-  currentReport = {};
-  currentReport["Location"] = locationId;
 };
 
 const fillReportFromDom = () => {
