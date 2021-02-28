@@ -155,7 +155,7 @@ const loadAndFill = (place) => {
   }
   // Initialize the report
   currentReport = {};
-  currentReport["Location"] = locationId;
+  currentReport["Location"] = place.id;
   hideLoadingScreen();
   hideElement("#nextCallPrompt");
   prepareCallTemplate(place);
@@ -381,7 +381,7 @@ const submitCallMonday = async () => {
 };
 
 const submitCallReport = async () => {
-  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(callReport));
+  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(currentReport));
   if (data.error) {
     showErrorModal(
       "Error submitting your report",
