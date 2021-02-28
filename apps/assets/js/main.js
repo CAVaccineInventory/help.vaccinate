@@ -488,7 +488,7 @@ const prepareCallTemplate = (data) => {
   bindClick("#closedForTheWeekend", submitCallMonday);
   bindClick("#longHold", submitLongHold);
 
-  // don't show "on hold for more than 2 minutes" until 4 min have elapsed
+  // don't show "on hold for more than 4 minutes" until 4 min have elapsed
   const el = document.querySelector("#longHold");
   if (el !== null) {
     el.style.visibility = "hidden";
