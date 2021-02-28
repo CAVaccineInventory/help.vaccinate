@@ -181,7 +181,14 @@ const initScooby = () => {
 };
 
 const showLoadingScreen = () => {
+  hideToast();
   showElement("#loading");
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
+
 };
 
 const hideLoadingScreen = () => {
@@ -189,14 +196,7 @@ const hideLoadingScreen = () => {
 };
 
 const recordCall = async (callReport) => {
-  hideToast();
   showLoadingScreen();
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "smooth",
-  });
-
   const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(callReport));
   hideLoadingScreen();
   if (data.error) {
