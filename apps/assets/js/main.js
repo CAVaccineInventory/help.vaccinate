@@ -74,6 +74,7 @@ const initAuth0 = (cb) => {
 };
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
+  showLoadingScreen();
   if (!method) {
     method = "POST";
   }
@@ -89,6 +90,7 @@ const fetchJsonFromEndpoint = async (endpoint, method, body) => {
   });
   const data = await result.json();
   console.log(data);
+  hideLoadingScreen();
   return data;
 };
 
@@ -121,7 +123,6 @@ const authOrLoadAndFillCall = async () => {
 };
 
 const loadAndFillCall = async () => {
-  showLoadingScreen();
   previousLocation = currentLocation;
   currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   const user = await auth0.getUser();
@@ -186,9 +187,7 @@ const initScooby = () => {
 
 
 const recordCall = async (callReport) => {
-  showLoadingScreen();
   const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(callReport));
-  hideLoadingScreen();
   if (data.error) {
     showErrorModal(
       "Error submitting your report",
@@ -397,7 +396,6 @@ const submitCallMonday = async () => {
 };
 
 const submitCallReport = async () => {
-  console.log(currentReport);
   const callId = await recordCall(currentReport);
 
   if (callId) {
