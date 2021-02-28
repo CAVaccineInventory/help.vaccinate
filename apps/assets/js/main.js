@@ -12,6 +12,8 @@ import {
   enableHideOnSelect,
   hideElement,
   showElement,
+  showToast,
+  hideToast
 } from "./fauxFramework.js";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
@@ -140,28 +142,6 @@ const loadAndFillPreviousCall = () => {
   currentLocation = previousLocation;
   previousLocation = null;
   loadAndFill(currentLocation);
-};
-
-// assumes we only have one toast at a time
-const showToast = (title, body, buttonLabel, clickHandler) => {
-  fillTemplateIntoDom(toastTemplate, "#toastContainer", {
-    body: body,
-    title: title,
-    buttonLabel: buttonLabel,
-  });
-
-  bindClick("#onlyToastButton", clickHandler);
-  const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
-    autohide: true,
-  });
-  t.show();
-};
-
-const hideToast = () => {
-  const el = document.querySelector("#onlyToast");
-  if (el) {
-    el.classList.add("hide");
-  }
 };
 
 const loadAndFill = (place) => {

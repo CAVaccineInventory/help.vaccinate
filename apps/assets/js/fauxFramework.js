@@ -88,4 +88,31 @@ const enableTooltips = (selector) => {
   });
 };
 
-export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement };
+
+
+
+// assumes we only have one toast at a time
+const showToast = (title, body, buttonLabel, clickHandler) => {
+  fillTemplateIntoDom(toastTemplate, "#toastContainer", {
+    body: body,
+    title: title,
+    buttonLabel: buttonLabel,
+  });
+
+  bindClick("#onlyToastButton", clickHandler);
+  const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
+    autohide: true,
+  });
+  t.show();
+};
+
+const hideToast = () => {
+  const el = document.querySelector("#onlyToast");
+  if (el) {
+    el.classList.add("hide");
+  }
+};
+
+
+
+export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement, hideToast, showToast };
