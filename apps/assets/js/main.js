@@ -184,7 +184,7 @@ const initScooby = () => {
 };
 
 
-const fillReportFromDom = () => {
+const constructReportFromDom = () => {
   const answers = [];
   let isYes = false;
   let isNo = false;
@@ -306,7 +306,7 @@ const fillReportFromDom = () => {
 };
 
 const saveCallReport = async () => {
-  fillReportFromDom();
+  constructReportFromDom();
   submitCallReport();
 };
 
@@ -324,13 +324,13 @@ const submitPermanentlyClosed = async () => {
 };
 
 const submitWithAvail = async (avail) => {
-  fillReportFromDom();
+  constructReportFromDom();
   currentReport["Availability"] = [avail];
   submitCallReport();
 };
 
 const submitSkipUntil = async (when) => {
-  fillReportFromDom();
+  constructReportFromDom();
   currentReport["Do not call until"] = when.toISOString();
   currentReport["Availability"] = [AVAIL_SKIP];
   submitCallReport();
