@@ -186,21 +186,6 @@ const initScooby = () => {
 };
 
 
-const recordCall = async (callReport) => {
-  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(callReport));
-  if (data.error) {
-    showErrorModal(
-      "Error submitting your report",
-      "I'm really sorry, but it looks like something has gone wrong while trying to submit your report. The specific error the system sent back was '" +
-        data.error_description +
-        "'. This is not your fault. You can try clicking the 'Close' button on this box and submitting your report again. If that doesn't work, copy the technical information below and paste it into Slack, so we can get this sorted out for you",
-      { report: callReport, result: data }
-    );
-  }
-
-  return data.created;
-};
-
 const fillReportFromDom = () => {
   const answers = [];
   let isYes = false;
@@ -396,7 +381,18 @@ const submitCallMonday = async () => {
 };
 
 const submitCallReport = async () => {
-  const callId = await recordCall(currentReport);
+  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(callReport));
+  if (data.error) {
+    showErrorModal(
+      "Error submitting your report",
+      "I'm really sorry, but it looks like something has gone wrong while trying to submit your report. The specific error the system sent back was '" +
+        data.error_description +
+        "'. This is not your fault. You can try clicking the 'Close' button on this box and submitting your report again. If that doesn't work, copy the technical information below and paste it into Slack, so we can get this sorted out for you",
+      { report: callReport, result: data }
+    );
+  }
+
+  const callId = data.created;
 
   if (callId) {
     loadAndFillCall();
