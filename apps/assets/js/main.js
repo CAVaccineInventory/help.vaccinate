@@ -13,7 +13,7 @@ import {
   hideElement,
   showElement,
   showLoadingScreen,
-  hideLoadingScreen
+  hideLoadingScreen,
 } from "./fauxFramework.js";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
@@ -178,10 +178,10 @@ const initScooby = () => {
   initAuth0(function () {
     handleAuth0Login();
     hideLoadingScreen();
-  fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
-  bindClick("#requestCallButton", authOrLoadAndFillCall);
-  showElement("#nextCallPrompt");
-  hideElement("#callerTool");
+    fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
+    bindClick("#requestCallButton", authOrLoadAndFillCall);
+    showElement("#nextCallPrompt");
+    hideElement("#callerTool");
     // this shouldn't be here, but it only needs to get run once. So maybe it's ok?
     document.querySelector("#autodial")?.addEventListener("change", function () {
       if (this.checked) {
@@ -190,7 +190,6 @@ const initScooby = () => {
     });
   });
 };
-
 
 const constructReportFromDom = () => {
   const answers = [];
@@ -455,7 +454,6 @@ const prepareCallTemplate = (data) => {
     locationPrivateNotes: data["Latest Internal Notes"],
   });
 
-
   if (data.Address === "" || !data.Address) {
     hideElement("#confirmAddress");
     showElement("#requestAddress");
@@ -486,7 +484,6 @@ const prepareCallTemplate = (data) => {
   }
 };
 
-
 // assumes we only have one toast at a time
 const showToast = (title, body, buttonLabel, clickHandler) => {
   fillTemplateIntoDom(toastTemplate, "#toastContainer", {
@@ -508,6 +505,5 @@ const hideToast = () => {
     el.classList.add("hide");
   }
 };
-
 
 export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint, handleAuth0Login, initAuth0 };
