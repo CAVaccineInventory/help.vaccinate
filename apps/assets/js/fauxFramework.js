@@ -125,5 +125,19 @@ const showErrorModal = (title, body, json) => {
   myModal.show();
 };
 
+const showLoadingScreen = () => {
+  hideToast();
+  showElement("#loading");
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
 
-export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement, hideToast, showToast, showErrorModal };
+};
+
+const hideLoadingScreen = () => {
+  hideElement("#loading");
+};
+
+export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement, hideToast, showToast, showErrorModal, showLoadingScreen, hideLoadingScreen };

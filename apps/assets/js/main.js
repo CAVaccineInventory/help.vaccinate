@@ -14,7 +14,9 @@ import {
   showElement,
   showToast,
   hideToast,
-  showErrorModal
+  showErrorModal,
+  showLoadingScreen,
+  hideLoadingScreen
 } from "./fauxFramework.js";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
@@ -180,20 +182,6 @@ const initScooby = () => {
   });
 };
 
-const showLoadingScreen = () => {
-  hideToast();
-  showElement("#loading");
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "smooth",
-  });
-
-};
-
-const hideLoadingScreen = () => {
-  hideElement("#loading");
-};
 
 const recordCall = async (callReport) => {
   showLoadingScreen();
