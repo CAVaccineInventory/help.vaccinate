@@ -12,8 +12,6 @@ import {
   enableHideOnSelect,
   hideElement,
   showElement,
-  showToast,
-  hideToast,
   showErrorModal,
   showLoadingScreen,
   hideLoadingScreen
@@ -479,5 +477,29 @@ const prepareCallTemplate = (data) => {
     document.querySelector("#location-phone-url")?.click();
   }
 };
+
+
+// assumes we only have one toast at a time
+const showToast = (title, body, buttonLabel, clickHandler) => {
+  fillTemplateIntoDom(toastTemplate, "#toastContainer", {
+    body: body,
+    title: title,
+    buttonLabel: buttonLabel,
+  });
+
+  bindClick("#onlyToastButton", clickHandler);
+  const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
+    autohide: true,
+  });
+  t.show();
+};
+
+const hideToast = () => {
+  const el = document.querySelector("#onlyToast");
+  if (el) {
+    el.classList.add("hide");
+  }
+};
+
 
 export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint, handleAuth0Login, initAuth0 };

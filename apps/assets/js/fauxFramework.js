@@ -91,28 +91,6 @@ const enableTooltips = (selector) => {
 
 
 
-// assumes we only have one toast at a time
-const showToast = (title, body, buttonLabel, clickHandler) => {
-  fillTemplateIntoDom(toastTemplate, "#toastContainer", {
-    body: body,
-    title: title,
-    buttonLabel: buttonLabel,
-  });
-
-  bindClick("#onlyToastButton", clickHandler);
-  const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
-    autohide: true,
-  });
-  t.show();
-};
-
-const hideToast = () => {
-  const el = document.querySelector("#onlyToast");
-  if (el) {
-    el.classList.add("hide");
-  }
-};
-
 const showErrorModal = (title, body, json) => {
   hideLoadingScreen();
   fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
@@ -126,7 +104,6 @@ const showErrorModal = (title, body, json) => {
 };
 
 const showLoadingScreen = () => {
-  hideToast();
   showElement("#loading");
   window.scrollTo({
     top: 0,
@@ -140,4 +117,4 @@ const hideLoadingScreen = () => {
   hideElement("#loading");
 };
 
-export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement, hideToast, showToast, showErrorModal, showLoadingScreen, hideLoadingScreen };
+export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement, showErrorModal, showLoadingScreen, hideLoadingScreen };
