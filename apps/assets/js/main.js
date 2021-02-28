@@ -161,19 +161,15 @@ const loadAndFill = (place) => {
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: place["id"] });
 };
 
-const showNextCallPrompt = () => {
-  fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
-  bindClick("#requestCallButton", authOrLoadAndFillCall);
-  showElement("#nextCallPrompt");
-  hideElement("#callerTool");
-};
-
 const initScooby = () => {
   showLoadingScreen();
   initAuth0(function () {
     handleAuth0Login();
     hideLoadingScreen();
-    showNextCallPrompt();
+  fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
+  bindClick("#requestCallButton", authOrLoadAndFillCall);
+  showElement("#nextCallPrompt");
+  hideElement("#callerTool");
     // this shouldn't be here, but it only needs to get run once. So maybe it's ok?
     document.querySelector("#autodial")?.addEventListener("change", function () {
       if (this.checked) {
