@@ -461,6 +461,7 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
+
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
@@ -470,6 +471,8 @@ const prepareCallTemplate = (data) => {
     locationPublicNotes: data["Latest report notes"],
     locationPrivateNotes: data["Latest Internal Notes"],
   });
+
+
   if (data.Address === "" || !data.Address) {
     hideElement("#confirmAddress");
     showElement("#requestAddress");
@@ -479,7 +482,6 @@ const prepareCallTemplate = (data) => {
   enableHideOnSelect();
 
   bindClick("#scoobyRecordCall", saveCallReport);
-
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
   bindClick("#noAnswer", submitNoAnswer);
