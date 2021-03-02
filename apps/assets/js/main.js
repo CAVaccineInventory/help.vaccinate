@@ -12,6 +12,8 @@ import {
   enableHideOnSelect,
   hideElement,
   showElement,
+  showLoadingScreen,
+  hideLoadingScreen,
 } from "./fauxFramework.js";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
@@ -69,6 +71,7 @@ const initAuth0 = (cb) => {
 };
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
+  showLoadingScreen();
   if (!method) {
     method = "POST";
   }
@@ -84,6 +87,7 @@ const fetchJsonFromEndpoint = async (endpoint, method, body) => {
   });
   const data = await result.json();
   console.log(data);
+  hideLoadingScreen();
   return data;
 };
 
@@ -106,6 +110,19 @@ const handleAuth0Login = async () => {
   }
 };
 
+const showErrorModal = (title, body, json) => {
+  hideLoadingScreen();
+  fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
+    title: title,
+    body: body,
+    json: JSON.stringify(json, null, 2),
+  });
+
+  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
+  myModal.show();
+};
+
+
 const authOrLoadAndFillCall = async () => {
   const user = await auth0.getUser();
   if (user && user.email) {
@@ -116,7 +133,6 @@ const authOrLoadAndFillCall = async () => {
 };
 
 const loadAndFillCall = async () => {
-  showLoadingScreen();
   previousLocation = currentLocation;
   currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   const user = await auth0.getUser();
@@ -142,46 +158,19 @@ const loadAndFillPreviousCall = () => {
   loadAndFill(currentLocation);
 };
 
-// assumes we only have one toast at a time
-const showToast = (title, body, buttonLabel, clickHandler) => {
-  fillTemplateIntoDom(toastTemplate, "#toastContainer", {
-    body: body,
-    title: title,
-    buttonLabel: buttonLabel,
-  });
-
-  bindClick("#onlyToastButton", clickHandler);
-  const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
-    autohide: true,
-  });
-  t.show();
-};
-
-const hideToast = () => {
-  const el = document.querySelector("#onlyToast");
-  if (el) {
-    el.classList.add("hide");
-  }
-};
-
 const loadAndFill = (place) => {
   // It is not a true "undo", but a "record a new call on this site"
   if (previousLocation !== null) {
     showToast(previousLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
   }
-  initializeReport(place["id"]);
+  // Initialize the report
+  currentReport = {};
+  currentReport["Location"] = place.id;
   hideLoadingScreen();
   hideElement("#nextCallPrompt");
   prepareCallTemplate(place);
   showElement("#callerTool");
-  logCallLocally(place["id"]);
-};
-
-const showNextCallPrompt = () => {
-  fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
-  bindClick("#requestCallButton", authOrLoadAndFillCall);
-  showElement("#nextCallPrompt");
-  hideElement("#callerTool");
+  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: place["id"] });
 };
 
 const initScooby = () => {
@@ -189,7 +178,10 @@ const initScooby = () => {
   initAuth0(function () {
     handleAuth0Login();
     hideLoadingScreen();
-    showNextCallPrompt();
+    fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
+    bindClick("#requestCallButton", authOrLoadAndFillCall);
+    showElement("#nextCallPrompt");
+    hideElement("#callerTool");
     // this shouldn't be here, but it only needs to get run once. So maybe it's ok?
     document.querySelector("#autodial")?.addEventListener("change", function () {
       if (this.checked) {
@@ -199,44 +191,7 @@ const initScooby = () => {
   });
 };
 
-const showLoadingScreen = () => {
-  showElement("#loading");
-};
-
-const hideLoadingScreen = () => {
-  hideElement("#loading");
-};
-
-const recordCall = async (callReport) => {
-  hideToast();
-  showLoadingScreen();
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "smooth",
-  });
-
-  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(callReport));
-  hideLoadingScreen();
-  if (data.error) {
-    showErrorModal(
-      "Error submitting your report",
-      "I'm really sorry, but it looks like something has gone wrong while trying to submit your report. The specific error the system sent back was '" +
-        data.error_description +
-        "'. This is not your fault. You can try clicking the 'Close' button on this box and submitting your report again. If that doesn't work, copy the technical information below and paste it into Slack, so we can get this sorted out for you",
-      { report: callReport, result: data }
-    );
-  }
-
-  return data.created;
-};
-
-const initializeReport = (locationId) => {
-  currentReport = {};
-  currentReport["Location"] = locationId;
-};
-
-const fillReportFromDom = () => {
+const constructReportFromDom = () => {
   const answers = [];
   let isYes = false;
   let isNo = false;
@@ -358,7 +313,7 @@ const fillReportFromDom = () => {
 };
 
 const saveCallReport = async () => {
-  fillReportFromDom();
+  constructReportFromDom();
   submitCallReport();
 };
 
@@ -376,13 +331,13 @@ const submitPermanentlyClosed = async () => {
 };
 
 const submitWithAvail = async (avail) => {
-  fillReportFromDom();
+  constructReportFromDom();
   currentReport["Availability"] = [avail];
   submitCallReport();
 };
 
 const submitSkipUntil = async (when) => {
-  fillReportFromDom();
+  constructReportFromDom();
   currentReport["Do not call until"] = when.toISOString();
   currentReport["Availability"] = [AVAIL_SKIP];
   submitCallReport();
@@ -431,17 +386,24 @@ const submitCallMonday = async () => {
 };
 
 const submitCallReport = async () => {
-  console.log(currentReport);
-  const callId = await recordCall(currentReport);
+  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(currentReport));
+  if (data.error) {
+    showErrorModal(
+      "Error submitting your report",
+      "I'm really sorry, but it looks like something has gone wrong while trying to submit your report. The specific error the system sent back was '" +
+        data.error_description +
+        "'. This is not your fault. You can try clicking the 'Close' button on this box and submitting your report again. If that doesn't work, copy the technical information below and paste it into Slack, so we can get this sorted out for you",
+      { report: currentReport, result: data }
+    );
+  }
+
+  const callId = data.created;
 
   if (callId) {
     loadAndFillCall();
   }
 };
 
-const logCallLocally = (callId) => {
-  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: callId });
-};
 const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
@@ -481,6 +443,7 @@ const prepareCallTemplate = (data) => {
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
+
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
@@ -490,6 +453,7 @@ const prepareCallTemplate = (data) => {
     locationPublicNotes: data["Latest report notes"],
     locationPrivateNotes: data["Latest Internal Notes"],
   });
+
   if (data.Address === "" || !data.Address) {
     hideElement("#confirmAddress");
     showElement("#requestAddress");
@@ -499,7 +463,6 @@ const prepareCallTemplate = (data) => {
   enableHideOnSelect();
 
   bindClick("#scoobyRecordCall", saveCallReport);
-
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
   bindClick("#noAnswer", submitNoAnswer);
@@ -508,7 +471,7 @@ const prepareCallTemplate = (data) => {
   bindClick("#closedForTheWeekend", submitCallMonday);
   bindClick("#longHold", submitLongHold);
 
-  // don't show "on hold for more than 2 minutes" until 4 min have elapsed
+  // don't show "on hold for more than 4 minutes" until 4 min have elapsed
   const el = document.querySelector("#longHold");
   if (el !== null) {
     el.style.visibility = "hidden";
@@ -521,16 +484,26 @@ const prepareCallTemplate = (data) => {
   }
 };
 
-const showErrorModal = (title, body, json) => {
-  hideLoadingScreen();
-  fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
-    title: title,
+// assumes we only have one toast at a time
+const showToast = (title, body, buttonLabel, clickHandler) => {
+  fillTemplateIntoDom(toastTemplate, "#toastContainer", {
     body: body,
-    json: JSON.stringify(json, null, 2),
+    title: title,
+    buttonLabel: buttonLabel,
   });
 
-  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
-  myModal.show();
+  bindClick("#onlyToastButton", clickHandler);
+  const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
+    autohide: true,
+  });
+  t.show();
+};
+
+const hideToast = () => {
+  const el = document.querySelector("#onlyToast");
+  if (el) {
+    el.classList.add("hide");
+  }
 };
 
 export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint, handleAuth0Login, initAuth0 };

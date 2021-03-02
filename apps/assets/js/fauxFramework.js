@@ -88,4 +88,26 @@ const enableTooltips = (selector) => {
   });
 };
 
-export { bindClick, fillTemplateIntoDom, enableShowAlso, enableHideOnSelect, hideElement, showElement };
+const showLoadingScreen = () => {
+  showElement("#loading");
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
+};
+
+const hideLoadingScreen = () => {
+  hideElement("#loading");
+};
+
+export {
+  bindClick,
+  fillTemplateIntoDom,
+  enableShowAlso,
+  enableHideOnSelect,
+  hideElement,
+  showElement,
+  showLoadingScreen,
+  hideLoadingScreen,
+};
