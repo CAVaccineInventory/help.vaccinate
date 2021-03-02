@@ -393,7 +393,7 @@ const submitCallReport = async () => {
       "I'm really sorry, but it looks like something has gone wrong while trying to submit your report. The specific error the system sent back was '" +
         data.error_description +
         "'. This is not your fault. You can try clicking the 'Close' button on this box and submitting your report again. If that doesn't work, copy the technical information below and paste it into Slack, so we can get this sorted out for you",
-      { report: callReport, result: data }
+      { report: currentReport, result: data }
     );
   }
 
