@@ -1,7 +1,7 @@
 # help.vaccinateca.com
 
 
-## All changes happen through Pull Requests
+## All changes happen through Pull Requests (except README changes)
 
 Pull requests are the best way to propose changes to the codebase (we use [Github Flow](https://guides.github.com/introduction/flow/index.html)). To get started:
 
@@ -20,6 +20,10 @@ We use GitHub Issues to track potential work. Please add to this list, whether y
 The linter - [Prettier](https://prettier.io/) - runs on every PR automatically. If you'd like to run it locally, run `npm install` once to set up npm and then `npm run lint:fix` to run the linter. 
 
 ### Using Docker
+
+You can run a local development version of the Netlify functions and static file serving using Docker. This development environment will write to our staging Airtable base, so it's safe to try out new things without worrying about writing to the production Airtable.
+
+The staging Airtable base is at https://airtable.com/tbllBVkVYOhBykunR
 
 Create a file called Makefile.local. It should contain only the line:
 
