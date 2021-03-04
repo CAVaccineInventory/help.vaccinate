@@ -396,11 +396,13 @@ const submitCallReport = async () => {
       { report: currentReport, result: data }
     );
   }
-
+  else {
   const callId = data.created;
 
   if (callId) {
     loadAndFillCall();
+  }
+
   }
 };
 
