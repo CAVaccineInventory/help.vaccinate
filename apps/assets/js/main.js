@@ -37,6 +37,8 @@ let currentReport = {};
 let currentLocation = null;
 let previousLocation = null;
 
+let previousCallScriptDom = null;
+
 const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
@@ -122,7 +124,6 @@ const showErrorModal = (title, body, json) => {
   myModal.show();
 };
 
-
 const authOrLoadAndFillCall = async () => {
   const user = await auth0.getUser();
   if (user && user.email) {
@@ -133,7 +134,6 @@ const authOrLoadAndFillCall = async () => {
 };
 
 const requestCall = async () => {
-  previousLocation = currentLocation;
   currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   const user = await auth0.getUser();
   if (currentLocation.error) {
@@ -147,7 +147,11 @@ const requestCall = async () => {
       { user: user, error: currentLocation }
     );
   } else {
-    loadAndFill(currentLocation);
+    hideLoadingScreen();
+    hideElement("#nextCallPrompt");
+    showElement("#callerTool");
+    showScriptForLocation(currentLocation);
+    activateCallTemplate();
   }
 };
 
@@ -155,22 +159,18 @@ const loadAndFillPreviousCall = () => {
   hideToast(); // should do this somewhere smarter.
   currentLocation = previousLocation;
   previousLocation = null;
-  loadAndFill(currentLocation);
+  showScriptForLocation(currentLocation);
+  // Replace the call script with the call script from the previous report
+  const callScript = document.getElementById("callScript");
+  callScript.parentNode.replaceChild(previousCallScriptDom, callScript);
+  activateCallTemplate();
 };
 
-const loadAndFill = (place) => {
-  // It is not a true "undo", but a "record a new call on this site"
-  if (previousLocation !== null) {
-    showToast(previousLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
-  }
+const showScriptForLocation = (place) => {
   // Initialize the report
   currentReport = {};
   currentReport["Location"] = place.id;
-  hideLoadingScreen();
-  hideElement("#nextCallPrompt");
-  prepareCallTemplate(place);
-  showElement("#callerTool");
-  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: place["id"] });
+  fillCallTemplate(place);
 };
 
 const initScooby = () => {
@@ -395,18 +395,20 @@ const submitCallReport = async () => {
         "'. This is not your fault. You can try clicking the 'Close' button on this box and submitting your report again. If that doesn't work, copy the technical information below and paste it into Slack, so we can get this sorted out for you",
       { report: currentReport, result: data }
     );
-  }
-  else {
-  const callId = data.created;
+  } else {
+    const callId = data.created;
 
-  if (callId) {
-    loadAndFillCall();
-  }
+    if (callId) {
+      showToast(currentLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
 
+      previousLocation = currentLocation;
+      previousCallScriptDom = document.getElementById("callScript").cloneNode(1);
+      requestCall();
+    }
   }
 };
 
-const prepareCallTemplate = (data) => {
+const fillCallTemplate = (data) => {
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
     locationName: data.Name,
@@ -420,8 +422,6 @@ const prepareCallTemplate = (data) => {
     countyInfo: data.county_notes,
     internalNotes: data["Internal Notes"],
   });
-
-  console.log(data);
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
@@ -444,6 +444,8 @@ const prepareCallTemplate = (data) => {
     locationPrivateNotes: data["Latest Internal Notes"],
   });
 
+  fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
+
   let affiliation = data.Affiliation || "";
   affiliation = affiliation.replace(/\W/g, "").toLowerCase();
   const affs = document.querySelectorAll("#affiliationNotes .provider");
@@ -460,7 +462,9 @@ const prepareCallTemplate = (data) => {
     hideElement("#confirmAddress");
     showElement("#requestAddress");
   }
+};
 
+const activateCallTemplate = () => {
   enableShowAlso();
   enableHideOnSelect();
 
