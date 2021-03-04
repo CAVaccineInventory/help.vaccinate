@@ -424,24 +424,12 @@ const prepareCallTemplate = (data) => {
   console.log(data);
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
-  let affiliation = data.Affiliation || "";
-  affiliation = affiliation.replace(/\W/g, "").toLowerCase();
 
   let responsiblePerson = "the right person";
   if (data["Location Type"] === "Pharmacy") {
     responsiblePerson = "the pharmacist on duty";
   }
 
-  const affs = document.querySelectorAll("#affiliationNotes .provider");
-  if (affs !== null) {
-    affs.forEach((e) => {
-      e.classList.add("hidden");
-    });
-  }
-
-  if (affiliation && affiliation !== "") {
-    document.querySelector("#affiliationNotes .provider." + affiliation)?.classList.remove("hidden");
-  }
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
@@ -456,6 +444,18 @@ const prepareCallTemplate = (data) => {
     locationPrivateNotes: data["Latest Internal Notes"],
   });
 
+  let affiliation = data.Affiliation || "";
+  affiliation = affiliation.replace(/\W/g, "").toLowerCase();
+  const affs = document.querySelectorAll("#affiliationNotes .provider");
+  if (affs !== null) {
+    affs.forEach((e) => {
+      e.classList.add("hidden");
+    });
+  }
+
+  if (affiliation && affiliation !== "") {
+    document.querySelector("#affiliationNotes .provider." + affiliation)?.classList.remove("hidden");
+  }
   if (data.Address === "" || !data.Address) {
     hideElement("#confirmAddress");
     showElement("#requestAddress");
