@@ -126,13 +126,13 @@ const showErrorModal = (title, body, json) => {
 const authOrLoadAndFillCall = async () => {
   const user = await auth0.getUser();
   if (user && user.email) {
-    loadAndFillCall();
+    requestCall();
   } else {
     doLogin();
   }
 };
 
-const loadAndFillCall = async () => {
+const requestCall = async () => {
   previousLocation = currentLocation;
   currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   const user = await auth0.getUser();
