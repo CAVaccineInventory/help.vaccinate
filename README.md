@@ -26,6 +26,7 @@ Create a file called Makefile.local. It should contain only the line:
 ```
 AIRTABLE_API_KEY=...your key here...
 ```
+You can obtain an Airtable API key from https://airtable.com/account
 
 To run an end-to-end stack using Docker, pointed at the staging Base:
 ```
