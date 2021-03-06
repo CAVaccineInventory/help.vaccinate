@@ -39,6 +39,9 @@ let previousLocation = null;
 
 let previousCallScriptDom = null;
 
+let providerSchedulingUrl = null;
+
+
 const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
@@ -88,7 +91,6 @@ const fetchJsonFromEndpoint = async (endpoint, method, body) => {
     },
   });
   const data = await result.json();
-  console.log(data);
   hideLoadingScreen();
   return data;
 };
@@ -170,6 +172,7 @@ const showScriptForLocation = (place) => {
   // Initialize the report
   currentReport = {};
   currentReport["Location"] = place.id;
+  providerSchedulingUrl = null;
   fillCallTemplate(place);
 };
 
@@ -409,6 +412,32 @@ const submitCallReport = async () => {
 };
 
 const fillCallTemplate = (data) => {
+
+  fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
+
+  let affiliation = data.Affiliation || "";
+  affiliation = affiliation.replace(/\W/g, "").toLowerCase();
+  const affs = document.querySelectorAll("#affiliationNotes .provider");
+  if (affs !== null) {
+    affs.forEach((e) => {
+      e.classList.add("hidden");
+    });
+  }
+
+  if (affiliation && affiliation !== "") {
+    var providerDiv = document.querySelector("#affiliationNotes .provider." + affiliation);
+  if (providerDiv !== null) {
+    providerDiv.classList.remove("hidden");
+    providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url")
+  }
+  }
+  if (data.Address === "" || !data.Address) {
+    hideElement("#confirmAddress");
+    showElement("#requestAddress");
+  }
+
+
+
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
     locationName: data.Name,
@@ -423,7 +452,6 @@ const fillCallTemplate = (data) => {
     internalNotes: data["Internal Notes"],
   });
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
-  fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
   let responsiblePerson = "the right person";
   if (data["Location Type"] === "Pharmacy") {
@@ -437,7 +465,7 @@ const fillCallTemplate = (data) => {
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
-    locationWebsite: data.Website,
+    locationWebsite: (providerSchedulingUrl || data.Website),
     responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
     locationPublicNotes: data["Latest report notes"],
@@ -446,22 +474,6 @@ const fillCallTemplate = (data) => {
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
 
-  let affiliation = data.Affiliation || "";
-  affiliation = affiliation.replace(/\W/g, "").toLowerCase();
-  const affs = document.querySelectorAll("#affiliationNotes .provider");
-  if (affs !== null) {
-    affs.forEach((e) => {
-      e.classList.add("hidden");
-    });
-  }
-
-  if (affiliation && affiliation !== "") {
-    document.querySelector("#affiliationNotes .provider." + affiliation)?.classList.remove("hidden");
-  }
-  if (data.Address === "" || !data.Address) {
-    hideElement("#confirmAddress");
-    showElement("#requestAddress");
-  }
 };
 
 const activateCallTemplate = () => {
