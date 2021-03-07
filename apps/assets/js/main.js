@@ -416,7 +416,7 @@ const fillCallTemplate = (data) => {
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
   let affiliation = data.Affiliation || "";
-  affiliation = affiliation.replace(/\W/g, "").toLowerCase();
+  affiliation = affiliation.replace(/pharmacy/,"").replace(/\W/g, "").toLowerCase();
   const affs = document.querySelectorAll("#affiliationNotes .provider");
   if (affs !== null) {
     affs.forEach((e) => {
