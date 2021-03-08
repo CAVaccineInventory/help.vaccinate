@@ -136,7 +136,7 @@ const authOrLoadAndFillCall = async () => {
 };
 
 const requestCall = async () => {
-  currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+  currentLocation = await fetchJsonFromEndpoint("https://vaccinateca-preview.herokuapp.com/api/requestCall");
   const user = await auth0.getUser();
   if (currentLocation.error) {
     showErrorModal(
@@ -389,7 +389,7 @@ const submitCallMonday = async () => {
 };
 
 const submitCallReport = async () => {
-  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(currentReport));
+  const data = await fetchJsonFromEndpoint("https://vaccinateca-preview.herokuapp.com/api/submitReport", "POST", JSON.stringify(currentReport));
   if (data.error) {
     showErrorModal(
       "Error submitting your report",

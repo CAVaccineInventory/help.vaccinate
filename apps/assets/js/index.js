@@ -24,14 +24,14 @@ const addNetlifyTesterListeners = () => {
 
   document.querySelector("#requestCallButton").addEventListener("click", async () => {
     debugOutput("loading");
-    const data = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+    const data = await fetchJsonFromEndpoint("https://vaccinateca-preview.herokuapp.com/api/requestCall");
     debugOutput(data);
   });
 
   document.querySelector("#submitReportButton").addEventListener("click", async () => {
     const body = document.querySelector("#submitReportText").value;
     debugOutput("loading");
-    const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", body);
+    const data = await fetchJsonFromEndpoint("https://vaccinateca-preview.herokuapp.com/api/submitReport", "POST", body);
     debugOutput(data);
   });
 };
