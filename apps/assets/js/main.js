@@ -289,6 +289,21 @@ const constructReportFromDom = () => {
     if (document.querySelector("#essentialWorkersAccepted")?.checked) {
       answers.push("Vaccinating essential workers");
     }
+    if (document.querySelector("#emergencyServicesAccepted")?.checked) {
+      answers.push("Vaccinating emergency services workers");
+    }
+    if (document.querySelector("#educatorsAccepted")?.checked) {
+      answers.push("Vaccinating education and childcare workers");
+    }
+    if (document.querySelector("#foodAndAgAccepted")?.checked) {
+      answers.push("Vaccinating agriculture and food workers");
+    }
+    if (document.querySelector("#highRiskIndividualsAccepted")?.checked) {
+      answers.push("Vaccinating high-risk individuals");
+    }
+
+
+
 
     if (document.querySelector("#veteransOnly")?.checked) {
       answers.push("Yes: must be a veteran");
