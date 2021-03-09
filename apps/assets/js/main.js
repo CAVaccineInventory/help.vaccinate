@@ -432,11 +432,13 @@ const submitCallReport = async () => {
 };
 
 const fillCallTemplate = (data) => {
-
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
   let affiliation = data.Affiliation || "";
-  affiliation = affiliation.replace(/pharmacy/,"").replace(/\W/g, "").toLowerCase();
+  affiliation = affiliation
+    .replace(/pharmacy/, "")
+    .replace(/\W/g, "")
+    .toLowerCase();
   const affs = document.querySelectorAll("#affiliationNotes .provider");
   if (affs !== null) {
     affs.forEach((e) => {
@@ -445,17 +447,15 @@ const fillCallTemplate = (data) => {
   }
 
   if (affiliation && affiliation !== "") {
-    var providerDiv = document.querySelector("#affiliationNotes .provider." + affiliation);
-  if (providerDiv !== null) {
-    providerDiv.classList.remove("hidden");
-    providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url")
-  }
+    const providerDiv = document.querySelector("#affiliationNotes .provider." + affiliation);
+    if (providerDiv !== null) {
+      providerDiv.classList.remove("hidden");
+      providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url");
+    }
   }
   if (data.Address === "" || !data.Address) {
     showElement("#requestAddress");
   }
-
-
 
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
@@ -484,7 +484,7 @@ const fillCallTemplate = (data) => {
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
-    locationWebsite: (providerSchedulingUrl || data.Website),
+    locationWebsite: providerSchedulingUrl || data.Website,
     responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
     locationPublicNotes: data["Latest report notes"],
@@ -492,7 +492,6 @@ const fillCallTemplate = (data) => {
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
-
 };
 
 const activateCallTemplate = () => {
