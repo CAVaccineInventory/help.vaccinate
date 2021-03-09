@@ -432,7 +432,6 @@ const fillCallTemplate = (data) => {
   }
   }
   if (data.Address === "" || !data.Address) {
-    hideElement("#confirmAddress");
     showElement("#requestAddress");
   }
 
