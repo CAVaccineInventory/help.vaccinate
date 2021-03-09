@@ -283,95 +283,99 @@
           <label class="btn btn-outline-primary" for="highRiskIndividualsAccepted">High risk individuals</label>
 
           <div class="instructions small secondary">
-            If they say anything that's not on the list, put it in the public notes. Please don't include "health care workers."
+            If they say anything that's not on the list, put it in the public notes. Please don't include "health care
+            workers."
           </div>
         </div>
-        <div class="restrictions">
-          <div class="surveyQuestion">
-            <div class="yousay">Are there limits on who you can accommodate right now?</div>
-            <div class="">
-              <input class="btn-check" type="checkbox" id="veteransOnly" />
-              <label class="btn btn-outline-primary" for="veteransOnly">Veterans only</label>
-              <input class="btn-check" type="checkbox" id="patientsOnly" />
-              <label class="btn btn-outline-primary" for="patientsOnly">Current patients only</label>
-              <input class="btn-check" type="checkbox" id="countyOnly" />
-              <label class="btn btn-outline-primary" for="countyOnly">County residents only</label>
-              <input class="btn-check" type="checkbox" id="cityOnly" />
-              <label class="btn btn-outline-primary" for="cityOnly">City residents only</label>
-              <input class="btn-check" type="checkbox" id="secondDoseOnly" />
-              <label class="btn btn-outline-primary" for="secondDoseOnly">Second dose only</label>
-            </div>
-            <div class="instructions small secondary">
-              If they say anything that's not on the list, mention it in the public notes.
-            </div>
+      </div>
+      <div class="restrictions">
+        <div class="surveyQuestion">
+          <div class="yousay">Are there limits on who you can accommodate right now?</div>
+          <div class="">
+            <input class="btn-check" type="checkbox" id="veteransOnly" />
+            <label class="btn btn-outline-primary" for="veteransOnly">Veterans only</label>
+            <input class="btn-check" type="checkbox" id="patientsOnly" />
+            <label class="btn btn-outline-primary" for="patientsOnly">Current patients only</label>
+            <input class="btn-check" type="checkbox" id="countyOnly" />
+            <label class="btn btn-outline-primary" for="countyOnly">County residents only</label>
+            <input class="btn-check" type="checkbox" id="cityOnly" />
+            <label class="btn btn-outline-primary" for="cityOnly">City residents only</label>
+            <input class="btn-check" type="checkbox" id="secondDoseOnly" />
+            <label class="btn btn-outline-primary" for="secondDoseOnly">Second dose only</label>
           </div>
           <div class="instructions small secondary">
             If they say anything that's not on the list, mention it in the public notes.
           </div>
         </div>
 
-
-
-  <div class="surveyQuestion">
-    <div class="yousay">When the state opens up vaccination to high-risk groups on March 15, what documentation will people need to bring with them to their appointments?</div>
-    <div class="small p-1 text-muted" >This text won't appear directly on our website. Our team will read it as we figure out how to get ready for March 15</div>
-    <div id="callScriptHighRiskDocNotes" class="input form-control form-control-sm" role="textbox" contenteditable ></div>
-    </div>
-  </div>
-
-
-  <div class="surveyQuestion">
-	<div class="instructions">If the person you're talking to mentions extra doses, cancelled appointments, or same day availability, write about that in this box.</div>
-    <div class="small p-1 text-muted"
-      >This text won't appear directly on our website, but we'll share it with our outreach partners</div>
-        <div id="callScriptExtraDoseNotes" class="input form-control form-control-sm" role="textbox" contenteditable ></div>
-      </div>
-    </div>
-  </div>
-
-
-
-
-
-
-
-
-        <div id="requestAddress" class="hidden">
-          <div class="surveyQuestion">
-            <div class="yousay">Would you mind telling me what your address is?</div>
-            <div class="instructions">
-              <a
-                target="_blank"
-                class="text-muted small open-as-popup"
-                href="https://airtable.com/shruwoZdEXPOmVNCK?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
-                >Request a database update</a
-              >
-            </div>
-          </div>
+        <div class="surveyQuestion">
+          <div class="yousay"
+            >When the state opens up vaccination to high-risk groups on March 15, what documentation will people need to
+            bring with them to their appointments?</div
+          >
+          <div class="small p-1 text-muted"
+            >This text won't appear directly on our website. Our team will read it as we figure out how to get ready for
+            March 15</div
+          >
+          <div
+            id="callScriptHighRiskDocNotes"
+            class="input form-control form-control-sm"
+            role="textbox"
+            contenteditable
+          ></div>
         </div>
       </div>
-    </div>
 
-    <div class="surveyQuestion">
-      <div class="yousay">Thanks so much for your time! Do you happen to know anywhere else I should check?</div>
-      <div class="instructions">
-        <p
-          >If they offer you any leads,
-
-          <a
-            target="_blank"
-            class="text-muted open-as-popup"
-            href="https://airtable.com/shruwoZdEXPOmVNCK?prefill_Type=Add+a+missing+hospital/pharmacy"
-            >report them with this form</a
-          >.
-        </p>
+      <div class="surveyQuestion">
+        <div class="instructions"
+          >If the person you're talking to mentions extra doses, cancelled appointments, or same day availability, write
+          about that in this box.</div
+        >
+        <div class="small p-1 text-muted"
+          >This text won't appear directly on our website, but we'll share it with our outreach partners</div
+        >
+        <div
+          id="callScriptExtraDoseNotes"
+          class="input form-control form-control-sm"
+          role="textbox"
+          contenteditable
+        ></div>
       </div>
-    </div>
-    <div class="surveyQuestion">
-      <div class="yousay">Thanks! Have a great day.</div>
     </div>
   </div>
 
+  <div id="requestAddress" class="hidden">
+    <div class="surveyQuestion">
+      <div class="yousay">Would you mind telling me what your address is?</div>
+      <div class="instructions">
+        <a
+          target="_blank"
+          class="text-muted small open-as-popup"
+          href="https://airtable.com/shruwoZdEXPOmVNCK?prefill_Location={{locationId}}&prefill_Type=Incorrect+contact+information"
+          >Request a database update</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="surveyQuestion">
+    <div class="yousay">Thanks so much for your time! Do you happen to know anywhere else I should check?</div>
+    <div class="instructions">
+      <p
+        >If they offer you any leads,
+
+        <a
+          target="_blank"
+          class="text-muted open-as-popup"
+          href="https://airtable.com/shruwoZdEXPOmVNCK?prefill_Type=Add+a+missing+hospital/pharmacy"
+          >report them with this form</a
+        >.
+      </p>
+    </div>
+  </div>
+  <div class="surveyQuestion">
+    <div class="yousay">Thanks! Have a great day.</div>
+  </div>
 
   <div class="surveyQuestion">
     <label for="callScriptPublicNotes">Public notes</label>
@@ -386,26 +390,25 @@
         >
       </div>
     </div>
-
-    <div>
-      <div class="surveyQuestion">
-        <div class="">
-          <label for="callScriptPrivateNotes">Private notes</label>
-          <div class="small p-1 text-muted"
-            >What should team members know about this call or location? We won't publish this information.</div
-          >
-          <div
-            id="callScriptPrivateNotes"
-            class="input border border-secondary form-control form-control-sm"
-            role="textbox"
-            contenteditable
-            >{{ locationPrivateNotes }}</div
-          >
-        </div>
+  </div>
+  <div>
+    <div class="surveyQuestion">
+      <div class="">
+        <label for="callScriptPrivateNotes">Private notes</label>
+        <div class="small p-1 text-muted"
+          >What should team members know about this call or location? We won't publish this information.</div
+        >
+        <div
+          id="callScriptPrivateNotes"
+          class="input border border-secondary form-control form-control-sm"
+          role="textbox"
+          contenteditable
+          >{{ locationPrivateNotes }}</div
+        >
       </div>
     </div>
-    <div class="d-grid gap-2 col-6 mx-auto row">
-      <input type="button" class="btn btn-primary my-4 hidden" id="scoobyRecordCall" value="Send report" />
-    </div>
+  </div>
+  <div class="d-grid gap-2 col-6 mx-auto row">
+    <input type="button" class="btn btn-primary my-4 hidden" id="scoobyRecordCall" value="Send report" />
   </div>
 </form>

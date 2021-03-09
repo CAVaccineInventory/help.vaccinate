@@ -41,7 +41,6 @@ let previousCallScriptDom = null;
 
 let providerSchedulingUrl = null;
 
-
 const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
@@ -302,9 +301,6 @@ const constructReportFromDom = () => {
       answers.push("Vaccinating high-risk individuals");
     }
 
-
-
-
     if (document.querySelector("#veteransOnly")?.checked) {
       answers.push("Yes: must be a veteran");
     }
@@ -323,9 +319,6 @@ const constructReportFromDom = () => {
       answers.push(AVAIL_SECOND_DOSE_ONLY);
     }
   }
-
-
-
 
   currentReport["Availability"] = answers;
   currentReport["Notes"] = document.querySelector("#callScriptPublicNotes")?.innerText;
