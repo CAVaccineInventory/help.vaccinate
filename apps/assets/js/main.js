@@ -319,6 +319,10 @@ const constructReportFromDom = () => {
       answers.push(AVAIL_SECOND_DOSE_ONLY);
     }
   }
+    
+  if (document.querySelector("#reviewRequested")?.checked) {
+	currentReport["is_pending_review"] = true;
+  }
 
   currentReport["Availability"] = answers;
   currentReport["Notes"] = document.querySelector("#callScriptPublicNotes")?.innerText;

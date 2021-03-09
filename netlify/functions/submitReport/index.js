@@ -75,7 +75,8 @@ const handler = async (event, context, logger) => {
     Object.assign(input, {
       auth0_reporter_name: userinfo.name,
       auth0_reporter_roles: roles.join(","),
-      is_pending_review: roles.includes(TRAINEE_ROLE_NAME)
+      // allow the client to turn on is_pending_review but never to turn it off
+      is_pending_review: (roles.includes(TRAINEE_ROLE_NAME) || input.is_pending_review)
     });
   } catch (err) {
     logger.error({ err: err }, "Failed to get userinfo"); // XXX
