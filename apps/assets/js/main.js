@@ -41,7 +41,6 @@ let previousCallScriptDom = null;
 
 let providerSchedulingUrl = null;
 
-
 const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
@@ -289,6 +288,18 @@ const constructReportFromDom = () => {
     if (document.querySelector("#essentialWorkersAccepted")?.checked) {
       answers.push("Vaccinating essential workers");
     }
+    if (document.querySelector("#emergencyServicesAccepted")?.checked) {
+      answers.push("Vaccinating emergency services workers");
+    }
+    if (document.querySelector("#educatorsAccepted")?.checked) {
+      answers.push("Vaccinating education and childcare workers");
+    }
+    if (document.querySelector("#foodAndAgAccepted")?.checked) {
+      answers.push("Vaccinating agriculture and food workers");
+    }
+    if (document.querySelector("#highRiskIndividualsAccepted")?.checked) {
+      answers.push("Vaccinating high-risk individuals");
+    }
 
     if (document.querySelector("#veteransOnly")?.checked) {
       answers.push("Yes: must be a veteran");
@@ -308,10 +319,16 @@ const constructReportFromDom = () => {
       answers.push(AVAIL_SECOND_DOSE_ONLY);
     }
   }
+    
+  if (document.querySelector("#reviewRequested")?.checked) {
+	currentReport["is_pending_review"] = true;
+  }
 
   currentReport["Availability"] = answers;
   currentReport["Notes"] = document.querySelector("#callScriptPublicNotes")?.innerText;
   currentReport["Internal Notes"] = document.querySelector("#callScriptPrivateNotes")?.innerText;
+  currentReport["extra_dose_info"] = document.querySelector("#callScriptExtraDoseNotes")?.innerText;
+  currentReport["documentation_requirements"] = document.querySelector("#callScriptHighRiskDocNotes")?.innerText;
   console.log(currentReport);
 };
 
@@ -412,11 +429,13 @@ const submitCallReport = async () => {
 };
 
 const fillCallTemplate = (data) => {
-
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
   let affiliation = data.Affiliation || "";
-  affiliation = affiliation.replace(/\W/g, "").toLowerCase();
+  affiliation = affiliation
+    .replace(/pharmacy/, "")
+    .replace(/\W/g, "")
+    .toLowerCase();
   const affs = document.querySelectorAll("#affiliationNotes .provider");
   if (affs !== null) {
     affs.forEach((e) => {
@@ -425,18 +444,15 @@ const fillCallTemplate = (data) => {
   }
 
   if (affiliation && affiliation !== "") {
-    var providerDiv = document.querySelector("#affiliationNotes .provider." + affiliation);
-  if (providerDiv !== null) {
-    providerDiv.classList.remove("hidden");
-    providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url")
-  }
+    const providerDiv = document.querySelector("#affiliationNotes .provider." + affiliation);
+    if (providerDiv !== null) {
+      providerDiv.classList.remove("hidden");
+      providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url");
+    }
   }
   if (data.Address === "" || !data.Address) {
-    hideElement("#confirmAddress");
     showElement("#requestAddress");
   }
-
-
 
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
@@ -465,7 +481,7 @@ const fillCallTemplate = (data) => {
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
-    locationWebsite: (providerSchedulingUrl || data.Website),
+    locationWebsite: providerSchedulingUrl || data.Website,
     responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
     locationPublicNotes: data["Latest report notes"],
@@ -473,7 +489,6 @@ const fillCallTemplate = (data) => {
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
-
 };
 
 const activateCallTemplate = () => {
