@@ -1,5 +1,4 @@
 .instructions {
-	font-style: italic;	
 }
 
 #dialer {
@@ -8,15 +7,18 @@
 }
 
 .surveyQuestion {
-	padding-bottom: 2.5em;
-
+	margin-bottom: 1.5em;
+ 	padding-left: 0.75em;
+	padding-bottom: 0.25em;
+	padding-top: 0.25em;
+	border-left: 1em solid #ccc;
 }
 
 .yousay::before {
-	content: '"';
+	content: '“';
 }
 .yousay::after {
-	content: '"';
+	content: '”';
 }
 
 .yousay {
@@ -30,6 +32,10 @@
 }
 
 #vaccinatingPublicScript {
+}
+
+#reallyVaccinatingEveryone {
+	margin-top: 1em;
 }
 
 #callScriptPrivateNotes {
