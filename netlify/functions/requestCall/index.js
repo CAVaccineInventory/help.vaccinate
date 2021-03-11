@@ -123,9 +123,16 @@ const handler = async (event, context, logger) => {
 
     for (const view of viewsToLoad) {
       try {
-        const locs = await base("Locations").select({
-          view, fields: LOCATION_FIELDS_TO_LOAD,
-        }).firstPage();
+        const locs = await base("Locations")
+          .select({
+            view,
+   	    // Only fetch the first 20 results from the view
+  	    // this may result in a race condition causing multiple folks
+ 	    // making the same call. but yolo
+            maxRecords: 20,
+            fields: LOCATION_FIELDS_TO_LOAD,
+          })
+          .firstPage();
         if (locs.length > 0) {
           locationsToCall = locs;
           pickedView = view;
