@@ -134,6 +134,7 @@ const handler = async (event, context, logger) => {
       const results = await base("Locations").update(
         [{id: locationId, fields: {
           "Force-prioritize in next call": false,
+	  "call_priority": "99-not_prioritized"
         }}]);
 
       const updatedId = results && results[0] && results[0].id;
