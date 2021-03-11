@@ -205,7 +205,7 @@ const handler = async (event, context, logger) => {
   }
 
   const output = Object.assign(
-    { id: locationToCall.id },
+    { id: locationToCall.id, debugMetadata: { _pickedView: pickedView, _locationIndex: locationIndex} },
     locationToCall.fields
   );
 
