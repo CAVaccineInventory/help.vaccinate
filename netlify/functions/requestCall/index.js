@@ -45,9 +45,10 @@ const PROVIDER_FIELDS_TO_LOAD = [
 // https://github.com/CAVaccineInventory/airtableApps/blob/main/caller/frontend/index.tsx
 
 const DEFAULT_VIEWS_TO_LOAD = [
-  "Stale reports (with Eva tip)",
+  "_scooby_prioritized_calls",
   "To-call priority list (internal)",
   "To-call from Eva reports list (internal)",
+  "Stale reports (with Eva tip)",
   "To-call list (internal)",
 ];
 
