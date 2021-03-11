@@ -128,14 +128,20 @@ const showErrorModal = (title, body, json) => {
 const authOrLoadAndFillCall = async () => {
   const user = await auth0.getUser();
   if (user && user.email) {
-    requestCall();
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceLocation = urlParams.get("location_id");
+    requestCall(forceLocation);
   } else {
     doLogin();
   }
 };
 
-const requestCall = async () => {
-  currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+const requestCall = async (id) => {
+  if (id) {
+    currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall?location_id=" + id);
+  } else {
+    currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+  }
   const user = await auth0.getUser();
   if (currentLocation.error) {
     showErrorModal(
@@ -171,6 +177,16 @@ const showScriptForLocation = (place) => {
   // Initialize the report
   currentReport = {};
   currentReport["Location"] = place.id;
+
+  // TODO Create a history entry for the new location
+  // and bake all of our state into the state object. then also
+  // implement a popstate handler, so we get proper back button support
+  //  const url = new URL(window.location);
+  //  url.searchParams.set("location_id", place.id);
+  //  url.searchParams.delete("code");
+  //  url.searchParams.delete("state");
+  //  window.history.pushState({}, "", url);
+
   providerSchedulingUrl = null;
   fillCallTemplate(place);
 };
