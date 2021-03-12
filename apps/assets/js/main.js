@@ -450,6 +450,7 @@ const liveopsDial = (event) => {
 	var button =  document.getElementById('location-phone-url');
 	var num = button?.getAttribute('data-phone-number');
 	num = num.replace(/[^\d]/g, '');
+        button.target='scratch-frame';
 	button.href = "https://app-scl.five9.com/appsvcs/rs/svc/orgs/131050/interactions/click_to_dial?number="+num+"&campaignId=VaccinateCA&contactId=&dialImmediately=false";
 };
 
