@@ -45,9 +45,10 @@ const PROVIDER_FIELDS_TO_LOAD = [
 // https://github.com/CAVaccineInventory/airtableApps/blob/main/caller/frontend/index.tsx
 
 const DEFAULT_VIEWS_TO_LOAD = [
-  "Stale reports (with Eva tip)",
+  "_scooby_prioritized_calls",
   "To-call priority list (internal)",
   "To-call from Eva reports list (internal)",
+  "Stale reports (with Eva tip)",
   "To-call list (internal)",
 ];
 
@@ -123,9 +124,16 @@ const handler = async (event, context, logger) => {
 
     for (const view of viewsToLoad) {
       try {
-        const locs = await base("Locations").select({
-          view, fields: LOCATION_FIELDS_TO_LOAD,
-        }).firstPage();
+        const locs = await base("Locations")
+          .select({
+            view,
+   	    // Only fetch the first 20 results from the view
+  	    // this may result in a race condition causing multiple folks
+ 	    // making the same call. but yolo
+            maxRecords: 20,
+            fields: LOCATION_FIELDS_TO_LOAD,
+          })
+          .firstPage();
         if (locs.length > 0) {
           locationsToCall = locs;
           pickedView = view;
@@ -197,7 +205,7 @@ const handler = async (event, context, logger) => {
   }
 
   const output = Object.assign(
-    { id: locationToCall.id },
+    { id: locationToCall.id, debugMetadata: { _pickedView: pickedView, _locationIndex: locationIndex} },
     locationToCall.fields
   );
 
