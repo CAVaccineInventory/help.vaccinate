@@ -32,7 +32,7 @@ import errorModalTemplate from "./templates/errorModal.handlebars";
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
 let auth0 = null;
-
+let userRoles = null;
 let currentReport = {};
 let currentLocation = null;
 let previousLocation = null;
@@ -143,6 +143,7 @@ const requestCall = async (id) => {
     currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   }
   const user = await auth0.getUser();
+  userRoles = user['https://help.vaccinateca.com/roles'];
   if (currentLocation.error) {
     showErrorModal(
       "Error fetching a call",
