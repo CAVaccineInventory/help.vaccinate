@@ -32,7 +32,7 @@ import errorModalTemplate from "./templates/errorModal.handlebars";
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
 let auth0 = null;
-
+let userRoles = null;
 let currentReport = {};
 let currentLocation = null;
 let previousLocation = null;
@@ -143,6 +143,7 @@ const requestCall = async (id) => {
     currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   }
   const user = await auth0.getUser();
+  userRoles = user['https://help.vaccinateca.com/roles'];
   if (currentLocation.error) {
     showErrorModal(
       "Error fetching a call",
@@ -444,6 +445,15 @@ const submitCallReport = async () => {
   }
 };
 
+// If the caller is in the liveops group we want them to dial through the liveops dialer, not ours
+const liveopsDial = (event) => {
+	var button =  document.getElementById('location-phone-url');
+	var num = button?.getAttribute('data-phone-number');
+	num = num.replace(/[^\d]/g, '');
+	button.href = "https://app-scl.five9.com/appsvcs/rs/svc/orgs/131050/interactions/click_to_dial?number="+num+"&campaignId=VaccinateCA&contactId=&dialImmediately=false";
+};
+
+
 const fillCallTemplate = (data) => {
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
@@ -519,6 +529,11 @@ const activateCallTemplate = () => {
   bindClick("#closedForTheDay", submitCallTomorrow);
   bindClick("#closedForTheWeekend", submitCallMonday);
   bindClick("#longHold", submitLongHold);
+
+  if (userRoles.includes("CC: Liveops")) {
+    bindClick("#location-phone-url", liveopsDial);
+  } 
+
 
   // don't show "on hold for more than 4 minutes" until 4 min have elapsed
   const el = document.querySelector("#longHold");
