@@ -106,3 +106,17 @@ Request:
 Response:
 {"created":["recFhKLYJku2jiQyM"]}
 ```
+
+## callerStats
+
+Get a summary of how many calls the user has made.
+
+- **Path**: `/.netlify/functions/callerStats`
+- **Permissions**: Must have the `caller` permission.
+- **Req Type**: `GET`
+- **Req Body**: _none_
+- **Response**: A JSON object with keys detailing how many reports the user has submitted.
+- **Example response**:
+```json
+{"total":3,"today":2}
+```
