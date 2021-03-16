@@ -485,6 +485,9 @@ const fillCallTemplate = (data) => {
 
   fillTemplateIntoDom(youAreCallingTemplate, "#youAreCalling", { 
     locationName: data.Name,
+    locationAddress: data.Address || "No address information available",
+    countyName: data.County,
+    countyURL: data["County vaccine info URL"],
 });
 
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
