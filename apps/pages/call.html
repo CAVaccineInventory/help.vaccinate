@@ -70,7 +70,45 @@ layout: base.html
     </div>
   </div>
 </div>
+<a href="#" class="position-fixed bottom-0 start-0 p-2 bg-body" id="whatsNew" data-bs-toggle="modal" data-bs-target="#changelogModal">What's new?</a>
+
+
 <div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
 <div id="applicationError"></div>
 <script src="/assets/js/scooby.js"></script>
 <iframe name="scratch-frame" class="hidden"></iframe>
+
+
+<!-- Modal -->
+<div class="modal fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changelogModalLabel">What's new with Scooby?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+<div class="changelog">
+<dl>
+<dt>March 16, 2021
+</dt>
+<dd>
+<ul>
+<li>Old <b>Notes</b> are no longer automatically copied into new reports</li>
+<li>Name of location you are calling moved to the header</li>
+<li>Header is now sticky. (It doesn't scroll off the screen)</li>
+<li>Address and dial instructions tightened up</li>
+<li>Call disposition buttons lifted above phone tree instructions</li>
+</ul>
+</dd>
+
+</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
