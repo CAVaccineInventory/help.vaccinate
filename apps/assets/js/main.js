@@ -511,7 +511,6 @@ const fillCallTemplate = (data) => {
     locationWebsite: providerSchedulingUrl || data.Website,
     responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
-    locationPublicNotes: data["Latest report notes"],
     locationPrivateNotes: data["Latest Internal Notes"],
   });
 
