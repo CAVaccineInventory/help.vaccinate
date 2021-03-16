@@ -1,16 +1,19 @@
+
+.highlevelStep {
+	padding-top: 0.5em;
+	padding-bottom;0.25em;
+}
+
 .instructions {
 }
 
 #dialer {
-	padding-top: 2em;
-	padding-bottom: 2em;
 }
 
 .surveyQuestion {
 	margin-bottom: 1.5em;
  	padding-left: 0.75em;
 	padding-bottom: 0.25em;
-	padding-top: 0.25em;
 	border-left: 1em solid #ccc;
 }
 
@@ -41,3 +44,4 @@
 #callScriptPrivateNotes {
 	background-color: #ffffee;
 }
+

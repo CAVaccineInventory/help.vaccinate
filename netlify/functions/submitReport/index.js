@@ -85,17 +85,17 @@ const handler = async (event, context, logger) => {
   let output = {};
 
   // Silently dual-write to the new Django system to test it
-  try {
-    await fetch("https://vaccinateca-preview.herokuapp.com/api/submitReport", {
-      method: "POST",
-      body: event.body,
-      headers: {
-        Authorization: `Bearer ${context.identityContext.token}`,
-      },
-    });
-  } catch (err) {
-    logger.error("failed to dual-write to Django", err);
-  }
+  //try {
+  //  await fetch("https://vaccinateca-preview.herokuapp.com/api/submitReport", {
+  //    method: "POST",
+  //    body: event.body,
+  //    headers: {
+  //      Authorization: `Bearer ${context.identityContext.token}`,
+  //    },
+  //  });
+  //} catch (err) {
+  //  logger.error("failed to dual-write to Django", err);
+  //}
 
   try {
     const result = await base("Reports").create([{ fields: input }]);

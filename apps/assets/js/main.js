@@ -18,6 +18,7 @@ import {
 
 import createAuth0Client from "@auth0/auth0-spa-js";
 import locationTemplate from "./templates/location.handlebars";
+import youAreCallingTemplate from "./templates/youAreCalling.handlebars";
 import ctaTemplate from "./templates/cta.handlebars";
 import nextCallPromptTemplate from "./templates/nextCallPrompt.handlebars";
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
@@ -481,6 +482,14 @@ const fillCallTemplate = (data) => {
     showElement("#requestAddress");
   }
 
+
+  fillTemplateIntoDom(youAreCallingTemplate, "#youAreCalling", { 
+    locationName: data.Name,
+    locationAddress: data.Address || "No address information available",
+    countyName: data.County,
+    countyURL: data["County vaccine info URL"],
+});
+
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
     locationName: data.Name,
@@ -511,7 +520,6 @@ const fillCallTemplate = (data) => {
     locationWebsite: providerSchedulingUrl || data.Website,
     responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
-    locationPublicNotes: data["Latest report notes"],
     locationPrivateNotes: data["Latest Internal Notes"],
   });
 
