@@ -4,7 +4,6 @@ const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
 const { logEvent } = require("../../lib/log.js");
-const fetch = require('node-fetch');
 
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
@@ -82,19 +81,6 @@ const handler = async (event, context, logger) => {
   }
 
   let output = {};
-
-  // Silently dual-write to the new Django system to test it
-  try {
-    await fetch("https://vaccinateca-preview.herokuapp.com/api/submitReport", {
-      method: "POST",
-      body: event.body,
-      headers: {
-        Authorization: `Bearer ${context.identityContext.token}`,
-      },
-    });
-  } catch (err) {
-    logger.error("failed to dual-write to Django", err);
-  }
 
   try {
     const result = await base("Reports").create([{ fields: input }]);
