@@ -18,23 +18,26 @@ layout: base.html
 
     <div class="container-fluid">
       <div class="row gy-5">
-        <div class="col-sm-6 col-lg-4 overflow-auto">
+        <div class="col-sm-12 col-md-4 overflow-auto" id="preconnectScript">
           <div id="locationInfo"></div>
           <div class="hidden" id="latestReport"></div>
           <div id="countyInfo"></div>
+	    <div class="h4 highlevelStep">1. Make the call</div>
           <div id="dialer">
-            <div id="cta" class="call-to-action"></div>
-            <div id="autodial-wrapper" class="p-2">
-              <div class="form-check">
+            <div id="autodial-wrapper" class="p-2 row">
+           	<div id="cta" class="call-to-action col "></div>
+              <div class="form-check col">
                 <input class="form-check-input" type="checkbox" value="" id="autodial" />
-                <label class="form-check-label small text-secondary" for="autodial">
-                  Instant calling (if your browser supports it)
+                <label class="form-check-label small text-secondary" for="autodial" title="Dial the phone when the page loads, if your browser supports it">
+                  Instant calling 
                 </label>
               </div>
             </div>
           </div>
-          <div id="affiliationNotes"></div>
+		
+	    <div class="h4 highlevelStep">2. Get connected</div>
           <div id="dialResult"></div>
+          <div id="affiliationNotes"></div>
           <div class="afterDialInstructions small">
             <p>Your goal is to talk to a human.</p>
 
@@ -47,7 +50,7 @@ layout: base.html
           </div>
         </div>
 
-        <div class="col-sm-6 col-lg-8 overflow-auto">
+        <div class="col-sm-12 col-md-8 overflow-auto">
           <div id="callScript"></div>
         </div>
       </div>
