@@ -15,7 +15,8 @@
     </div>
     <div class="surveyQuestion">
       <div class="instructions">When you reach the right person:</div>
-      <div class="yousay">Are you currently offering the COVID vaccine?</div>
+      <div class="yousay">Do you offer the COVID vaccine?</div>
+      <div class="instructions small secondary">Pick yes if they are out of stock right now.</div>
       <div id="noOption" class="btn-group" role="group">
         <input
           type="radio"
@@ -37,7 +38,7 @@
           class="btn-check"
           data-show-also="scoobyRecordCall"
         />
-        <label class="btn btn-outline-success" for="yesJustYes">Yes</label>
+        <label class="btn btn-outline-success" for="yesJustYes" title="Pick if they offer vaccines, even if out of stock">Yes</label>
         <input
           type="radio"
           id="yesSoon"
@@ -46,7 +47,7 @@
           name="yesNoSelect"
           data-show-also="scoobyRecordCall"
         />
-        <label class="btn btn-outline-success" for="yesSoon">Probably within 2 weeks</label>
+        <label class="btn btn-outline-success" for="yesSoon" title="Pick if they think they will start to offer vaccines soon">Probably within 2 weeks</label>
       </div>
     </div>
 
