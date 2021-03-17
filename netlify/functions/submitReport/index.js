@@ -86,18 +86,20 @@ const handler = async (event, context, logger) => {
 
   const output = {};
 
-  // Silently dual-write to the new Django system to test it
-  // try {
-  //   await fetch("https://vaccinateca-preview.herokuapp.com/api/submitReport", {
-  //     method: "POST",
-  //     body: event.body,
-  //     headers: {
-  //       Authorization: `Bearer ${context.identityContext.token}`,
-  //     },
-  //   });
-  // } catch (err) {
-  //   logger.error("failed to dual-write to Django", err);
-  // }
+  // Start the dual-write to VIAL; it is not authoritative, so we swallow its
+  // failures.  Because of that, it may also succeed even if we return 400 or
+  // 500 due to failures in the Airtable path.
+  try {
+    await fetch("https://vial-staging.calltheshots.us/api/submitReport", {
+      method: "POST",
+      body: event.body,
+      headers: {
+        Authorization: `Bearer ${context.identityContext.token}`,
+      },
+    });
+  } catch (err) {
+    logger.error("failed to dual-write to VIAL", err);
+  }
 
   try {
     const createdReport = await base("Reports").create([{ fields: input }]);
