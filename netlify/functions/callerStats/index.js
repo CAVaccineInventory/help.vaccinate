@@ -18,20 +18,19 @@ const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission } = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
 
-const REPORTS_FIELDS_TO_LOAD = [
-  'time',
-  'Availability',
-];
+const REPORTS_FIELDS_TO_LOAD = ["time", "Availability"];
 
 const handler = async (event, context, logger) => {
   const output = {};
 
   // fetch all reports from airtable
   const sub = context.identityContext.claims.sub;
-  const stats = await base('Reports').select({
-    fields: REPORTS_FIELDS_TO_LOAD,
-    filterByFormula: `{auth0_reporter_id} = "${sub}"`
-  }).all();
+  const stats = await base("Reports")
+    .select({
+      fields: REPORTS_FIELDS_TO_LOAD,
+      filterByFormula: `{auth0_reporter_id} = "${sub}"`,
+    })
+    .all();
 
   // count them and do stats
 
@@ -39,13 +38,13 @@ const handler = async (event, context, logger) => {
   output.total = stats.length;
 
   // how many of them are today (PST)
-  const formatter = new Intl.DateTimeFormat('en-US', {
+  const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Los_Angeles",
   });
   const nowDate = formatter.format(new Date());
-  output.today = stats.filter((r) => (
-    nowDate === formatter.format(new Date(r.get('time')))
-  )).length;
+  output.today = stats.filter(
+    (r) => nowDate === formatter.format(new Date(r.get("time")))
+  ).length;
 
   /* XXX not doing these for now. Let's figure out more stats to give users later.
   // how many of them have yes tags
@@ -56,7 +55,7 @@ const handler = async (event, context, logger) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify(output)
+    body: JSON.stringify(output),
   };
 };
 

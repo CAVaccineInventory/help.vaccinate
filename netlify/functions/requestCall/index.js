@@ -1,7 +1,10 @@
 "use strict";
 
 const { loggedHandler } = require("../../lib/logger.js");
-const { requirePermission, extractRolesFromContext } = require("../../lib/auth.js");
+const {
+  requirePermission,
+  extractRolesFromContext,
+} = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
 const { logEvent } = require("../../lib/log.js");
 
@@ -52,17 +55,14 @@ const DEFAULT_VIEWS_TO_LOAD = [
   "To-call list (internal)",
 ];
 
-const INTERNAL_CC_VIEWS_TO_LOAD = [
-  "Internal Caller List"
-];
+const INTERNAL_CC_VIEWS_TO_LOAD = ["Internal Caller List"];
 
-const TRAINEE_VIEWS_TO_LOAD = [
-  "Training Call List"
-];
+const TRAINEE_VIEWS_TO_LOAD = ["Training Call List"];
 
-const ROLE_VIEW_MAP = new Map([ //List roles in decreasing priority
+const ROLE_VIEW_MAP = new Map([
+  // List roles in decreasing priority
   ["Trainee", TRAINEE_VIEWS_TO_LOAD],
-  ["CC1 callers", INTERNAL_CC_VIEWS_TO_LOAD]
+  ["CC1 callers", INTERNAL_CC_VIEWS_TO_LOAD],
 ]);
 
 // how long to lock a location after returning it before returning to
@@ -70,7 +70,6 @@ const ROLE_VIEW_MAP = new Map([ //List roles in decreasing priority
 const LOCK_MINUTES = 20;
 
 const handler = async (event, context, logger) => {
-
   // NOTE: there is a race condition here where two callers could get the same location.
   // this is no worse than the current app, though.
 
@@ -85,10 +84,12 @@ const handler = async (event, context, logger) => {
       //
       // The `escape` should help prevent people from doing anything funny.
       // All legit airtable IDs should not contain any characters.
-      const locs = await base("Locations").select({
-        filterByFormula: `RECORD_ID() = "${escape(locationOverride)}"`,
-        fields: LOCATION_FIELDS_TO_LOAD,
-      }).firstPage();
+      const locs = await base("Locations")
+        .select({
+          filterByFormula: `RECORD_ID() = "${escape(locationOverride)}"`,
+          fields: LOCATION_FIELDS_TO_LOAD,
+        })
+        .firstPage();
       if (locs.length === 0) {
         return {
           statusCode: 200,
@@ -115,7 +116,7 @@ const handler = async (event, context, logger) => {
     const roles = extractRolesFromContext(context);
 
     ROLE_VIEW_MAP.forEach((views, role) => {
-      if(roles.includes(role)) {
+      if (roles.includes(role)) {
         viewsToLoad = viewsToLoad.concat(views);
       }
     });
@@ -127,9 +128,9 @@ const handler = async (event, context, logger) => {
         const locs = await base("Locations")
           .select({
             view,
-   	    // Only fetch the first 20 results from the view
-  	    // this may result in a race condition causing multiple folks
- 	    // making the same call. but yolo
+            // Only fetch the first 20 results from the view
+            // this may result in a race condition causing multiple folks
+            // making the same call. but yolo
             maxRecords: 20,
             fields: LOCATION_FIELDS_TO_LOAD,
           })
@@ -179,7 +180,7 @@ const handler = async (event, context, logger) => {
     // use ?no_claim=1 in the URL to avoid writing the field that
     // stops others from claiming this row. This is for debugging or
     // monitoring purposes.
-    if (event.queryStringParameters.no_claim !== '1') {
+    if (event.queryStringParameters.no_claim !== "1") {
       await base("Locations").update([
         {
           id: locationToCall.id,
@@ -205,7 +206,10 @@ const handler = async (event, context, logger) => {
   }
 
   const output = Object.assign(
-    { id: locationToCall.id, debugMetadata: { _pickedView: pickedView, _locationIndex: locationIndex} },
+    {
+      id: locationToCall.id,
+      debugMetadata: { _pickedView: pickedView, _locationIndex: locationIndex },
+    },
     locationToCall.fields
   );
 
@@ -253,7 +257,9 @@ const handler = async (event, context, logger) => {
       context,
       endpoint: "requestCall",
       name: "assigned",
-      payload: JSON.stringify(Object.assign({picked_view: pickedView}, output)),
+      payload: JSON.stringify(
+        Object.assign({ picked_view: pickedView }, output)
+      ),
     });
   } catch (err) {
     logger.error("error writing to event log", err);
