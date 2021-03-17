@@ -72,7 +72,14 @@ const handler = async (event, context, logger) => {
         roles.includes(TRAINEE_ROLE_NAME) || input.is_pending_review,
     });
   } catch (err) {
-    logger.error({ err: err }, "Failed to get userinfo"); // XXX
+    logger.error({ err: err }, "Failed to get userinfo");
+    // If we don't have information on the user (auth0 outage?) it's better to
+    // flag the rows but keep going, so we don't lose the call data.
+    Object.assign(input, {
+      auth0_reporter_name: "UNKNOWN - authentication error: " + err,
+      auth0_reporter_roles: "",
+      is_pending_review: true,
+    });
   }
 
   const output = {};
