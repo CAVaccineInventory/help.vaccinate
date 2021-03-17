@@ -99,8 +99,9 @@ const handler = async (event, context, logger) => {
   // }
 
   try {
-    const result = await base("Reports").create([{ fields: input }]);
-    const resultIds = (result && result.map((r) => r.id)) || [];
+    const createdReport = await base("Reports").create([{ fields: input }]);
+
+    const resultIds = (createdReport && createdReport.map((r) => r.id)) || [];
     output.created = resultIds;
   } catch (err) {
     logger.error({ err: err }, "Failed to insert to airtable"); // XXX
@@ -135,7 +136,7 @@ const handler = async (event, context, logger) => {
       const locationId = input.Location[0];
       logger.info("non-skip, updating location id", locationId);
       // kick off location update to set force-prioritize to false.
-      const results = await base("Locations").update([
+      const updatedLocation = await base("Locations").update([
         {
           id: locationId,
           fields: {
@@ -145,7 +146,8 @@ const handler = async (event, context, logger) => {
         },
       ]);
 
-      const updatedId = results && results[0] && results[0].id;
+      const updatedId =
+        updatedLocation && updatedLocation[0] && updatedLocation[0].id;
       logger.info("updated location", updatedId);
     }
   } catch (err) {
