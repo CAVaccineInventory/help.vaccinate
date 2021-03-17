@@ -5,14 +5,14 @@ const { logBase } = require("./airtable.js");
 // reasons (eg, not losing in-flight data if airtable hiccups).
 module.exports.logEvent = ({ event, context, endpoint, payload, name }) => {
   try {
-    const auth0_reporter_id =
+    const auth0ReporterId =
       context &&
       context.identityContext &&
       context.identityContext.claims &&
       context.identityContext.claims.sub;
 
     const fields = {
-      auth0_reporter_id,
+      auth0_reporter_id: auth0ReporterId,
       endpoint,
       payload,
       event_name: name,
@@ -27,7 +27,7 @@ module.exports.logEvent = ({ event, context, endpoint, payload, name }) => {
             "EVENTLOG",
             endpoint,
             name,
-            auth0_reporter_id,
+            auth0ReporterId,
             results[0].id
           );
         } else {
