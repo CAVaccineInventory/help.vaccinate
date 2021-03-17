@@ -11,6 +11,11 @@ const Airtable = require("airtable");
 const base = Airtable.base(process.env.AIRTABLE_BASE);
 module.exports.base = base;
 
+if (process.env.AIRTABLE_DUPLICATE_BASE) {
+  const duplicateBase = Airtable.base(process.env.AIRTABLE_DUPLICATE_BASE);
+  module.exports.duplicateBase = duplicateBase;
+}
+
 // base to send log events to and api key to send them with. Defaults
 // to the same as the main base, but can be overriden (eg staging and prod).
 const logApiKey =

@@ -2,7 +2,7 @@
 
 const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
-const { base } = require("../../lib/airtable.js");
+const { base, duplicateBase } = require("../../lib/airtable.js");
 const { logEvent } = require("../../lib/log.js");
 const fetch = require("node-fetch");
 
@@ -122,6 +122,24 @@ const handler = async (event, context, logger) => {
   }
 
   const output = {};
+
+  if (duplicateBase) {
+    awaits.push(
+      new Promise(async (resolve) => {
+        try {
+          // We make "Location" not an array because we don't have the Locations
+          // table sync'd into the duplicate base; it's just a text column, there.
+          const duplicate = Object.assign({}, input);
+          duplicate.Location = duplicate.Location[0];
+          await duplicateBase("Reports").create([{ fields: duplicate }]);
+        } catch (err) {
+          logger.error("Failed to dual-write to duplicate base", err);
+          // No re-raise; this is for ease of QA and not authoritative.
+        }
+        resolve();
+      })
+    );
+  }
 
   try {
     const createdReport = await base("Reports").create([{ fields: input }]);
