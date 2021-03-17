@@ -15,17 +15,13 @@ const handler = async (event, context, logger) => {
   // note: if we wanted to be extra fancy, rather than await here we
   // could save off the promise and await it where we return.
 
-  try {
-    await logEvent({
-      event,
-      context,
-      endpoint: "submitReport",
-      name: "raw",
-      payload: event.body,
-    });
-  } catch (err) {
-    logger.error("error writing to event log", err);
-  }
+  await logEvent({
+    event,
+    context,
+    endpoint: "submitReport",
+    name: "raw",
+    payload: event.body,
+  });
 
   let input = null;
   try {
@@ -40,17 +36,13 @@ const handler = async (event, context, logger) => {
   // validation, such as it is
   if (!input.Location || !input.Availability) {
     const output = { error: "location validation failed" };
-    try {
-      await logEvent({
-        event,
-        context,
-        endpoint: "submitReport",
-        name: "err",
-        payload: JSON.stringify(output),
-      });
-    } catch (err) {
-      logger.error("error writing to event log", err);
-    }
+    await logEvent({
+      event,
+      context,
+      endpoint: "submitReport",
+      name: "err",
+      payload: JSON.stringify(output),
+    });
 
     return {
       statusCode: 400,
@@ -104,15 +96,14 @@ const handler = async (event, context, logger) => {
     const resultIds = (createdReport && createdReport.map((r) => r.id)) || [];
     output.created = resultIds;
   } catch (err) {
-    logger.error({ err: err }, "Failed to insert to airtable"); // XXX
-
-    logEvent({
+    await logEvent({
       event,
       context,
       endpoint: "submitReport",
       name: "err",
       payload: JSON.stringify({ error: err }),
     });
+    logger.error({ err: err }, "Failed to insert to airtable");
 
     return {
       statusCode: 500,
