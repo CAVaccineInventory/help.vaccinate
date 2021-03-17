@@ -82,7 +82,7 @@ const handler = async (event, context, logger) => {
     logger.error({ err: err }, "Failed to get userinfo"); // XXX
   }
 
-  let output = {};
+  const output = {};
 
   // Silently dual-write to the new Django system to test it
   // try {
