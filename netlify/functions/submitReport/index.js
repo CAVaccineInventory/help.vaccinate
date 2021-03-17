@@ -9,6 +9,16 @@ const fetch = require("node-fetch");
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
 
+class HTTPResponseError extends Error {
+  constructor(response, ...args) {
+    super(
+      `HTTP Error Response: ${response.status} ${response.statusText}`,
+      ...args
+    );
+    this.response = response;
+  }
+}
+
 const handler = async (event, context, logger) => {
   const awaits = [];
 
@@ -58,13 +68,19 @@ const handler = async (event, context, logger) => {
   awaits.push(
     new Promise(async (resolve) => {
       try {
-        await fetch("https://vial-staging.calltheshots.us/api/submitReport", {
-          method: "POST",
-          body: event.body,
-          headers: {
-            Authorization: `Bearer ${context.identityContext.token}`,
-          },
-        });
+        const response = await fetch(
+          "https://vial-staging.calltheshots.us/api/submitReport",
+          {
+            method: "POST",
+            body: event.body,
+            headers: {
+              Authorization: `Bearer ${context.identityContext.token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new HTTPResponseError(response);
+        }
       } catch (err) {
         logger.error("failed to dual-write to VIAL", err);
         // No re-raise; this is not authoritative.
