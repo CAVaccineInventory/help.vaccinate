@@ -10,23 +10,24 @@ const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
 
 const handler = async (event, context, logger) => {
-  // save off a raw report in case something goes wrong below.
-  //
-  // note: if we wanted to be extra fancy, rather than await here we
-  // could save off the promise and await it where we return.
+  const awaits = [];
 
-  await logEvent({
-    event,
-    context,
-    endpoint: "submitReport",
-    name: "raw",
-    payload: event.body,
-  });
+  // save off a raw report in case something goes wrong below.
+  awaits.push(
+    logEvent({
+      event,
+      context,
+      endpoint: "submitReport",
+      name: "raw",
+      payload: event.body,
+    })
+  );
 
   let input = null;
   try {
     input = JSON.parse(event.body);
   } catch (e) {
+    await Promise.all(awaits);
     return {
       statusCode: 400,
       body: JSON.stringify({ error: "bad json" }),
@@ -44,6 +45,7 @@ const handler = async (event, context, logger) => {
       payload: JSON.stringify(output),
     });
 
+    await Promise.all(awaits);
     return {
       statusCode: 400,
       body: JSON.stringify(output),
@@ -112,6 +114,7 @@ const handler = async (event, context, logger) => {
     });
     logger.error({ err: err }, "Failed to insert to airtable");
 
+    await Promise.all(awaits);
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -152,6 +155,7 @@ const handler = async (event, context, logger) => {
     logger.error("failed to update location on non-skip report", err);
   }
 
+  await Promise.all(awaits);
   return {
     statusCode: 200,
     body: JSON.stringify(output),
