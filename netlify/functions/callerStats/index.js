@@ -23,7 +23,7 @@ const REPORTS_FIELDS_TO_LOAD = [
   'Availability',
 ];
 
-const handler = loggedHandler(requirePermission("caller", async (event, context, logger) => {
+const handler = async (event, context, logger) => {
   const output = {};
 
   try {
@@ -66,6 +66,6 @@ const handler = loggedHandler(requirePermission("caller", async (event, context,
     statusCode: 200,
     body: JSON.stringify(output)
   };
-}));
+};
 
-exports.handler = handler;
+exports.handler = loggedHandler(requirePermission("caller", handler));
