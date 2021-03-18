@@ -26,41 +26,33 @@ const REPORTS_FIELDS_TO_LOAD = [
 const handler = async (event, context, logger) => {
   const output = {};
 
-  try {
-    // fetch all reports from airtable
-    const sub = context.identityContext.claims.sub;
-    const stats = await base('Reports').select({
-      fields: REPORTS_FIELDS_TO_LOAD,
-      filterByFormula: `{auth0_reporter_id} = "${sub}"`
-    }).all();
+  // fetch all reports from airtable
+  const sub = context.identityContext.claims.sub;
+  const stats = await base('Reports').select({
+    fields: REPORTS_FIELDS_TO_LOAD,
+    filterByFormula: `{auth0_reporter_id} = "${sub}"`
+  }).all();
 
-    // count them and do stats
+  // count them and do stats
 
-    // total number of reports i've filed
-    output.total = stats.length;
+  // total number of reports i've filed
+  output.total = stats.length;
 
-    // how many of them are today (PST)
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: "America/Los_Angeles",
-    });
-    const nowDate = formatter.format(new Date());
-    output.today = stats.filter((r) => (
-      nowDate === formatter.format(new Date(r.get('Date')))
-    )).length;
+  // how many of them are today (PST)
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: "America/Los_Angeles",
+  });
+  const nowDate = formatter.format(new Date());
+  output.today = stats.filter((r) => (
+    nowDate === formatter.format(new Date(r.get('Date')))
+  )).length;
 
-    /* XXX not doing these for now. Let's figure out more stats to give users later.
-    // how many of them have yes tags
-    output.yesses = stats.filter((r) => (
-      r.get('Availability').some((s) => s.startsWith("Yes:"))
-    )).length;
-    */
-
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({error: err.message})
-    };
-  }
+  /* XXX not doing these for now. Let's figure out more stats to give users later.
+  // how many of them have yes tags
+  output.yesses = stats.filter((r) => (
+    r.get('Availability').some((s) => s.startsWith("Yes:"))
+  )).length;
+  */
 
   return {
     statusCode: 200,

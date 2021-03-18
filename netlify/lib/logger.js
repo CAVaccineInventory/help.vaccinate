@@ -57,7 +57,10 @@ const loggedHandler = (handler) => {
     try {
       retval = await handler(event, context, logger);
     } catch (err) {
-      retval = { statusCode: 500 };
+      retval = {
+        statusCode: 500,
+        body: JSON.stringify({ error: err.message }),
+      };
       logger.error({ err: err }, "Uncaught error");
     }
     let logFunc = logger.info.bind(logger);
