@@ -45,3 +45,6 @@
 	background-color: #ffffee;
 }
 
+#toastContainer {
+	z-index: 9999;
+}
