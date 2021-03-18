@@ -19,7 +19,7 @@ const { requirePermission } = require("../../lib/auth.js");
 const { base } = require("../../lib/airtable.js");
 
 const REPORTS_FIELDS_TO_LOAD = [
-  'Date',
+  'time',
   'Availability',
 ];
 
@@ -44,7 +44,7 @@ const handler = async (event, context, logger) => {
   });
   const nowDate = formatter.format(new Date());
   output.today = stats.filter((r) => (
-    nowDate === formatter.format(new Date(r.get('Date')))
+    nowDate === formatter.format(new Date(r.get('time')))
   )).length;
 
   /* XXX not doing these for now. Let's figure out more stats to give users later.
