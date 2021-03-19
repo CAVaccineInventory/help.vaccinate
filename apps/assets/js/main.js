@@ -144,7 +144,7 @@ const requestCall = async (id) => {
     currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   }
   const user = await auth0.getUser();
-  userRoles = user['https://help.vaccinateca.com/roles'];
+  userRoles = user["https://help.vaccinateca.com/roles"];
   if (currentLocation.error) {
     showErrorModal(
       "Error fetching a call",
@@ -448,13 +448,15 @@ const submitCallReport = async () => {
 
 // If the caller is in the liveops group we want them to dial through the liveops dialer, not ours
 const liveopsDial = (event) => {
-	var button =  document.getElementById('location-phone-url');
-	var num = button?.getAttribute('data-phone-number');
-	num = num.replace(/[^\d]/g, '');
-        button.target='scratch-frame';
-	button.href = "https://app-scl.five9.com/appsvcs/rs/svc/orgs/131050/interactions/click_to_dial?number="+num+"&campaignId=VaccinateCA&contactId=&dialImmediately=false";
+  const button = document.getElementById("location-phone-url");
+  let num = button?.getAttribute("data-phone-number");
+  num = num.replace(/[^\d]/g, "");
+  button.target = "scratch-frame";
+  button.href =
+    "https://app-scl.five9.com/appsvcs/rs/svc/orgs/131050/interactions/click_to_dial?number=" +
+    num +
+    "&campaignId=VaccinateCA&contactId=&dialImmediately=false";
 };
-
 
 const fillCallTemplate = (data) => {
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
@@ -482,13 +484,12 @@ const fillCallTemplate = (data) => {
     showElement("#requestAddress");
   }
 
-
-  fillTemplateIntoDom(youAreCallingTemplate, "#youAreCalling", { 
+  fillTemplateIntoDom(youAreCallingTemplate, "#youAreCalling", {
     locationName: data.Name,
     locationAddress: data.Address || "No address information available",
     countyName: data.County,
     countyURL: data["County vaccine info URL"],
-});
+  });
 
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
@@ -541,8 +542,7 @@ const activateCallTemplate = () => {
 
   if (userRoles.includes("CC: Liveops")) {
     bindClick("#location-phone-url", liveopsDial);
-  } 
-
+  }
 
   // don't show "on hold for more than 4 minutes" until 4 min have elapsed
   const el = document.querySelector("#longHold");

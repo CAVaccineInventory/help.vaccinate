@@ -6,7 +6,7 @@ layout: base.html
 <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="#"> <img src="/assets/img/logo.png" alt="VaccinateCA logo" height="24" /></a>
-    <div id="youAreCalling"></div>	
+    <div id="youAreCalling"></div>
     <div class="d-flex" id="loggedInAs"></div>
   </div>
 </nav>
@@ -22,21 +22,28 @@ layout: base.html
           <div id="locationInfo"></div>
           <div class="hidden" id="latestReport"></div>
           <div id="countyInfo"></div>
-	    <div class="h4 highlevelStep">1. Make the call</div>
+          <div class="h4 highlevelStep">1. Make the call</div>
           <div id="dialer">
             <div id="autodial-wrapper" class="p-2 row">
-           	<div id="cta" class="call-to-action col "></div>
+              <div id="cta" class="call-to-action col"></div>
               <div class="form-check col">
                 <input class="form-check-input" type="checkbox" value="" id="autodial" />
-                <label class="form-check-label small text-secondary" for="autodial" title="Dial the phone when the page loads, if your browser supports it">
-                  Instant calling 
+                <label
+                  class="form-check-label small text-secondary"
+                  for="autodial"
+                  title="Dial the phone when the page loads, if your browser supports it"
+                >
+                  Instant calling
                 </label>
               </div>
             </div>
-	    <div class="instructions small muted">If it appears they're closed for the night or weekend, don't call; just click a "closed" button below.</div>
+            <div class="instructions small muted"
+              >If it appears they're closed for the night or weekend, don't call; just click a "closed" button
+              below.</div
+            >
           </div>
-		
-	    <div class="h4 highlevelStep">2. Get connected</div>
+
+          <div class="h4 highlevelStep">2. Get connected</div>
           <div id="dialResult"></div>
           <div id="affiliationNotes"></div>
           <div class="afterDialInstructions small">
@@ -71,14 +78,19 @@ layout: base.html
     </div>
   </div>
 </div>
-<a href="#" class="position-fixed bottom-0 start-0 p-2 bg-body" id="whatsNew" data-bs-toggle="modal" data-bs-target="#changelogModal">What's new?</a>
-
+<a
+  href="#"
+  class="position-fixed bottom-0 start-0 p-2 bg-body"
+  id="whatsNew"
+  data-bs-toggle="modal"
+  data-bs-target="#changelogModal"
+  >What's new?</a
+>
 
 <div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
 <div id="applicationError"></div>
 <script src="/assets/js/scooby.js"></script>
 <iframe name="scratch-frame" class="hidden"></iframe>
-
 
 <!-- Modal -->
 <div class="modal fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel" aria-hidden="true">
@@ -89,34 +101,32 @@ layout: base.html
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-<div class="changelog">
-<dl>
-<dt>March 19, 2021</dt>
-<dd>
-<ul>
-<li>Fixed call tree and appointment url for Vons</li>
-</ul>
-</dd>
-<dt>March 17, 2021
-</dt>
-<dd>
-<ul>
-<li>"Undo" is no longer hidden by the title bar</li>
-</ul>
-</dd>
-<dt>March 16, 2021
-</dt>
-<dd>
-<ul>
-<li>Old <b>Notes</b> are no longer automatically copied into new reports</li>
-<li>Name of location you are calling moved to the header</li>
-<li>Header is now sticky. (It doesn't scroll off the screen)</li>
-<li>Address and dial instructions tightened up</li>
-<li>Call disposition buttons lifted above phone tree instructions</li>
-</ul>
-</dd>
-
-</div>
+        <div class="changelog">
+          <dl>
+            <dt>March 19, 2021</dt>
+            <dd>
+              <ul>
+                <li>Fixed call tree and appointment url for Vons</li>
+              </ul>
+            </dd>
+            <dt>March 17, 2021 </dt>
+            <dd>
+              <ul>
+                <li>"Undo" is no longer hidden by the title bar</li>
+              </ul>
+            </dd>
+            <dt>March 16, 2021 </dt>
+            <dd>
+              <ul>
+                <li>Old <b>Notes</b> are no longer automatically copied into new reports</li>
+                <li>Name of location you are calling moved to the header</li>
+                <li>Header is now sticky. (It doesn't scroll off the screen)</li>
+                <li>Address and dial instructions tightened up</li>
+                <li>Call disposition buttons lifted above phone tree instructions</li>
+              </ul>
+            </dd>
+          </dl>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -124,5 +134,3 @@ layout: base.html
     </div>
   </div>
 </div>
-
-
