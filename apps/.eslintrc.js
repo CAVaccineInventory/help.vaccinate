@@ -1,14 +1,14 @@
 module.exports = {
-  "parserOptions": {
-    "ecmaVersion": 12,
-    "sourceType": "module",
+  parserOptions: {
+    ecmaVersion: 12,
+    sourceType: "module",
   },
-  "overrides": [
+  overrides: [
     {
-      "files": ["*.js"], 
-      "rules": {
-        "es/no-optional-chaining": "off"  // These internal tools are targeting current modern browsers. I want optional chaining
-      }
-    }
-   ]
+      files: ["*.js"],
+      rules: {
+        "es/no-optional-chaining": "off", // These internal tools are targeting current modern browsers. I want optional chaining
+      },
+    },
+  ],
 };
