@@ -203,11 +203,17 @@ const initScooby = () => {
     showElement("#nextCallPrompt");
     hideElement("#callerTool");
     // this shouldn't be here, but it only needs to get run once. So maybe it's ok?
-    document.querySelector("#autodial")?.addEventListener("change", function () {
-      if (this.checked) {
-        document.querySelector("#location-phone-url")?.click();
-      }
-    });
+    const autoDial = document.querySelector("#autodial");
+    if (autoDial) {
+      autoDial.addEventListener(
+        "change",
+        function () {
+          if (this.checked) {
+            document.querySelector("#location-phone-url")?.click();
+          }
+        }.bind(autoDial)
+      );
+    }
   });
 };
 
