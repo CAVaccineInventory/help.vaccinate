@@ -69,15 +69,15 @@ const initAuth0 = async (cb) => {
       client_id: AUTH0_CLIENTID,
       audience: AUTH0_AUDIENCE,
       redirect_uri: window.location.href,
-    })
+    });
 
     console.log("Auth0 setup complete");
 
     const user = await auth0.getUser();
     updateLogin(user);
     cb();
-  } catch(err) {
-      console.error("XXX", err);
+  } catch (err) {
+    console.error("XXX", err);
   }
 };
 
@@ -209,14 +209,11 @@ const initScooby = () => {
     hideElement("#callerTool");
 
     const autoDial = document.querySelector("#autodial");
-    autoDial?.addEventListener(
-      "change",
-      () => {
-        if (autoDial?.checked) {
-          document.querySelector("#location-phone-url")?.click();
-        }
+    autoDial?.addEventListener("change", () => {
+      if (autoDial?.checked) {
+        document.querySelector("#location-phone-url")?.click();
       }
-    );
+    });
   });
 };
 
