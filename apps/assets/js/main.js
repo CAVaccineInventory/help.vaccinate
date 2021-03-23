@@ -29,6 +29,7 @@ import toastTemplate from "./templates/toast.handlebars";
 import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
 import errorModalTemplate from "./templates/errorModal.handlebars";
+import callerStatsTemplate from "./templates/callerStats.handlebars";
 
 const MINUTE = 60 * 1000;
 const HOUR = MINUTE * 60;
@@ -49,13 +50,32 @@ let previousLocation = null;
 let previousCallScriptDom = null;
 
 let providerSchedulingUrl = null;
+let callerStats = null;
+
+const initCallerStats = async () => {
+  if (!callerStats) {
+    callerStats = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
+    initCallerStatsTemplate();
+  }
+}
+
+const initCallerStatsTemplate = () => {
+  fillTemplateIntoDom(callerStatsTemplate, "#callerStats", {
+    displayCallerStats: !!callerStats,
+    callsToday: callerStats?.today,
+    callsTotal: callerStats?.total,
+  });
+}
 
 const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
       email: user.email,
     });
-    bindClick("#logoutButton", doLogout);
+    bindClick("#logoutButton", doLogout)
+
+    // earliest point at which the user is guaranteed logged in, prefetch caller stats
+    initCallerStats();
   } else {
     fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
     bindClick("#loginButton", doLogin);
@@ -63,6 +83,7 @@ const updateLogin = (user) => {
 };
 
 const initAuth0 = async (cb) => {
+  console.log("INIT AUTH 0");
   try {
     auth0 = await createAuth0Client({
       domain: AUTH0_DOMAIN,
@@ -82,7 +103,6 @@ const initAuth0 = async (cb) => {
 };
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
-  showLoadingScreen();
   if (!method) {
     method = "POST";
   }
@@ -97,7 +117,6 @@ const fetchJsonFromEndpoint = async (endpoint, method, body) => {
     },
   });
   const data = await result.json();
-  hideLoadingScreen();
   return data;
 };
 
@@ -143,11 +162,13 @@ const authOrLoadAndFillCall = async () => {
 };
 
 const requestCall = async (id) => {
+  showLoadingScreen();
   if (id) {
     currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall?location_id=" + id);
   } else {
     currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   }
+  hideLoadingScreen();
   const user = await auth0.getUser();
   userRoles = user["https://help.vaccinateca.com/roles"];
   if (currentLocation.error) {
@@ -207,7 +228,6 @@ const initScooby = () => {
     bindClick("#requestCallButton", authOrLoadAndFillCall);
     showElement("#nextCallPrompt");
     hideElement("#callerTool");
-
     const autoDial = document.querySelector("#autodial");
     autoDial?.addEventListener("change", () => {
       if (autoDial?.checked) {
@@ -422,7 +442,9 @@ const submitCallMonday = () => {
 };
 
 const submitCallReport = async () => {
+  showLoadingScreen();
   const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(currentReport));
+  hideLoadingScreen();
   if (data.error) {
     showErrorModal(
       "Error submitting your report",
@@ -435,6 +457,10 @@ const submitCallReport = async () => {
     const callId = data.created;
 
     if (callId) {
+      callerStats = {
+        today: callerStats ? callerStats.today + 1 : 1,
+        total: callerStats ? callerStats.total + 1 : 1,
+      }
       showToast(currentLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
 
       previousLocation = currentLocation;
@@ -523,6 +549,7 @@ const fillCallTemplate = (data) => {
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
+  initCallerStatsTemplate();
 };
 
 const activateCallTemplate = () => {
