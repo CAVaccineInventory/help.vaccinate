@@ -57,7 +57,7 @@ const initCallerStats = async () => {
     callerStats = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
     initCallerStatsTemplate();
   }
-}
+};
 
 const initCallerStatsTemplate = () => {
   fillTemplateIntoDom(callerStatsTemplate, "#callerStats", {
@@ -65,14 +65,14 @@ const initCallerStatsTemplate = () => {
     callsToday: callerStats?.today,
     callsTotal: callerStats?.total,
   });
-}
+};
 
 const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
       email: user.email,
     });
-    bindClick("#logoutButton", doLogout)
+    bindClick("#logoutButton", doLogout);
 
     // earliest point at which the user is guaranteed logged in, prefetch caller stats
     initCallerStats();
@@ -83,7 +83,6 @@ const updateLogin = (user) => {
 };
 
 const initAuth0 = async (cb) => {
-  console.log("INIT AUTH 0");
   try {
     auth0 = await createAuth0Client({
       domain: AUTH0_DOMAIN,
@@ -460,7 +459,7 @@ const submitCallReport = async () => {
       callerStats = {
         today: callerStats ? callerStats.today + 1 : 1,
         total: callerStats ? callerStats.total + 1 : 1,
-      }
+      };
       showToast(currentLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
 
       previousLocation = currentLocation;
