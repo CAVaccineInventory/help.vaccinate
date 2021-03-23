@@ -3,12 +3,6 @@
   padding-bottom: 0.25em;
 }
 
-.instructions {
-}
-
-#dialer {
-}
-
 .surveyQuestion {
   margin-bottom: 1.5em;
   padding-left: 0.75em;
@@ -32,9 +26,6 @@
   display: none;
 }
 
-#vaccinatingPublicScript {
-}
-
 #reallyVaccinatingEveryone {
   margin-top: 1em;
 }
@@ -45,4 +36,8 @@
 
 #toastContainer {
   z-index: 9999;
+}
+
+.navbar-main-content {
+  text-align: center;
 }
