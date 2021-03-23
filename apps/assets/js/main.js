@@ -53,10 +53,8 @@ let providerSchedulingUrl = null;
 let callerStats = null;
 
 const initCallerStats = async () => {
-  if (!callerStats) {
-    callerStats = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
-    initCallerStatsTemplate();
-  }
+  callerStats = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
+  initCallerStatsTemplate();
 };
 
 const initCallerStatsTemplate = () => {
