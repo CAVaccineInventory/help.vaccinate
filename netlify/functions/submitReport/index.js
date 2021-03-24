@@ -127,10 +127,20 @@ const handler = async (event, context, logger) => {
     awaits.push(
       new Promise(async (resolve) => {
         try {
-          // We make "Location" not an array because we don't have the Locations
-          // table sync'd into the duplicate base; it's just a text column, there.
           const duplicate = Object.assign({}, input);
-          duplicate.Location = duplicate.Location[0];
+          const lookupLocationId = input.Location[0];
+          const locs = await duplicateBase("Locations")
+            .select({
+              maxRecords: 1,
+              fields: ["Location ID"],
+              filterByFormula: "{Location ID} = '" + lookupLocationId + "'",
+            })
+            .firstPage();
+          if (locs.length > 0) {
+            duplicate.Location = [locs[0].id];
+          } else {
+            duplicate.Location = [];
+          }
           await duplicateBase("Reports").create([{ fields: duplicate }]);
         } catch (err) {
           logger.error("Failed to dual-write to duplicate base", err);
