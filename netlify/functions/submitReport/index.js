@@ -170,6 +170,11 @@ const handler = async (event, context, logger) => {
           } else {
             duplicate.Location = [];
           }
+          const result = await creation;
+          if (result.statusCode == 200) {
+            const created = JSON.parse(result.body).created;
+            duplicate["Original report ID"] = created[0];
+          }
           await duplicateBase("Reports").create([{ fields: duplicate }]);
         } catch (err) {
           logger.error("Failed to dual-write to duplicate base", err);
