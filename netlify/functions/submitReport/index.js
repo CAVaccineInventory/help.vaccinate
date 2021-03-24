@@ -121,16 +121,60 @@ const handler = async (event, context, logger) => {
     });
   }
 
-  const output = {};
+  const creation = new Promise(async (resolve) => {
+    try {
+      const createdReport = await base("Reports").create([{ fields: input }]);
+
+      const resultIds = (createdReport && createdReport.map((r) => r.id)) || [];
+      resolve({
+        statusCode: 200,
+        body: JSON.stringify({
+          created: resultIds,
+        }),
+      });
+    } catch (err) {
+      await logEvent({
+        event,
+        context,
+        endpoint: "submitReport",
+        name: "err",
+        payload: JSON.stringify({ error: err }),
+      });
+      logger.error({ err: err }, "Failed to insert to airtable");
+      resolve({
+        statusCode: 500,
+        body: JSON.stringify({
+          error: "airtable insert failed",
+          message: err.message,
+        }),
+      });
+    }
+  });
+  awaits.push(creation);
 
   if (duplicateBase) {
     awaits.push(
       new Promise(async (resolve) => {
         try {
-          // We make "Location" not an array because we don't have the Locations
-          // table sync'd into the duplicate base; it's just a text column, there.
           const duplicate = Object.assign({}, input);
-          duplicate.Location = duplicate.Location[0];
+          const lookupLocationId = input.Location[0];
+          const locs = await duplicateBase("Locations")
+            .select({
+              maxRecords: 1,
+              fields: ["Location ID"],
+              filterByFormula: "{Location ID} = '" + lookupLocationId + "'",
+            })
+            .firstPage();
+          if (locs.length > 0) {
+            duplicate.Location = [locs[0].id];
+          } else {
+            duplicate.Location = [];
+          }
+          const result = await creation;
+          if (result.statusCode == 200) {
+            const created = JSON.parse(result.body).created;
+            duplicate["Original report ID"] = created[0];
+          }
           await duplicateBase("Reports").create([{ fields: duplicate }]);
         } catch (err) {
           logger.error("Failed to dual-write to duplicate base", err);
@@ -141,29 +185,10 @@ const handler = async (event, context, logger) => {
     );
   }
 
-  try {
-    const createdReport = await base("Reports").create([{ fields: input }]);
-
-    const resultIds = (createdReport && createdReport.map((r) => r.id)) || [];
-    output.created = resultIds;
-  } catch (err) {
-    await logEvent({
-      event,
-      context,
-      endpoint: "submitReport",
-      name: "err",
-      payload: JSON.stringify({ error: err }),
-    });
-    logger.error({ err: err }, "Failed to insert to airtable");
-
+  const result = await creation;
+  if (creation.statusCode != 200) {
     await Promise.all(awaits);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: "airtable insert failed",
-        message: err.message,
-      }),
-    };
+    return result;
   }
 
   // update Locations to de-force-prioritize a call
@@ -198,10 +223,7 @@ const handler = async (event, context, logger) => {
   }
 
   await Promise.all(awaits);
-  return {
-    statusCode: 200,
-    body: JSON.stringify(output),
-  };
+  return result;
 };
 
 exports.handler = loggedHandler(requirePermission("caller", handler));
