@@ -121,7 +121,36 @@ const handler = async (event, context, logger) => {
     });
   }
 
-  const output = {};
+  const creation = new Promise(async (resolve) => {
+    try {
+      const createdReport = await base("Reports").create([{ fields: input }]);
+
+      const resultIds = (createdReport && createdReport.map((r) => r.id)) || [];
+      resolve({
+        statusCode: 200,
+        body: JSON.stringify({
+          created: resultIds,
+        }),
+      });
+    } catch (err) {
+      await logEvent({
+        event,
+        context,
+        endpoint: "submitReport",
+        name: "err",
+        payload: JSON.stringify({ error: err }),
+      });
+      logger.error({ err: err }, "Failed to insert to airtable");
+      resolve({
+        statusCode: 500,
+        body: JSON.stringify({
+          error: "airtable insert failed",
+          message: err.message,
+        }),
+      });
+    }
+  });
+  awaits.push(creation);
 
   if (duplicateBase) {
     awaits.push(
@@ -151,29 +180,10 @@ const handler = async (event, context, logger) => {
     );
   }
 
-  try {
-    const createdReport = await base("Reports").create([{ fields: input }]);
-
-    const resultIds = (createdReport && createdReport.map((r) => r.id)) || [];
-    output.created = resultIds;
-  } catch (err) {
-    await logEvent({
-      event,
-      context,
-      endpoint: "submitReport",
-      name: "err",
-      payload: JSON.stringify({ error: err }),
-    });
-    logger.error({ err: err }, "Failed to insert to airtable");
-
+  const result = await creation;
+  if (creation.statusCode != 200) {
     await Promise.all(awaits);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: "airtable insert failed",
-        message: err.message,
-      }),
-    };
+    return result;
   }
 
   // update Locations to de-force-prioritize a call
@@ -208,10 +218,7 @@ const handler = async (event, context, logger) => {
   }
 
   await Promise.all(awaits);
-  return {
-    statusCode: 200,
-    body: JSON.stringify(output),
-  };
+  return result;
 };
 
 exports.handler = loggedHandler(requirePermission("caller", handler));
