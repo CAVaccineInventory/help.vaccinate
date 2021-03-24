@@ -1,14 +1,11 @@
 module.exports = {
-  "printWidth": 120, 
-  "overrides": [
+  printWidth: 120,
+  overrides: [
     {
-      "files": ["*.html", "assets/js/templates/*.handlebars"],
-      "options": {
-        "htmlWhitespaceSensitivity": "strict"
-      }
-    }
-  ]
-
-
+      files: ["*.html", "assets/js/templates/*.handlebars"],
+      options: {
+        htmlWhitespaceSensitivity: "strict",
+      },
+    },
+  ],
 };
-

@@ -6,7 +6,10 @@ layout: base.html
 <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="#"> <img src="/assets/img/logo.png" alt="VaccinateCA logo" height="24" /></a>
-    <div id="youAreCalling"></div>
+    <div class="navbar-main-content mb-1">
+      <div id="youAreCalling"></div>
+      <div id="callerStats"></div>
+    </div>
     <div class="d-flex" id="loggedInAs"></div>
   </div>
 </nav>
@@ -26,7 +29,7 @@ layout: base.html
           <div id="dialer">
             <div id="autodial-wrapper" class="p-2 row">
               <div id="cta" class="call-to-action col"></div>
-              <div class="form-check col">
+              <div class="form-check col align-self-center">
                 <input class="form-check-input" type="checkbox" value="" id="autodial" />
                 <label
                   class="form-check-label small text-secondary"
@@ -37,7 +40,7 @@ layout: base.html
                 </label>
               </div>
             </div>
-            <div class="instructions small muted"
+            <div class="instructions small muted ms-2"
               >If it appears they're closed for the night or weekend, don't call; just click a "closed" button
               below.</div
             >
@@ -45,8 +48,8 @@ layout: base.html
 
           <div class="h4 highlevelStep">2. Get connected</div>
           <div id="dialResult"></div>
-          <div id="affiliationNotes"></div>
-          <div class="afterDialInstructions small">
+          <div id="affiliationNotes" class="ms-2"></div>
+          <div class="afterDialInstructions small ms-2">
             <p>Your goal is to talk to a human.</p>
 
             <p>

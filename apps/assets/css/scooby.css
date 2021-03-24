@@ -1,50 +1,43 @@
-
 .highlevelStep {
-	padding-top: 0.5em;
-	padding-bottom;0.25em;
-}
-
-.instructions {
-}
-
-#dialer {
+  padding-top: 0.5em;
+  padding-bottom: 0.25em;
 }
 
 .surveyQuestion {
-	margin-bottom: 1.5em;
- 	padding-left: 0.75em;
-	padding-bottom: 0.25em;
-	border-left: 1em solid #ccc;
+  margin-bottom: 1.5em;
+  padding-left: 0.75em;
+  padding-bottom: 0.25em;
+  border-left: 1em solid #ccc;
 }
 
 .yousay::before {
-	content: '“';
+  content: "“";
 }
 .yousay::after {
-	content: '”';
+  content: "”";
 }
 
 .yousay {
-	font-weight: bold;
-	padding-bottom: 0.5em;	
+  font-weight: bold;
+  padding-bottom: 0.5em;
 }
 
 .hidden {
-	display: none;
-
-}
-
-#vaccinatingPublicScript {
+  display: none;
 }
 
 #reallyVaccinatingEveryone {
-	margin-top: 1em;
+  margin-top: 1em;
 }
 
 #callScriptPrivateNotes {
-	background-color: #ffffee;
+  background-color: #ffffee;
 }
 
 #toastContainer {
-	z-index: 9999;
+  z-index: 9999;
+}
+
+.navbar-main-content {
+  text-align: center;
 }

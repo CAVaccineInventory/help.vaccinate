@@ -29,6 +29,15 @@ import toastTemplate from "./templates/toast.handlebars";
 import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
 import errorModalTemplate from "./templates/errorModal.handlebars";
+import callerStatsTemplate from "./templates/callerStats.handlebars";
+
+const MINUTE = 60 * 1000;
+const HOUR = MINUTE * 60;
+
+const AVAIL_BAD_CONTACT_INFO = "No: incorrect contact information";
+const AVAIL_PERMANENTLY_CLOSED = "No: location permanently closed";
+const AVAIL_SKIP = "Skip: call back later";
+const AVAIL_SECOND_DOSE_ONLY = "Scheduling second dose only";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
@@ -41,6 +50,20 @@ let previousLocation = null;
 let previousCallScriptDom = null;
 
 let providerSchedulingUrl = null;
+let callerStats = null;
+
+const initCallerStats = async () => {
+  callerStats = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
+  initCallerStatsTemplate();
+};
+
+const initCallerStatsTemplate = () => {
+  fillTemplateIntoDom(callerStatsTemplate, "#callerStats", {
+    displayCallerStats: !!callerStats,
+    callsToday: callerStats?.today,
+    callsTotal: callerStats?.total,
+  });
+};
 
 const updateLogin = (user) => {
   if (user && user.email) {
@@ -48,35 +71,35 @@ const updateLogin = (user) => {
       email: user.email,
     });
     bindClick("#logoutButton", doLogout);
+
+    // earliest point at which the user is guaranteed logged in, prefetch caller stats
+    initCallerStats();
   } else {
     fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
     bindClick("#loginButton", doLogin);
   }
 };
 
-const initAuth0 = (cb) => {
-  createAuth0Client({
-    domain: AUTH0_DOMAIN,
-    client_id: AUTH0_CLIENTID,
-    audience: AUTH0_AUDIENCE,
-    redirect_uri: window.location.href,
-  })
-    .then((a0) => {
-      console.log("Auth0 setup complete");
-      auth0 = a0;
-
-      auth0.getUser().then((user) => {
-        updateLogin(user);
-        cb();
-      });
-    })
-    .catch((err) => {
-      console.log("XXX", err);
+const initAuth0 = async (cb) => {
+  try {
+    auth0 = await createAuth0Client({
+      domain: AUTH0_DOMAIN,
+      client_id: AUTH0_CLIENTID,
+      audience: AUTH0_AUDIENCE,
+      redirect_uri: window.location.href,
     });
+
+    console.log("Auth0 setup complete");
+
+    const user = await auth0.getUser();
+    updateLogin(user);
+    cb();
+  } catch (err) {
+    console.error("XXX", err);
+  }
 };
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
-  showLoadingScreen();
   if (!method) {
     method = "POST";
   }
@@ -91,7 +114,6 @@ const fetchJsonFromEndpoint = async (endpoint, method, body) => {
     },
   });
   const data = await result.json();
-  hideLoadingScreen();
   return data;
 };
 
@@ -106,7 +128,6 @@ const doLogout = () => {
 const handleAuth0Login = async () => {
   if (auth0) {
     await auth0.handleRedirectCallback();
-    // XXX maybe remove url paramaters now?
     const user = await auth0.getUser();
     if (user) {
       updateLogin(user);
@@ -138,11 +159,13 @@ const authOrLoadAndFillCall = async () => {
 };
 
 const requestCall = async (id) => {
+  showLoadingScreen();
   if (id) {
     currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall?location_id=" + id);
   } else {
     currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
   }
+  hideLoadingScreen();
   const user = await auth0.getUser();
   userRoles = user["https://help.vaccinateca.com/roles"];
   if (currentLocation.error) {
@@ -195,16 +218,16 @@ const showScriptForLocation = (place) => {
 
 const initScooby = () => {
   showLoadingScreen();
-  initAuth0(function () {
+  initAuth0(() => {
     handleAuth0Login();
     hideLoadingScreen();
     fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
     bindClick("#requestCallButton", authOrLoadAndFillCall);
     showElement("#nextCallPrompt");
     hideElement("#callerTool");
-    // this shouldn't be here, but it only needs to get run once. So maybe it's ok?
-    document.querySelector("#autodial")?.addEventListener("change", function () {
-      if (this.checked) {
+    const autoDial = document.querySelector("#autodial");
+    autoDial?.addEventListener("change", () => {
+      if (autoDial?.checked) {
         document.querySelector("#location-phone-url")?.click();
       }
     });
@@ -232,7 +255,7 @@ const constructReportFromDom = () => {
       console.log("No top level answer selected ");
   }
 
-  if (isNo === true) {
+  if (isNo) {
     const noReason = document.querySelector("[name=noReasonSelect]:checked")?.value;
     switch (noReason) {
       case "never":
@@ -255,7 +278,7 @@ const constructReportFromDom = () => {
     }
   }
 
-  if (isYes === true) {
+  if (isYes) {
     const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
     if (minAgeAnswer) {
       answers.push("Yes: vaccinating " + minAgeAnswer + "+");
@@ -350,62 +373,54 @@ const constructReportFromDom = () => {
   console.log(currentReport);
 };
 
-const saveCallReport = async () => {
+const saveCallReport = () => {
   constructReportFromDom();
   submitCallReport();
 };
 
-const AVAIL_BAD_CONTACT_INFO = "No: incorrect contact information";
-const AVAIL_PERMANENTLY_CLOSED = "No: location permanently closed";
-const AVAIL_SKIP = "Skip: call back later";
-const AVAIL_SECOND_DOSE_ONLY = "Scheduling second dose only";
-
-const submitBadContactInfo = async () => {
+const submitBadContactInfo = () => {
   submitWithAvail(AVAIL_BAD_CONTACT_INFO);
 };
 
-const submitPermanentlyClosed = async () => {
+const submitPermanentlyClosed = () => {
   submitWithAvail(AVAIL_PERMANENTLY_CLOSED);
 };
 
-const submitWithAvail = async (avail) => {
+const submitWithAvail = (avail) => {
   constructReportFromDom();
   currentReport["Availability"] = [avail];
   submitCallReport();
 };
 
-const submitSkipUntil = async (when) => {
+const submitSkipUntil = (when) => {
   constructReportFromDom();
   currentReport["Do not call until"] = when.toISOString();
   currentReport["Availability"] = [AVAIL_SKIP];
   submitCallReport();
 };
 
-const MINUTE = 60 * 1000;
-const HOUR = MINUTE * 60;
-
 // busy = 15 min delay
-const submitBusy = async () => {
+const submitBusy = () => {
   const when = new Date();
   when.setTime(when.getTime() + 15 * MINUTE);
   submitSkipUntil(when);
 };
 
 // no answer = an hour delay - totally arbitrary choice
-const submitNoAnswer = async () => {
+const submitNoAnswer = () => {
   const when = new Date();
   when.setTime(when.getTime() + 1 * HOUR);
   submitSkipUntil(when);
 };
 
 // long hold = an hour delay - totally arbitrary choice
-const submitLongHold = async () => {
+const submitLongHold = () => {
   const when = new Date();
   when.setTime(when.getTime() + 1 * HOUR);
   submitSkipUntil(when);
 };
 
-const submitCallTomorrow = async () => {
+const submitCallTomorrow = () => {
   const when = new Date();
   // Advance the clock 24 hours to get to tomorrow, then bounce back to 8am localtime.
   // / TODO this shouldn't be in localtime
@@ -415,7 +430,7 @@ const submitCallTomorrow = async () => {
   submitSkipUntil(when);
 };
 
-const submitCallMonday = async () => {
+const submitCallMonday = () => {
   const when = new Date();
   when.setDate(when.getDate() + ((1 + 7 - when.getDay()) % 7));
   when.setHours(8);
@@ -424,7 +439,9 @@ const submitCallMonday = async () => {
 };
 
 const submitCallReport = async () => {
+  showLoadingScreen();
   const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(currentReport));
+  hideLoadingScreen();
   if (data.error) {
     showErrorModal(
       "Error submitting your report",
@@ -437,6 +454,10 @@ const submitCallReport = async () => {
     const callId = data.created;
 
     if (callId) {
+      callerStats = {
+        today: callerStats ? callerStats.today + 1 : 1,
+        total: callerStats ? callerStats.total + 1 : 1,
+      };
       showToast(currentLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
 
       previousLocation = currentLocation;
@@ -473,14 +494,14 @@ const fillCallTemplate = (data) => {
     });
   }
 
-  if (affiliation && affiliation !== "") {
+  if (affiliation) {
     const providerDiv = document.querySelector("#affiliationNotes .provider." + affiliation);
     if (providerDiv !== null) {
       providerDiv.classList.remove("hidden");
       providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url");
     }
   }
-  if (data.Address === "" || !data.Address) {
+  if (!data.Address) {
     showElement("#requestAddress");
   }
 
@@ -525,6 +546,7 @@ const fillCallTemplate = (data) => {
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
+  initCallerStatsTemplate();
 };
 
 const activateCallTemplate = () => {
@@ -548,9 +570,9 @@ const activateCallTemplate = () => {
   const el = document.querySelector("#longHold");
   if (el !== null) {
     el.style.visibility = "hidden";
-    setTimeout(function () {
+    setTimeout(() => {
       el.style.visibility = "visible";
-    }, 240000);
+    }, 4 * MINUTE);
   }
   if (document.querySelector("#autodial")?.checked) {
     document.querySelector("#location-phone-url")?.click();
@@ -566,17 +588,13 @@ const showToast = (title, body, buttonLabel, clickHandler) => {
   });
 
   bindClick("#onlyToastButton", clickHandler);
-  const t = new bootstrap.Toast(document.querySelector("#onlyToast"), {
+  new bootstrap.Toast(document.querySelector("#onlyToast"), {
     autohide: true,
-  });
-  t.show();
+  }).show();
 };
 
 const hideToast = () => {
-  const el = document.querySelector("#onlyToast");
-  if (el) {
-    el.classList.add("hide");
-  }
+  document.querySelector("#onlyToast")?.classList.add("hide");
 };
 
 export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint, handleAuth0Login, initAuth0 };
