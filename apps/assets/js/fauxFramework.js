@@ -29,34 +29,44 @@ const showElement = (selector) => {
   document.querySelector(selector)?.classList.remove("hidden");
 };
 
-const enableInputDataBinding =() => {
+const enableInputDataBinding = () => {
   // Automatically makes clicking any input with the data-show-also and data-hide-on-select attribute automatically toggle the associated element.
 
-  // init for radio inputs. Because radio inputs do not fire events on un-check, we find all radio inputs in a container and check against each on every change event.
-  document.querySelectorAll("[data-radio-toggle-container]").forEach(container => {
-    const elements = container.querySelectorAll("input[type=radio]");
-    elements.forEach(element => {
-      element.addEventListener('change', () => {
-        elements.forEach(e => {
+  // Init for radio inputs. Because radio inputs do not fire events on un-check, we find all radio inputs with the same name and group them together.
+  // On check of any radio input in the group, check the state of each radio input.
+  const radios = Array.from(
+    document.querySelectorAll("input[data-show-also][type=radio], input[data-hide-on-select][type=radio]")
+  );
+  const names = radios.reduce((set, radio) => {
+    set.add(radio.getAttribute("name"));
+    return set;
+  }, new Set());
+
+  names.forEach((name) => {
+    const relatedRadios = document.querySelectorAll(`input[name=${name}][type=radio]`);
+    relatedRadios.forEach((element) => {
+      element.addEventListener("change", () => {
+        relatedRadios.forEach((e) => {
           toggleElement(e);
         });
       });
     });
-  })
+  });
 
   // init for non-radio inputs
-  const elements = Array.from(document.querySelectorAll("[data-show-also], [data-hide-on-select]")).filter(element => element.getAttribute('type') !== 'radio');
-  elements.forEach(element => {
-    element.addEventListener('change', () => {
+  const elements = Array.from(document.querySelectorAll("input[data-show-also], input[data-hide-on-select]")).filter(
+    (element) => element.getAttribute("type") !== "radio"
+  );
+  elements.forEach((element) => {
+    element.addEventListener("change", () => {
       toggleElement(element);
     });
   });
-
-}
+};
 
 const toggleElement = (element) => {
-  const showId = element.getAttribute('data-show-also');
-  const hideId = element.getAttribute('data-hide-on-select');
+  const showId = element.getAttribute("data-show-also");
+  const hideId = element.getAttribute("data-hide-on-select");
 
   if (showId) {
     if (element.checked) {
@@ -73,7 +83,7 @@ const toggleElement = (element) => {
       showElement(`#${hideId}`);
     }
   }
-}
+};
 
 const enablePopups = (selector) => {
   const popupOptions = "status=no,location=no,toolbar=no,menubar=no,width=400,height=500,left=100,top=100";
