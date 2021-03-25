@@ -8,8 +8,7 @@ import "regenerator-runtime/runtime";
 import {
   bindClick,
   fillTemplateIntoDom,
-  enableShowAlso,
-  enableHideOnSelect,
+  enableInputDataBinding,
   hideElement,
   showElement,
   showLoadingScreen,
@@ -550,6 +549,7 @@ const fillCallTemplate = (data) => {
 };
 
 const activateCallTemplate = () => {
+  enableInputDataBinding();
   enableShowAlso();
   enableHideOnSelect();
 

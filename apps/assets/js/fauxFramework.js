@@ -29,42 +29,49 @@ const showElement = (selector) => {
   document.querySelector(selector)?.classList.remove("hidden");
 };
 
-const enableShowAlso = () => {
-  // This bit of js will automatically make clicking on any checkbox that has a data-show-also attribute
-  // automatically toggle on the element with the id in the data-show-also attr
-  document.querySelectorAll("[data-show-also]").forEach(function (sel) {
-    document.querySelectorAll('input[name="' + sel.name + '"]').forEach(function (x) {
-      addEventListener("change", function () {
-        const selector = "#" + x.getAttribute("data-show-also");
-        if (x.checked) {
-          showElement(selector);
-        } else if (!document.querySelector("[data-show-also=" + x.getAttribute("data-show-also") + "]:checked")) {
-          hideElement(selector);
-        }
+const enableInputDataBinding =() => {
+  // init for radio inputs. Because radio inputs do not fire events on un-check, we find all radio inputs in a container and check against each on every change event.
+  document.querySelectorAll("[data-radio-toggle-container]").forEach(container => {
+    const elements = container.querySelectorAll("input[type=radio]");
+    elements.forEach(element => {
+      element.addEventListener('change', () => {
+        elements.forEach(e => {
+          toggleElement(e);
+        });
       });
     });
-  });
-};
+  })
 
-const enableHideOnSelect = () => {
-  // This bit of js will automatically make clicking on any checkbox that has a data-hide-on-select attribute
-  // automatically toggle on the element with the id in the data-hide-on-select attr
-  document.querySelectorAll("[data-hide-on-select]").forEach(function (sel) {
-    document.querySelectorAll('input[name="' + sel.name + '"]')?.forEach(function (x) {
-      addEventListener("change", function () {
-        const selector = "#" + x.getAttribute("data-hide-on-select");
-        if (x.checked) {
-          hideElement(selector);
-        } else if (
-          !document.querySelector("[data-hide-on-select=" + x.getAttribute("data-hide-on-select") + "]:checked")
-        ) {
-          // If any of the other radio buttons hide this section are picked, don't show it
-          showElement(selector);
-        }
-      });
+  // init for non-radio inputs
+  const elements = Array.from(document.querySelectorAll("[data-show-also], [data-hide-on-select]")).filter(element => element.getAttribute('type') !== 'radio');
+  elements.forEach(element => {
+    element.addEventListener('change', () => {
+      toggleElement(element);
     });
   });
-};
+
+}
+
+const toggleElement = (element) => {
+  const showId = element.getAttribute('data-show-also');
+  const hideId = element.getAttribute('data-hide-on-select');
+
+  if (showId) {
+    if (element.checked) {
+      showElement(`#${showId}`);
+    } else if (!document.querySelector(`[data-show-also=${showId}]:checked`)) {
+      hideElement(`#${showId}`);
+    }
+  }
+
+  if (hideId) {
+    if (element.checked) {
+      hideElement(`#${hideId}`);
+    } else if (!document.querySelector(`[data-hide-on-select=${hideId}]:checked`)) {
+      showElement(`#${hideId}`);
+    }
+  }
+}
 
 const enablePopups = (selector) => {
   const popupOptions = "status=no,location=no,toolbar=no,menubar=no,width=400,height=500,left=100,top=100";
@@ -104,8 +111,7 @@ const hideLoadingScreen = () => {
 export {
   bindClick,
   fillTemplateIntoDom,
-  enableShowAlso,
-  enableHideOnSelect,
+  enableInputDataBinding,
   hideElement,
   showElement,
   showLoadingScreen,
