@@ -9,18 +9,20 @@
 >
   <div class="toast-header">
     <strong class="me-auto text-nowrap overflow-hidden">{{ title }}</strong>
-    <small></small>
     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
   </div>
   <div class="toast-body">
-    <div class="container">
-      <div class="row justify-content-md-center">
-        <div class="col small text-nowrap align-self-center">{{ body }}</div>
-        <div class="col small justify-content-md-end">
-          <button id="onlyToastButton" class="btn-sm small text-nowrap btn btn-outline-secondary">
-            {{ buttonLabel }}
-          </button>
-        </div>
+    <div class="d-flex flex-column">
+      <div class="text-wrap">
+        Got your report! You've made <strong>{{curProgress}}</strong> calls today. Can you reach <strong>{{maxProgress}}</strong> calls?
+      </div>
+      <div class="progress mt-2 mb-1">
+        <div class="progress-bar bg-success" role="progressbar" style="width: 0%">{{curProgress}}/{{maxProgress}}</div>
+      </div>
+      <div class="small align-self-end mt-2">
+        <button id="onlyToastButton" class="btn-sm small text-nowrap btn btn-outline-secondary">
+          Need to make a change?
+        </button>
       </div>
     </div>
   </div>
