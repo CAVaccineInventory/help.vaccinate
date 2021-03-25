@@ -596,7 +596,7 @@ const showCompletionToast = (locationName) => {
 
   document.querySelector("#onlyToast").addEventListener("shown.bs.toast", () => {
     // bootstrap progress bars animate width - begin animation on show
-    document.querySelector(".progress-bar").setAttribute("style", `width: ${progress}%`);
+    document.querySelector(".progress-bar")?.setAttribute("style", `width: ${progress}%`);
   });
 
   bindClick("#onlyToastButton", loadAndFillPreviousCall);
