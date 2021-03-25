@@ -191,10 +191,7 @@ const handler = async (event, context, logger) => {
     return result;
   }
 
-  // update Locations to de-force-prioritize a call
-  //
-  // this copies logic from:
-  // https://github.com/CAVaccineInventory/airtableApps/blob/1e5fe26a437e2d2ea885acb480694f467178d5f8/caller/frontend/CallFlow.tsx#L474
+  // Update Locations to de-force-prioritize a call
   try {
     // if the call is non-skip, updated some other tables.
     if (
