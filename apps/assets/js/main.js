@@ -586,6 +586,7 @@ const showCompletionToast = (locationName) => {
 
   fillTemplateIntoDom(toastTemplate, "#toastContainer", {
     title: locationName,
+    withProgress: userRoles?.includes("Volunteer Caller"),
     maxProgress: goal,
     curProgress: callerStats.today,
     progress,

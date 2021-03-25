@@ -14,11 +14,13 @@
   <div class="toast-body">
     <div class="d-flex flex-column">
       <div class="text-wrap">
-        Got your report! You've made <strong>{{curProgress}}</strong> calls today. Can you reach <strong>{{maxProgress}}</strong> calls?
+        Got your report! {{#if withProgress}}You've made <strong>{{curProgress}}</strong> calls today. Can you reach <strong>{{maxProgress}}</strong> calls?{{/if}}
       </div>
+      {{#if withProgress}}
       <div class="progress mt-2 mb-1">
         <div class="progress-bar bg-success" role="progressbar" style="width: 0%">{{curProgress}}/{{maxProgress}}</div>
       </div>
+      {{/if}}
       <div class="small align-self-end mt-2">
         <button id="onlyToastButton" class="btn-sm small text-nowrap btn btn-outline-secondary">
           Need to make a change?
