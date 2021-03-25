@@ -35,7 +35,7 @@ const enableInputDataBinding = () => {
 
   // Init for radio inputs. Because radio inputs do not fire events on un-check, we find all radio inputs with the same name and group them together.
   // On check of any radio input in the group, check the state of each radio input.
-  const radios = inputs.filter(input => input.getAttribute("type") === "radio");
+  const radios = inputs.filter((input) => input.getAttribute("type") === "radio");
   const names = radios.reduce((set, radio) => {
     set.add(radio.getAttribute("name"));
     return set;
@@ -53,7 +53,7 @@ const enableInputDataBinding = () => {
   });
 
   // init for non-radio inputs
-  const nonRadios = inputs.filter(input => input.getAttribute("type") !== "radio");
+  const nonRadios = inputs.filter((input) => input.getAttribute("type") !== "radio");
   nonRadios.forEach((element) => {
     element.addEventListener("change", () => {
       toggleElement(element);
