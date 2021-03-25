@@ -30,6 +30,8 @@ const showElement = (selector) => {
 };
 
 const enableInputDataBinding =() => {
+  // Automatically makes clicking any input with the data-show-also and data-hide-on-select attribute automatically toggle the associated element.
+
   // init for radio inputs. Because radio inputs do not fire events on un-check, we find all radio inputs in a container and check against each on every change event.
   document.querySelectorAll("[data-radio-toggle-container]").forEach(container => {
     const elements = container.querySelectorAll("input[type=radio]");
