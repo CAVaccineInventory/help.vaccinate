@@ -584,10 +584,13 @@ const showCompletionToast = (locationName) => {
   const goalCalls = callerStats.today % 5 === 0 ? callerStats.today + 5 : Math.ceil(callerStats.today / 5) * 5;
   const progress = (100 * callerStats.today) / goalCalls;
 
+  const validRoles = ["Volunteer Caller", "Vaccinate CA Staff"];
+  const withProgress = userRoles?.filter((role) => validRoles.includes(role)).length > 0;
+
   fillTemplateIntoDom(toastTemplate, "#toastContainer", {
     title: locationName,
-    withProgress: userRoles?.includes("Volunteer Caller"),
     curCalls: callerStats.today,
+    withProgress,
     goalCalls,
   });
 
