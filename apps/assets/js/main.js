@@ -582,7 +582,7 @@ const activateCallTemplate = () => {
 // assumes we only have one toast at a time
 const showCompletionToast = (locationName) => {
   const goal = callerStats.today % 5 === 0 ? callerStats.today + 5 : Math.ceil(callerStats.today / 5) * 5;
-  const progress = 100 * callerStats.today / goal;
+  const progress = (100 * callerStats.today) / goal;
 
   fillTemplateIntoDom(toastTemplate, "#toastContainer", {
     title: locationName,
@@ -591,7 +591,7 @@ const showCompletionToast = (locationName) => {
     progress,
   });
 
-  document.querySelector("#onlyToast").addEventListener('shown.bs.toast', () => {
+  document.querySelector("#onlyToast").addEventListener("shown.bs.toast", () => {
     // bootstrap progress bars animate width - begin animation on show
     document.querySelector(".progress-bar").setAttribute("style", `width: ${progress}%`);
   });
@@ -600,7 +600,7 @@ const showCompletionToast = (locationName) => {
   new bootstrap.Toast(document.querySelector("#onlyToast"), {
     autohide: true,
   }).show();
-}
+};
 
 const hideToast = () => {
   document.querySelector("#onlyToast")?.classList.add("hide");
