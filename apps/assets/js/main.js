@@ -550,8 +550,6 @@ const fillCallTemplate = (data) => {
 
 const activateCallTemplate = () => {
   enableInputDataBinding();
-  enableShowAlso();
-  enableHideOnSelect();
 
   bindClick("#scoobyRecordCall", saveCallReport);
   bindClick("#wrongNumber", submitBadContactInfo);
