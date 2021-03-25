@@ -186,7 +186,7 @@ const handler = async (event, context, logger) => {
   }
 
   const result = await creation;
-  if (creation.statusCode != 200) {
+  if (result.statusCode != 200) {
     await Promise.all(awaits);
     return result;
   }
