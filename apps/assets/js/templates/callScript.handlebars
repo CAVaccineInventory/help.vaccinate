@@ -453,10 +453,17 @@
   </div>
   <div class="surveyQuestion">
     <div class="instructions"
-      >If you think this report should be checked by somebody before publication, click the "Request review" button</div
+      >If you think this report should be checked by somebody before publication, check "Request review"</div
     >
-    <input class="btn-check" type="checkbox" id="reviewRequested" />
-    <label class="btn btn-outline-danger" for="reviewRequested">Request review</label>
+    <div class="form-check mt-1">
+      <input data-show-also="reviewRequestedConfirmation" class="form-check-input" type="checkbox" id="reviewRequested" />
+      <label class="form-check-label text-danger" for="reviewRequested">Request review</label>
+    </div>
+    <div class="d-inline-block">
+      <div id="reviewRequestedConfirmation" class="hidden alert alert-danger small mb-0"  role="alert">
+        This report will be reviewed upon submission.
+      </div>
+    </div>
   </div>
   <div class="d-grid gap-2 col-6 mx-auto row">
     <input type="button" class="btn btn-primary my-4 hidden" id="scoobyRecordCall" value="Send report" />
