@@ -581,15 +581,14 @@ const activateCallTemplate = () => {
 
 // assumes we only have one toast at a time
 const showCompletionToast = (locationName) => {
-  const goal = callerStats.today % 5 === 0 ? callerStats.today + 5 : Math.ceil(callerStats.today / 5) * 5;
-  const progress = (100 * callerStats.today) / goal;
+  const goalCalls = callerStats.today % 5 === 0 ? callerStats.today + 5 : Math.ceil(callerStats.today / 5) * 5;
+  const progress = (100 * callerStats.today) / goalCalls;
 
   fillTemplateIntoDom(toastTemplate, "#toastContainer", {
     title: locationName,
     withProgress: userRoles?.includes("Volunteer Caller"),
-    maxProgress: goal,
-    curProgress: callerStats.today,
-    progress,
+    curCalls: callerStats.today,
+    goalCalls,
   });
 
   document.querySelector("#onlyToast").addEventListener("shown.bs.toast", () => {
