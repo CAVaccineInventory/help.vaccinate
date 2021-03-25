@@ -31,12 +31,11 @@ const showElement = (selector) => {
 
 const enableInputDataBinding = () => {
   // Automatically makes clicking any input with the data-show-also and data-hide-on-select attribute automatically toggle the associated element.
+  const inputs = Array.from(document.querySelectorAll("input[data-show-also], input[data-hide-on-select]"));
 
   // Init for radio inputs. Because radio inputs do not fire events on un-check, we find all radio inputs with the same name and group them together.
   // On check of any radio input in the group, check the state of each radio input.
-  const radios = Array.from(
-    document.querySelectorAll("input[data-show-also][type=radio], input[data-hide-on-select][type=radio]")
-  );
+  const radios = inputs.filter(input => input.getAttribute("type") === "radio");
   const names = radios.reduce((set, radio) => {
     set.add(radio.getAttribute("name"));
     return set;
@@ -54,10 +53,8 @@ const enableInputDataBinding = () => {
   });
 
   // init for non-radio inputs
-  const elements = Array.from(document.querySelectorAll("input[data-show-also], input[data-hide-on-select]")).filter(
-    (element) => element.getAttribute("type") !== "radio"
-  );
-  elements.forEach((element) => {
+  const nonRadios = inputs.filter(input => input.getAttribute("type") !== "radio");
+  nonRadios.forEach((element) => {
     element.addEventListener("change", () => {
       toggleElement(element);
     });
