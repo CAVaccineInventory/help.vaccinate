@@ -208,8 +208,7 @@ const handler = async (event, context, logger) => {
         {
           id: locationId,
           fields: {
-            "Force-prioritize in next call": false,
-            "call_priority": "99-not_prioritized",
+            call_priority: "99-not_prioritized",
           },
         },
       ]);
