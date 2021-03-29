@@ -474,7 +474,7 @@ const submitCallReport = async () => {
         today: callerStats ? callerStats.today + 1 : 1,
         total: callerStats ? callerStats.total + 1 : 1,
       };
-      showToast(currentLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
+      showCompletionToast(currentLocation.Name);
 
       previousLocation = currentLocation;
       previousCallScriptDom = document.getElementById("callScript").cloneNode(1);
@@ -595,14 +595,26 @@ const activateCallTemplate = () => {
 };
 
 // assumes we only have one toast at a time
-const showToast = (title, body, buttonLabel, clickHandler) => {
+const showCompletionToast = (locationName) => {
+  const goalCalls = callerStats.today % 5 === 0 ? callerStats.today + 5 : Math.ceil(callerStats.today / 5) * 5;
+  const progress = (100 * callerStats.today) / goalCalls;
+
+  const validRoles = ["Volunteer Caller", "Vaccinate CA Staff"];
+  const withProgress = userRoles?.filter((role) => validRoles.includes(role)).length > 0;
+
   fillTemplateIntoDom(toastTemplate, "#toastContainer", {
-    body: body,
-    title: title,
-    buttonLabel: buttonLabel,
+    title: locationName,
+    curCalls: callerStats.today,
+    withProgress,
+    goalCalls,
   });
 
-  bindClick("#onlyToastButton", clickHandler);
+  document.querySelector("#onlyToast").addEventListener("shown.bs.toast", () => {
+    // bootstrap progress bars animate width - begin animation on show
+    document.querySelector(".progress-bar")?.setAttribute("style", `width: ${progress}%`);
+  });
+
+  bindClick("#onlyToastButton", loadAndFillPreviousCall);
   new bootstrap.Toast(document.querySelector("#onlyToast"), {
     autohide: true,
   }).show();
