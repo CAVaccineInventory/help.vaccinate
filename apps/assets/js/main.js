@@ -8,8 +8,7 @@ import "regenerator-runtime/runtime";
 import {
   bindClick,
   fillTemplateIntoDom,
-  enableShowAlso,
-  enableHideOnSelect,
+  enableInputDataBinding,
   hideElement,
   showElement,
   showLoadingScreen,
@@ -281,7 +280,24 @@ const constructReportFromDom = () => {
   if (isYes) {
     const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
     if (minAgeAnswer) {
-      answers.push("Yes: vaccinating " + minAgeAnswer + "+");
+      if (minAgeAnswer === "checkSite") {
+        const siteToCheck = document.querySelector("[name=siteSelect]:checked")?.value;
+        switch (siteToCheck) {
+          case "provider":
+            answers.push("Eligibility determined by provider website");
+            break;
+          case "state":
+            answers.push("Eligibility determined by state website");
+            break;
+          case "county":
+            answers.push("Eligibility determined by county website");
+            break;
+          default:
+            console.log("not site to check selected");
+        }
+      } else {
+        answers.push("Yes: vaccinating " + minAgeAnswer + "+");
+      }
     }
     const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
 
@@ -458,7 +474,7 @@ const submitCallReport = async () => {
         today: callerStats ? callerStats.today + 1 : 1,
         total: callerStats ? callerStats.total + 1 : 1,
       };
-      showToast(currentLocation.Name, "Got your report!", "Need to make a change?", loadAndFillPreviousCall);
+      showCompletionToast(currentLocation.Name);
 
       previousLocation = currentLocation;
       previousCallScriptDom = document.getElementById("callScript").cloneNode(1);
@@ -550,8 +566,7 @@ const fillCallTemplate = (data) => {
 };
 
 const activateCallTemplate = () => {
-  enableShowAlso();
-  enableHideOnSelect();
+  enableInputDataBinding();
 
   bindClick("#scoobyRecordCall", saveCallReport);
   bindClick("#wrongNumber", submitBadContactInfo);
@@ -580,14 +595,26 @@ const activateCallTemplate = () => {
 };
 
 // assumes we only have one toast at a time
-const showToast = (title, body, buttonLabel, clickHandler) => {
+const showCompletionToast = (locationName) => {
+  const goalCalls = callerStats.today % 5 === 0 ? callerStats.today + 5 : Math.ceil(callerStats.today / 5) * 5;
+  const progress = (100 * callerStats.today) / goalCalls;
+
+  const validRoles = ["Volunteer Caller", "Vaccinate CA Staff"];
+  const withProgress = userRoles?.filter((role) => validRoles.includes(role)).length > 0;
+
   fillTemplateIntoDom(toastTemplate, "#toastContainer", {
-    body: body,
-    title: title,
-    buttonLabel: buttonLabel,
+    title: locationName,
+    curCalls: callerStats.today,
+    withProgress,
+    goalCalls,
   });
 
-  bindClick("#onlyToastButton", clickHandler);
+  document.querySelector("#onlyToast").addEventListener("shown.bs.toast", () => {
+    // bootstrap progress bars animate width - begin animation on show
+    document.querySelector(".progress-bar")?.setAttribute("style", `width: ${progress}%`);
+  });
+
+  bindClick("#onlyToastButton", loadAndFillPreviousCall);
   new bootstrap.Toast(document.querySelector("#onlyToast"), {
     autohide: true,
   }).show();
