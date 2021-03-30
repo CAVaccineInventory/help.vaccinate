@@ -8,6 +8,25 @@ const fetch = require("node-fetch");
 
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
+const JOURNEYMAN_ROLE_NAME = "Journeyman";
+const REVIEW_IF_UNCHANGED_NOTES_TAGS = new Set([
+  "No: incorrect contact information",
+  "No: will never be a vaccination site",
+  "No: location permanently closed",
+  "No: not open to the public",
+]);
+const REVIEW_ALWAYS_TAGS = new Set([
+  "Yes: vaccinating 16+",
+  "Yes: vaccinating 18+",
+  "Yes: walk-ins accepted",
+]);
+// These are exceptions to the "always" list above.
+const COUNTY_EXCEPTIONS = {
+  "Contra Costa County": new Set([
+    "Yes: vaccinating 16+",
+    "Yes: vaccinating 18+",
+  ]),
+};
 
 class HTTPResponseError extends Error {
   constructor(response, ...args) {
@@ -17,6 +36,64 @@ class HTTPResponseError extends Error {
     );
     this.response = response;
   }
+}
+
+function shouldReview(event, roles) {
+  // Flag based on user roles; 100% of trainee, 15% of journeyman
+  if (roles.includes(TRAINEE_ROLE_NAME)) {
+    return true;
+  } else if (roles.includes(JOURNEYMAN_ROLE_NAME)) {
+    if (Math.random() < 0.15) {
+      return true;
+    }
+  }
+
+  // Flag based on public notes containing email addresses or phone numbers
+  if (event.Notes) {
+    // This regex matches "(800)-123-4567", "+1 800 123 4567" and most things in between.
+    const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
+    // This is very much not RFC-compliant, but generally matches common addresses.
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (event.Notes.match(phoneNumberRegex)) {
+      return true;
+    } else if (event.Notes.match(emailRegex)) {
+      return true;
+    }
+  }
+
+  // Flag based on tags that we expect to be very infrequent
+  const tags = new Set(event.Availability);
+  let suspectTags = new Set( // Intersection
+    [...tags].filter((value) => REVIEW_ALWAYS_TAGS.has(value))
+  );
+  if (event.County && event.County in COUNTY_EXCEPTIONS) {
+    const exceptions = COUNTY_EXCEPTIONS[event.County];
+    suspectTags = new Set( // Difference
+      [...suspectTags].filter((value) => !exceptions.has(value))
+    );
+  }
+  if (suspectTags.size) {
+    return true;
+  }
+
+  // Flag based on tags that require explanation; flag if their internal notes are unchanged
+  if (
+    [...tags].filter((value) => REVIEW_IF_UNCHANGED_NOTES_TAGS.has(value)).size
+  ) {
+    // Note that we trust the client to tell us the previous notes value; a
+    // malicious client could thus fake having changed the internal notes in
+    // order to escape being flagged.  A more correct implementation would be to
+    // HMAC sign the internal notes in requestCall, and verify that signature
+    // and compare it to the regenerate version of that here.
+    const prev = event["Previous Internal Notes"] || "";
+    const curr = event["Internal Notes"] || "";
+    if (prev === curr) {
+      return true;
+    }
+  }
+
+  // If they checked the box, then we also mark it for review.
+  return event.is_pending_review;
 }
 
 const handler = async (event, context, logger) => {
@@ -100,15 +177,14 @@ const handler = async (event, context, logger) => {
   });
 
   // fetch user info to add to report
+  let roles = [];
   try {
     const userinfo = await getUserinfo(context.identityContext.token);
-    const roles = userinfo["https://help.vaccinateca.com/roles"] || [];
+    roles = userinfo["https://help.vaccinateca.com/roles"] || [];
     Object.assign(input, {
       auth0_reporter_name: userinfo.name,
       auth0_reporter_roles: roles.join(","),
       // allow the client to turn on is_pending_review but never to turn it off
-      is_pending_review:
-        roles.includes(TRAINEE_ROLE_NAME) || input.is_pending_review,
     });
   } catch (err) {
     logger.error({ err: err }, "Failed to get userinfo");
@@ -120,6 +196,12 @@ const handler = async (event, context, logger) => {
       is_pending_review: true,
     });
   }
+
+  if (shouldReview(input, roles)) {
+    input.is_pending_review = true;
+  }
+  delete input["County"];
+  delete input["Previous Internal Notes"];
 
   const creation = new Promise(async (resolve) => {
     try {
