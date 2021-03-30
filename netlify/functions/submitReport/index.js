@@ -35,6 +35,19 @@ function shouldReview(event, roles) {
     }
   }
 
+  // Flag based on public notes containing email addresses or phone numbers
+  if (event.Notes) {
+    // This regex matches "(800)-123-4567", "+1 800 123 4567" and most things in between.
+    const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
+    // This is very much not RFC-compliant, but generally matches common addresses.
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (event.Notes.match(phoneNumberRegex)) {
+      return true;
+    } else if (event.Notes.match(emailRegex)) {
+      return true;
+    }
+  }
+
   // Flag based on tags that we expect to be very infrequent
   const tags = new Set(event.Availability);
   let suspectTags = new Set( // Intersection
