@@ -30,8 +30,13 @@
   margin-top: 1em;
 }
 
+#callScriptPublicNotes {
+  white-space: pre;
+}
+
 #callScriptPrivateNotes {
   background-color: #ffffee;
+  white-space: pre;
 }
 
 #toastContainer {
