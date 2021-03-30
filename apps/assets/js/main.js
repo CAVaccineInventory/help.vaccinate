@@ -13,6 +13,7 @@ import {
   showElement,
   showLoadingScreen,
   hideLoadingScreen,
+  uncheckRadio,
 } from "./fauxFramework.js";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
@@ -485,13 +486,6 @@ const submitCallReport = async () => {
   }
 };
 
-const uncheckRadio = (name) => {
-  const radio = document.querySelector(`input[name=${name}][type=radio]:checked`);
-  if (radio) {
-    radio.checked = false;
-  }
-}
-
 // If the caller is in the liveops group we want them to dial through the liveops dialer, not ours
 const liveopsDial = (event) => {
   const button = document.getElementById("location-phone-url");
@@ -585,9 +579,9 @@ const activateCallTemplate = () => {
   bindClick("#closedForTheDay", submitCallTomorrow);
   bindClick("#closedForTheWeekend", submitCallMonday);
   bindClick("#longHold", submitLongHold);
-  bindClick('#checkSite', () => {
-    hideElement('#reallyVaccinatingEveryone'); // edge case fauxFramework can't handle. Unchecking a radio button doesn't trigger it's change event, so force hide this div
-    uncheckRadio('minAgeSelect');
+  bindClick("#checkSite", () => {
+    hideElement("#reallyVaccinatingEveryone"); // edge case fauxFramework can't handle. Unchecking a radio button doesn't trigger it's change event, so force hide this div
+    uncheckRadio("minAgeSelect");
   });
 
   if (userRoles.includes("CC: Liveops")) {
