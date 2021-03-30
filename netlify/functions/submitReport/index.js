@@ -20,6 +20,13 @@ const REVIEW_ALWAYS_TAGS = new Set([
   "Yes: vaccinating 18+",
   "Yes: walk-ins accepted",
 ]);
+// These are exceptions to the "always" list above.
+const COUNTY_EXCEPTIONS = {
+  "Contra Costa County": new Set([
+    "Yes: vaccinating 16+",
+    "Yes: vaccinating 18+",
+  ]),
+};
 
 class HTTPResponseError extends Error {
   constructor(response, ...args) {
@@ -59,6 +66,12 @@ function shouldReview(event, roles) {
   let suspectTags = new Set( // Intersection
     [...tags].filter((value) => REVIEW_ALWAYS_TAGS.has(value))
   );
+  if (event.County && event.County in COUNTY_EXCEPTIONS) {
+    const exceptions = COUNTY_EXCEPTIONS[event.County];
+    suspectTags = new Set( // Difference
+      [...suspectTags].filter((value) => !exceptions.has(value))
+    );
+  }
   if (suspectTags.size) {
     return true;
   }
@@ -187,6 +200,7 @@ const handler = async (event, context, logger) => {
   if (shouldReview(input, roles)) {
     input.is_pending_review = true;
   }
+  delete input["County"];
   delete input["Previous Internal Notes"];
 
   const creation = new Promise(async (resolve) => {
