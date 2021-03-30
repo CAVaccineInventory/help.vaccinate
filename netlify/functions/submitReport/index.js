@@ -19,6 +19,16 @@ class HTTPResponseError extends Error {
   }
 }
 
+function shouldReview(event, roles) {
+  // Flag based on user roles
+  if (roles.includes(TRAINEE_ROLE_NAME)) {
+    return true;
+  }
+
+  // If they checked the box, then we also mark it for review.
+  return event.is_pending_review;
+}
+
 const handler = async (event, context, logger) => {
   const awaits = [];
 
@@ -100,15 +110,14 @@ const handler = async (event, context, logger) => {
   });
 
   // fetch user info to add to report
+  let roles = [];
   try {
     const userinfo = await getUserinfo(context.identityContext.token);
-    const roles = userinfo["https://help.vaccinateca.com/roles"] || [];
+    roles = userinfo["https://help.vaccinateca.com/roles"] || [];
     Object.assign(input, {
       auth0_reporter_name: userinfo.name,
       auth0_reporter_roles: roles.join(","),
       // allow the client to turn on is_pending_review but never to turn it off
-      is_pending_review:
-        roles.includes(TRAINEE_ROLE_NAME) || input.is_pending_review,
     });
   } catch (err) {
     logger.error({ err: err }, "Failed to get userinfo");
@@ -119,6 +128,10 @@ const handler = async (event, context, logger) => {
       auth0_reporter_roles: "",
       is_pending_review: true,
     });
+  }
+
+  if (shouldReview(input, roles)) {
+    input.is_pending_review = true;
   }
 
   const creation = new Promise(async (resolve) => {
