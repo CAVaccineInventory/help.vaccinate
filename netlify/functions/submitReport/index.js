@@ -9,6 +9,12 @@ const fetch = require("node-fetch");
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
 const JOURNEYMAN_ROLE_NAME = "Journeyman";
+const REVIEW_IF_UNCHANGED_NOTES_TAGS = new Set([
+  "No: incorrect contact information",
+  "No: will never be a vaccination site",
+  "No: location permanently closed",
+  "No: not open to the public",
+]);
 const REVIEW_ALWAYS_TAGS = new Set([
   "Yes: vaccinating 16+",
   "Yes: vaccinating 18+",
@@ -55,6 +61,22 @@ function shouldReview(event, roles) {
   );
   if (suspectTags.size) {
     return true;
+  }
+
+  // Flag based on tags that require explanation; flag if their internal notes are unchanged
+  if (
+    [...tags].filter((value) => REVIEW_IF_UNCHANGED_NOTES_TAGS.has(value)).size
+  ) {
+    // Note that we trust the client to tell us the previous notes value; a
+    // malicious client could thus fake having changed the internal notes in
+    // order to escape being flagged.  A more correct implementation would be to
+    // HMAC sign the internal notes in requestCall, and verify that signature
+    // and compare it to the regenerate version of that here.
+    const prev = event["Previous Internal Notes"] || "";
+    const curr = event["Internal Notes"] || "";
+    if (prev === curr) {
+      return true;
+    }
   }
 
   // If they checked the box, then we also mark it for review.
@@ -165,6 +187,7 @@ const handler = async (event, context, logger) => {
   if (shouldReview(input, roles)) {
     input.is_pending_review = true;
   }
+  delete input["Previous Internal Notes"];
 
   const creation = new Promise(async (resolve) => {
     try {

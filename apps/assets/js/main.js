@@ -384,6 +384,7 @@ const constructReportFromDom = () => {
   currentReport["Availability"] = answers;
   currentReport["Notes"] = document.querySelector("#callScriptPublicNotes")?.innerText;
   currentReport["Internal Notes"] = document.querySelector("#callScriptPrivateNotes")?.innerText;
+  currentReport["Previous Internal Notes"] = currentLocation?.["Latest Internal Notes"]?.[0];
   currentReport["extra_dose_info"] = document.querySelector("#callScriptExtraDoseNotes")?.innerText;
   currentReport["documentation_requirements"] = document.querySelector("#callScriptHighRiskDocNotes")?.innerText;
   console.log(currentReport);
