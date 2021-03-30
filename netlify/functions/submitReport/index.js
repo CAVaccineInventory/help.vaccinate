@@ -124,12 +124,14 @@ const handler = async (event, context, logger) => {
   const creation = new Promise(async (resolve) => {
     try {
       const createdReport = await base("Reports").create([{ fields: input }]);
-
       const resultIds = (createdReport && createdReport.map((r) => r.id)) || [];
+      const numericIds =
+        (createdReport && createdReport.map((r) => r.fields.ID)) || [];
       resolve({
         statusCode: 200,
         body: JSON.stringify({
           created: resultIds,
+          numeric: numericIds,
         }),
       });
     } catch (err) {
@@ -172,8 +174,9 @@ const handler = async (event, context, logger) => {
           }
           const result = await creation;
           if (result.statusCode == 200) {
-            const created = JSON.parse(result.body).created;
-            duplicate["Original report ID"] = created[0];
+            const responseBody = JSON.parse(result.body);
+            duplicate["Original report ID"] = responseBody.created[0];
+            duplicate["Original report numeric ID"] = responseBody.numeric[0];
           }
           await duplicateBase("Reports").create([{ fields: duplicate }]);
         } catch (err) {
