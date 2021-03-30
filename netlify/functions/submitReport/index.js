@@ -9,6 +9,11 @@ const fetch = require("node-fetch");
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
 const JOURNEYMAN_ROLE_NAME = "Journeyman";
+const REVIEW_ALWAYS_TAGS = new Set([
+  "Yes: vaccinating 16+",
+  "Yes: vaccinating 18+",
+  "Yes: walk-ins accepted",
+]);
 
 class HTTPResponseError extends Error {
   constructor(response, ...args) {
@@ -28,6 +33,15 @@ function shouldReview(event, roles) {
     if (Math.random() < 0.15) {
       return true;
     }
+  }
+
+  // Flag based on tags that we expect to be very infrequent
+  const tags = new Set(event.Availability);
+  let suspectTags = new Set( // Intersection
+    [...tags].filter((value) => REVIEW_ALWAYS_TAGS.has(value))
+  );
+  if (suspectTags.size) {
+    return true;
   }
 
   // If they checked the box, then we also mark it for review.
