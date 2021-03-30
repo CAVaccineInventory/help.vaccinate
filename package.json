@@ -16,12 +16,12 @@
     "url": "git+https://github.com/CAVaccineInventory/help.vaccinate.git"
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.13.6",
+    "@auth0/auth0-spa-js": "^1.14.0",
     "@google-cloud/logging-bunyan": "^3.0.2",
     "@serverless-jwt/netlify": "^0.2.1",
     "airtable": "^0.10.1",
     "bunyan": "^1.8.15",
-    "npm": "^7.5.2"
+    "npm": "^7.7.6"
   },
   "name": "site",
   "description": "**PSA: this will eventually be public so be careful not to put any secrets in any commits!**",
@@ -34,7 +34,7 @@
   "keywords": [],
   "author": "",
   "devDependencies": {
-    "eslint": "^7.19.0",
+    "eslint": "^7.23.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-es": "^4.1.0",
     "prettier": "^2.2.1"
