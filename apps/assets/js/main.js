@@ -279,29 +279,29 @@ const constructReportFromDom = () => {
   }
 
   if (isYes) {
-    const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
-    if (minAgeAnswer) {
-      if (minAgeAnswer === "checkSite") {
-        const siteToCheck = document.querySelector("[name=siteSelect]:checked")?.value;
-        switch (siteToCheck) {
-          case "provider":
-            answers.push("Eligibility determined by provider website");
-            break;
-          case "state":
-            answers.push("Eligibility determined by state website");
-            break;
-          case "county":
-            answers.push("Eligibility determined by county website");
-            break;
-          default:
-            console.log("not site to check selected");
-        }
-      } else {
-        answers.push("Yes: vaccinating " + minAgeAnswer + "+");
+    const siteToCheck = document.querySelector("[name=siteSelect]:checked")?.value;
+    if (siteToCheck) {
+      switch (siteToCheck) {
+        case "provider":
+          answers.push("Eligibility determined by provider website");
+          break;
+        case "state":
+          answers.push("Eligibility determined by state website");
+          break;
+        case "county":
+          answers.push("Eligibility determined by county website");
+          break;
+        default:
+          console.log("unknown site to check");
       }
     }
-    const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
 
+    const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
+    if (minAgeAnswer) {
+      answers.push("Yes: vaccinating " + minAgeAnswer + "+");
+    }
+
+    const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
     switch (apptRequired) {
       case "walkinOk":
         answers.push("Yes: walk-ins accepted");
