@@ -8,6 +8,7 @@ const fetch = require("node-fetch");
 
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
+const JOURNEYMAN_ROLE_NAME = "Journeyman";
 
 class HTTPResponseError extends Error {
   constructor(response, ...args) {
@@ -20,9 +21,13 @@ class HTTPResponseError extends Error {
 }
 
 function shouldReview(event, roles) {
-  // Flag based on user roles
+  // Flag based on user roles; 100% of trainee, 15% of journeyman
   if (roles.includes(TRAINEE_ROLE_NAME)) {
     return true;
+  } else if (roles.includes(JOURNEYMAN_ROLE_NAME)) {
+    if (Math.random() < 0.15) {
+      return true;
+    }
   }
 
   // If they checked the box, then we also mark it for review.
