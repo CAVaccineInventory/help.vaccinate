@@ -31,12 +31,12 @@
 }
 
 #callScriptPublicNotes {
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 #callScriptPrivateNotes {
   background-color: #ffffee;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 #toastContainer {
