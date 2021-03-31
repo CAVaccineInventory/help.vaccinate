@@ -78,7 +78,8 @@ function shouldReview(event, roles) {
 
   // Flag based on tags that require explanation; flag if their internal notes are unchanged
   if (
-    [...tags].filter((value) => REVIEW_IF_UNCHANGED_NOTES_TAGS.has(value)).size
+    [...tags].filter((value) => REVIEW_IF_UNCHANGED_NOTES_TAGS.has(value))
+      .length
   ) {
     // Note that we trust the client to tell us the previous notes value; a
     // malicious client could thus fake having changed the internal notes in
