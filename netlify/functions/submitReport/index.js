@@ -26,6 +26,10 @@ const COUNTY_EXCEPTIONS = {
     "Yes: vaccinating 16+",
     "Yes: vaccinating 18+",
   ]),
+  "Stanislaus County": new Set([
+    "Yes: vaccinating 16+",
+    "Yes: vaccinating 18+",
+  ]),
 };
 
 class HTTPResponseError extends Error {
