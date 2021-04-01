@@ -81,9 +81,9 @@ function shouldReview(event, roles) {
     [...tags].filter((value) => REVIEW_IF_UNCHANGED_NOTES_TAGS.has(value))
       .length
   ) {
-    // Note that we trust the client to tell us if the internal notes are 
+    // Note that we trust the client to tell us if the internal notes are
     // unchanged; a malicious client could thus fake having changed the internal
-    // notes in order to escape being flagged.  A more correct implementation 
+    // notes in order to escape being flagged.  A more correct implementation
     // would be to HMAC sign the internal notes in requestCall, and verify that
     // signature and compare it to a regenerate version of that here.
     if (event["internal_notes_unchanged"]) {
