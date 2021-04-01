@@ -26,6 +26,7 @@ const FULLY_OPENED_COUNTIES = new Set([
   "Butte County",
   "Contra Costa County",
   "Stanislaus County",
+  "Tulare County",
 ]);
 
 class HTTPResponseError extends Error {
