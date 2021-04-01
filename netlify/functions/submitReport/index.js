@@ -86,10 +86,8 @@ function shouldReview(event, roles) {
     // order to escape being flagged.  A more correct implementation would be to
     // HMAC sign the internal notes in requestCall, and verify that signature
     // and compare it to the regenerate version of that here.
-    const prev = event["Previous Internal Notes"] || "";
-    const curr = event["Internal Notes"] || "";
-    if (prev === curr) {
-      return true;
+    if (event["internal_notes_unchanged"]) {
+      return true
     }
   }
 
@@ -202,7 +200,7 @@ const handler = async (event, context, logger) => {
     input.is_pending_review = true;
   }
   delete input["County"];
-  delete input["Previous Internal Notes"];
+  delete input["internal_notes_unchanged"];
 
   const creation = new Promise(async (resolve) => {
     try {
