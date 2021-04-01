@@ -22,6 +22,7 @@ const REVIEW_ALWAYS_TAGS = new Set([
 ]);
 // These are exceptions to the "always" list above.
 const COUNTY_EXCEPTIONS = {
+  "Butte County": new Set(["Yes: vaccinating 16+", "Yes: vaccinating 18+"]),
   "Contra Costa County": new Set([
     "Yes: vaccinating 16+",
     "Yes: vaccinating 18+",
