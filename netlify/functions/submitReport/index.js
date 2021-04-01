@@ -40,12 +40,17 @@ class HTTPResponseError extends Error {
 }
 
 function shouldReview(event, roles) {
-  // Flag based on user roles; 100% of trainee, 15% of journeyman
-  if (roles.includes(TRAINEE_ROLE_NAME)) {
-    return true;
-  } else if (roles.includes(JOURNEYMAN_ROLE_NAME)) {
-    if (Math.random() < 0.15) {
+  const tags = new Set(event.Availability);
+
+  // We never flag skips, unless they explicitly ask for review
+  if (!tags.has(SKIP_TAG_PREFIX)) {
+    // For non-skips, flag based on user roles; 100% of trainee, 15% of journeyman
+    if (roles.includes(TRAINEE_ROLE_NAME)) {
       return true;
+    } else if (roles.includes(JOURNEYMAN_ROLE_NAME)) {
+      if (Math.random() < 0.15) {
+        return true;
+      }
     }
   }
 
@@ -63,7 +68,6 @@ function shouldReview(event, roles) {
   }
 
   // Flag based on tags that we expect to be very infrequent
-  const tags = new Set(event.Availability);
   let potentiallySuspectTags = REVIEW_ALWAYS_TAGS;
   if (event.County && !FULLY_OPENED_COUNTIES.has(event.County)) {
     // Add the age tags, unless they're fully open
