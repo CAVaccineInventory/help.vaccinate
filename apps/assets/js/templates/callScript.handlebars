@@ -141,7 +141,11 @@
     <div id="vaccinatingPublicScript">
       <div class="surveyQuestion">
         <div class="yousay">How old does someone need to be to get vaccinated if they're <u>not</u> in a special group?</div>
-        <div class="btn-group" role="group">
+        <div class="btn-group role=group">
+          <input class="btn-check" type="checkbox" id="checkSite" value="checkSite" data-hide-on-select="publicScriptFollowUpQuestions minAgeOptions" data-show-also="whatSite"/>
+          <label class="btn btn-outline-primary" for="checkSite">Told to check website</label>
+        </div>
+        <div class="btn-group" id="minAgeOptions" role="group">
           <input
             class="btn-check"
             type="radio"
@@ -190,10 +194,6 @@
           <label class="btn btn-outline-secondary" for="minAge80">80+</label>
           <input class="btn-check" type="radio" name="minAgeSelect" value="85" id="minAge85" />
           <label class="btn btn-outline-secondary" for="minAge85">85+</label>
-        </div>
-        <div class="btn-group role=group">
-          <input class="btn-check" type="radio" name="minAgeSelect" id="minAgeCheckSite" value="checkSite" data-hide-on-select="publicScriptFollowUpQuestions" data-show-also="whatSite"/>
-          <label class="btn btn-outline-warning" for="minAgeCheckSite">Told to check website</label>
         </div>
         <div id="reallyVaccinatingEveryone" class="hidden alert alert-danger" role="alert"
           >Right now, it's very unlikely that a site in California will be open to people that young without other

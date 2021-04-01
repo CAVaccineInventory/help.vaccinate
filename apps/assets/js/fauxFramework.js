@@ -29,6 +29,13 @@ const showElement = (selector) => {
   document.querySelector(selector)?.classList.remove("hidden");
 };
 
+const uncheckRadio = (name) => {
+  const radio = document.querySelector(`input[name=${name}][type=radio]:checked`);
+  if (radio) {
+    radio.checked = false;
+  }
+};
+
 const enableInputDataBinding = () => {
   // Automatically makes clicking any input with the data-show-also and data-hide-on-select attribute automatically toggle the associated element.
   const inputs = Array.from(document.querySelectorAll("input[data-show-also], input[data-hide-on-select]"));
@@ -62,23 +69,33 @@ const enableInputDataBinding = () => {
 };
 
 const toggleElement = (element) => {
-  const showId = element.getAttribute("data-show-also");
-  const hideId = element.getAttribute("data-hide-on-select");
+  const showIds = element.getAttribute("data-show-also")?.split(" ");
+  const hideIds = element.getAttribute("data-hide-on-select")?.split(" ");
 
-  if (showId) {
-    if (element.checked) {
-      showElement(`#${showId}`);
-    } else if (!document.querySelector(`[data-show-also=${showId}]:checked`)) {
-      hideElement(`#${showId}`);
-    }
+  if (showIds) {
+    showIds.forEach((showId) => {
+      if (element.checked) {
+        showElement(`#${showId}`);
+      } else {
+        const checkedItems = Array.from(document.querySelectorAll("[data-show-also]:checked"));
+        if (!checkedItems.some((item) => item.getAttribute("data-show-also").split(" ").includes(showId))) {
+          hideElement(`#${showId}`);
+        }
+      }
+    });
   }
 
-  if (hideId) {
-    if (element.checked) {
-      hideElement(`#${hideId}`);
-    } else if (!document.querySelector(`[data-hide-on-select=${hideId}]:checked`)) {
-      showElement(`#${hideId}`);
-    }
+  if (hideIds) {
+    hideIds.forEach((hideId) => {
+      if (element.checked) {
+        hideElement(`#${hideId}`);
+      } else {
+        const checkedItems = Array.from(document.querySelectorAll("[data-hide-on-select]:checked"));
+        if (!checkedItems.some((item) => item.getAttribute("data-hide-on-select").split(" ").includes(hideId))) {
+          showElement(`#${hideId}`);
+        }
+      }
+    });
   }
 };
 
@@ -125,4 +142,5 @@ export {
   showElement,
   showLoadingScreen,
   hideLoadingScreen,
+  uncheckRadio,
 };
