@@ -87,7 +87,7 @@ function shouldReview(event, roles) {
     // HMAC sign the internal notes in requestCall, and verify that signature
     // and compare it to the regenerate version of that here.
     if (event["internal_notes_unchanged"]) {
-      return true
+      return true;
     }
   }
 

@@ -561,9 +561,8 @@ const fillCallTemplate = (data) => {
     locationPhone: data["Phone number"],
   });
 
-
-  noteTimestampPrefix = `${new Date().toLocaleString('en-US', {month: 'short', day: 'numeric'})}: `;
-  prefilledInternalNotes = `${noteTimestampPrefix}\n\n${(data["Latest Internal Notes"] || "")}`;
+  noteTimestampPrefix = `${new Date().toLocaleString("en-US", { month: "short", day: "numeric" })}: `;
+  prefilledInternalNotes = `${noteTimestampPrefix}\n\n${data["Latest Internal Notes"] || ""}`;
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
