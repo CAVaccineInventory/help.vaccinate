@@ -574,6 +574,7 @@ const fillCallTemplate = (data) => {
     locationPhone: data["Phone number"],
     locationPrivateNotes: prefilledInternalNotes,
     locationPublicNotes: noteTimestampPrefix,
+    county: data.County,
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
@@ -611,6 +612,23 @@ const activateCallTemplate = () => {
   if (document.querySelector("#autodial")?.checked) {
     document.querySelector("#location-phone-url")?.click();
   }
+
+  bindAgeSelectToWarning();
+};
+
+const bindAgeSelectToWarning = () => {
+  const floor = currentLocation?.county_age_floor_without_restrictions || 18;
+  document.querySelectorAll("input[name=minAgeSelect]").forEach((input) => {
+    input.addEventListener("change", () => {
+      if (input.checked) {
+        if (parseInt(input.value) < floor) {
+          showElement("#reallyVaccinatingEveryone");
+        } else {
+          hideElement("#reallyVaccinatingEveryone");
+        }
+      }
+    });
+  });
 };
 
 // assumes we only have one toast at a time
