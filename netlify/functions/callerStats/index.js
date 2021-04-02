@@ -37,6 +37,13 @@ const handler = async (event, context, logger) => {
   // total number of reports i've filed
   output.total = stats.length;
 
+  // how many of them are in the past week
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  output.week = stats.filter(
+    (r) => new Date(r.get("time")).getTime() >= weekAgo.getTime()
+  ).length;
+
   // how many of them are today (PST)
   const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Los_Angeles",
