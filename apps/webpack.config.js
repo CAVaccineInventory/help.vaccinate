@@ -3,7 +3,7 @@ const path = require("path");
 module.exports = {
   mode: "production",
   entry: {
-    index: "./assets/js/index.js",
+    tester: "./assets/js/tester.js",
     scooby: "./assets/js/scooby.js",
   },
   devtool: "source-map",
