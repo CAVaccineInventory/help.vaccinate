@@ -51,6 +51,8 @@ let previousCallScriptDom = null;
 
 let providerSchedulingUrl = null;
 let callerStats = null;
+let noteTimestampPrefix = null;
+let prefilledInternalNotes = null;
 
 const initCallerStats = async () => {
   callerStats = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
@@ -383,9 +385,14 @@ const constructReportFromDom = () => {
   }
 
   currentReport["Availability"] = answers;
-  currentReport["Notes"] = document.querySelector("#callScriptPublicNotes")?.innerText;
-  currentReport["Internal Notes"] = document.querySelector("#callScriptPrivateNotes")?.innerText;
-  currentReport["Previous Internal Notes"] = currentLocation?.["Latest Internal Notes"]?.[0];
+
+  // only save public notes if caller modified the prefilled date input
+  const publicNotes = document.querySelector("#callScriptPublicNotes")?.innerText;
+  currentReport["Notes"] = publicNotes?.trim() === noteTimestampPrefix?.trim() ? "" : publicNotes;
+
+  const internalNotes = document.querySelector("#callScriptPrivateNotes")?.innerText;
+  currentReport["Internal Notes"] = internalNotes;
+  currentReport["internal_notes_unchanged"] = prefilledInternalNotes === internalNotes;
   currentReport["County"] = currentLocation?.["County"];
   currentReport["extra_dose_info"] = document.querySelector("#callScriptExtraDoseNotes")?.innerText;
   currentReport["documentation_requirements"] = document.querySelector("#callScriptHighRiskDocNotes")?.innerText;
@@ -555,13 +562,18 @@ const fillCallTemplate = (data) => {
     locationPhone: data["Phone number"],
   });
 
+  noteTimestampPrefix = `${new Date().toLocaleString("en-US", { month: "short", day: "numeric" })}: `;
+  prefilledInternalNotes = !!data["Latest Internal Notes"]
+    ? `${noteTimestampPrefix}\n\n${data["Latest Internal Notes"] || ""}`
+    : noteTimestampPrefix;
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
     locationWebsite: providerSchedulingUrl || data.Website,
     responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
-    locationPrivateNotes: data["Latest Internal Notes"],
+    locationPrivateNotes: prefilledInternalNotes,
+    locationPublicNotes: noteTimestampPrefix,
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });

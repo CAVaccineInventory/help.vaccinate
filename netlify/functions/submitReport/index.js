@@ -81,14 +81,12 @@ function shouldReview(event, roles) {
     [...tags].filter((value) => REVIEW_IF_UNCHANGED_NOTES_TAGS.has(value))
       .length
   ) {
-    // Note that we trust the client to tell us the previous notes value; a
-    // malicious client could thus fake having changed the internal notes in
-    // order to escape being flagged.  A more correct implementation would be to
-    // HMAC sign the internal notes in requestCall, and verify that signature
-    // and compare it to the regenerate version of that here.
-    const prev = event["Previous Internal Notes"] || "";
-    const curr = event["Internal Notes"] || "";
-    if (prev === curr) {
+    // Note that we trust the client to tell us if the internal notes are
+    // unchanged; a malicious client could thus fake having changed the internal
+    // notes in order to escape being flagged.  A more correct implementation
+    // would be to HMAC sign the internal notes in requestCall, and verify that
+    // signature and compare it to a regenerate version of that here.
+    if (event["internal_notes_unchanged"]) {
       return true;
     }
   }
@@ -202,7 +200,7 @@ const handler = async (event, context, logger) => {
     input.is_pending_review = true;
   }
   delete input["County"];
-  delete input["Previous Internal Notes"];
+  delete input["internal_notes_unchanged"];
 
   const creation = new Promise(async (resolve) => {
     try {
