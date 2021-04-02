@@ -25,6 +25,7 @@ const LOCATION_FIELDS_TO_LOAD = [
   "Affiliation",
   "Location Type",
   "Hours",
+  "county_age_floor_without_restrictions",
 ];
 
 const PROVIDER_FIELDS_TO_LOAD = [
