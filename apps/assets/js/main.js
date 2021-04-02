@@ -63,7 +63,7 @@ const initCallerStatsTemplate = () => {
   fillTemplateIntoDom(callerStatsTemplate, "#callerStats", {
     displayCallerStats: !!callerStats,
     callsToday: callerStats?.today,
-    callsTotal: callerStats?.total,
+    callsThisWeek: callerStats?.week,
   });
 };
 
@@ -482,7 +482,7 @@ const submitCallReport = async () => {
     if (callId) {
       callerStats = {
         today: callerStats ? callerStats.today + 1 : 1,
-        total: callerStats ? callerStats.total + 1 : 1,
+        week: callerStats ? callerStats.week + 1 : 1,
       };
       showCompletionToast(currentLocation.Name);
 
