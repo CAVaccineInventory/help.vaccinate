@@ -146,42 +146,22 @@
           <label class="btn btn-outline-primary" for="checkSite">Told to check website</label>
         </div>
         <div class="btn-group" id="minAgeOptions" role="group">
-          <input
-            class="btn-check"
-            type="radio"
-            name="minAgeSelect"
-            value="16"
-            id="minAge16"
-            data-show-also="reallyVaccinatingEveryone"
-          />
+          <input class="btn-check" type="radio" name="minAgeSelect" value="16" id="minAge16" />
           <label class="btn btn-outline-secondary" for="minAge16">16+</label>
-          <input
-            class="btn-check"
-            type="radio"
-            name="minAgeSelect"
-            value="18"
-            id="minAge18"
-            data-show-also="reallyVaccinatingEveryone"
-          />
+          <input class="btn-check" type="radio" name="minAgeSelect" value="18" id="minAge18" />
           <label class="btn btn-outline-secondary" for="minAge18">18+</label>
           <input class="btn-check" type="radio" name="minAgeSelect" value="30" id="minAge30" />
           <label class="btn btn-outline-secondary" for="minAge30">30+</label>
-          
           <input class="btn-check" type="radio" name="minAgeSelect" value="35" id="minAge35" />
           <label class="btn btn-outline-secondary" for="minAge35">35+</label>
-          
           <input class="btn-check" type="radio" name="minAgeSelect" value="40" id="minAge40" />
           <label class="btn btn-outline-secondary" for="minAge40">40+</label>
-          
           <input class="btn-check" type="radio" name="minAgeSelect" value="45" id="minAge45" />
           <label class="btn btn-outline-secondary" for="minAge45">45+</label>
-          
           <input class="btn-check" type="radio" name="minAgeSelect" value="50" id="minAge50" />
           <label class="btn btn-outline-secondary" for="minAge50">50+</label> 
-          
           <input class="btn-check" type="radio" name="minAgeSelect" value="55" id="minAge55" />
           <label class="btn btn-outline-secondary" for="minAge55">55+</label>
-          
           <input class="btn-check" type="radio" name="minAgeSelect" value="60" id="minAge60" />
           <label class="btn btn-outline-secondary" for="minAge60">60+</label>
           <input class="btn-check" type="radio" name="minAgeSelect" value="65" id="minAge65" />
@@ -195,10 +175,9 @@
           <input class="btn-check" type="radio" name="minAgeSelect" value="85" id="minAge85" />
           <label class="btn btn-outline-secondary" for="minAge85">85+</label>
         </div>
-        <div id="reallyVaccinatingEveryone" class="hidden alert alert-danger" role="alert"
-          >Right now, it's very unlikely that a site in California will be open to people that young without other
-          restrictions. Please double-check with the person you're talking to and select any relevant limitations below.
-        </div>
+        <div id="reallyVaccinatingEveryone" class="hidden alert alert-warning" role="alert"
+          >Right now, it's unlikely that a site in {{county}} will be open to people that young without other
+          restrictions. Please double-check with the person you're talking to and leave an internal note below explaining the situation.</div>
       </div>
       <div id="publicScriptFollowUpQuestions">
         <div class="surveyQuestion expansions">
