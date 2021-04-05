@@ -14,6 +14,7 @@ import {
   showLoadingScreen,
   hideLoadingScreen,
   uncheckRadio,
+  showModal,
 } from "./util/fauxFramework.js";
 import { validatePublicNotes } from "./util/validators";
 
@@ -137,19 +138,6 @@ const handleAuth0Login = async () => {
       updateLogin(user);
     }
   }
-};
-
-const showModal = (template, templateVars, modalId, onShownCallback = null) => {
-  hideLoadingScreen();
-  fillTemplateIntoDom(template, "#modalContainer", templateVars);
-  const modal = new bootstrap.Modal(document.getElementById(modalId), {});
-  document.getElementById(modalId).addEventListener("show.bs.modal", () => {
-    if (onShownCallback) {
-      onShownCallback(modal);
-    }
-  });
-
-  modal.show();
 };
 
 const showErrorModal = (title, body, json) => {
@@ -450,16 +438,20 @@ const submitPermanentlyClosed = () => {
 };
 
 const submitWithAvail = (avail) => {
-  constructReportFromDom();
-  currentReport["Availability"] = [avail];
-  submitCallReport();
+  runValidators(() => {
+    constructReportFromDom();
+    currentReport["Availability"] = [avail];
+    submitCallReport();
+  })
 };
 
 const submitSkipUntil = (when) => {
-  constructReportFromDom();
-  currentReport["Do not call until"] = when.toISOString();
-  currentReport["Availability"] = [AVAIL_SKIP];
-  submitCallReport();
+  runValidators(() => {
+    constructReportFromDom();
+    currentReport["Do not call until"] = when.toISOString();
+    currentReport["Availability"] = [AVAIL_SKIP];
+    submitCallReport();
+  })
 };
 
 // busy = 15 min delay
