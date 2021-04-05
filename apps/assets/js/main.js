@@ -405,10 +405,7 @@ const runValidators = (onSuccess) => {
   const publicNotes = document.querySelector("#callScriptPublicNotes")?.innerText;
   if (validatePublicNotes(publicNotes).length > 0) {
     showModal(
-      submissionWarningModalTemplate,
-      {
-        title: "Submission issue detected",
-      },
+      submissionWarningModalTemplate, {},
       "submissionWarningModal",
       (modal) => {
         bindClick("#submitReportAfterWarning", () => {
