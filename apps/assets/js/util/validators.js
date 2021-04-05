@@ -8,7 +8,8 @@ const PUBLIC_NOTES_WARNING =
 const AGE_WARNING =
   "It's unlikely that a site in this county will be open to people that young without other restrictions. You need to update the private notes field with details.";
 
-const CONTACT_INFO_BLOCK = "It's unexpected to have the wrong number. You need to update the private notes field with details.";
+const CONTACT_INFO_BLOCK =
+  "It's unexpected to have the wrong number. You need to update the private notes field with details.";
 const NEVER_BLOCK =
   "It's unexpected for a site to never become a vaccination site. You need to update the private notes field with details.";
 const PERM_CLOSED_BLOCK =
