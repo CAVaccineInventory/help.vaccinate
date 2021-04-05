@@ -1,7 +1,7 @@
 "use strict";
 
 const {
-  validatePublicNotes, validateReport,
+  validateReport,
 } = require("../../../apps/assets/js/util/validators.js");
 const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
@@ -12,38 +12,6 @@ const fetch = require("node-fetch");
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
 const JOURNEYMAN_ROLE_NAME = "Journeyman";
-const REVIEW_IF_UNCHANGED_NOTES_TAGS = new Set([
-  "No: incorrect contact information",
-  "No: will never be a vaccination site",
-  "No: location permanently closed",
-  "No: not open to the public",
-]);
-const REVIEW_ALWAYS_TAGS = new Set(["Yes: walk-ins accepted"]);
-
-// Flag these ages, if they're not in the list of counties that have opened up
-const REVIEW_AGE_TAGS = new Set([
-  "Yes: vaccinating 16+",
-  "Yes: vaccinating 18+",
-]);
-const FULLY_OPENED_COUNTIES = new Set([
-  "Alpine County",
-  "Amador County",
-  "Butte County",
-  "Contra Costa County",
-  "Del Norte County",
-  "Kern County",
-  "Lassen County",
-  "Madera County",
-  "Merced County",
-  "Modoc County",
-  "Nevada County",
-  "Shasta County",
-  "Sierra County",
-  "Stanislaus County",
-  "Sutter County",
-  "Tulare County",
-  "Yuba County",
-]);
 
 class HTTPResponseError extends Error {
   constructor(response, ...args) {
@@ -65,10 +33,10 @@ function shouldReview(event, roles) {
     }
   }
 
-   const issues = validateReport(event);
-   if (issues.warningIssues.length || issues.blockingIssues.length) {
-     return true;
-   }
+  const issues = validateReport(event);
+  if (issues.requiresReview) {
+    return true;
+  }
 
   // If they checked the box, then we also mark it for review.
   return event.is_pending_review;
@@ -180,6 +148,7 @@ const handler = async (event, context, logger) => {
   }
   delete input["County"];
   delete input["internal_notes_unchanged"];
+  delete input["unexpected_min_age"];
 
   const creation = new Promise(async (resolve) => {
     try {

@@ -8,12 +8,12 @@
       </div>
       <div class="modal-body">
         The following issues were found with your submission:
-        <ul>
+        <ul class="list-group">
           {{#each errors}}
-            <li>{{this}}</li>
+            <li class="list-group-item list-group-item-danger">{{this}}</li>
           {{/each}}
           {{#each warnings}}
-            <li>{{this}}</li>
+            <li class="list-group-item list-group-item-warning">{{this}}</li>
           {{/each}}
         </ul>
       </div>

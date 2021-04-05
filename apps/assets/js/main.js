@@ -16,7 +16,7 @@ import {
   uncheckRadio,
   showModal,
 } from "./util/fauxFramework.js";
-import { validatePublicNotes, validateReport } from "./util/validators";
+import { validateReport } from "./util/validators";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
 import locationTemplate from "./templates/location.handlebars";
@@ -400,24 +400,30 @@ const constructReportFromDom = () => {
 
   // fields used for validation
   currentReport["internal_notes_unchanged"] = prefilledInternalNotes === internalNotes;
-  currentReport["unexpected_min_age"] = !document.querySelector('#reallyVaccinatingEveryone')?.classList?.contains('hidden') || false;
+  currentReport["unexpected_min_age"] =
+    !document.querySelector("#reallyVaccinatingEveryone")?.classList?.contains("hidden") || false;
   console.log(currentReport);
 };
 
 const runValidators = (onSuccess) => {
   const reportState = validateReport(currentReport);
   if (reportState.warningIssues.length || reportState.blockingIssues.length) {
-    showModal(submissionWarningModalTemplate, {
-      hasWarnings: !!reportState.warningIssues.length,
-      hasErrors: !!reportState.blockingIssues.length,
-      warnings: reportState.warningIssues,
-      errors: reportState.blockingIssues,
-    }, "submissionWarningModal", (modal) => {
-      bindClick("#submitReportAfterWarning", () => {
-        onSuccess();
-        modal.hide();
-      });
-    });
+    showModal(
+      submissionWarningModalTemplate,
+      {
+        hasWarnings: !!reportState.warningIssues.length,
+        hasErrors: !!reportState.blockingIssues.length,
+        warnings: reportState.warningIssues,
+        errors: reportState.blockingIssues,
+      },
+      "submissionWarningModal",
+      (modal) => {
+        bindClick("#submitReportAfterWarning", () => {
+          onSuccess();
+          modal.hide();
+        });
+      }
+    );
   } else {
     onSuccess();
   }
