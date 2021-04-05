@@ -14,7 +14,8 @@ import {
   showLoadingScreen,
   hideLoadingScreen,
   uncheckRadio,
-} from "./fauxFramework.js";
+} from "./util/fauxFramework.js";
+import { validatePublicNotes } from "./util/validators";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
 import locationTemplate from "./templates/location.handlebars";
@@ -30,6 +31,7 @@ import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
 import errorModalTemplate from "./templates/errorModal.handlebars";
 import callerStatsTemplate from "./templates/callerStats.handlebars";
+import submissionWarningModalTemplate from "./templates/submissionWarningModal.handlebars";
 
 const MINUTE = 60 * 1000;
 const HOUR = MINUTE * 60;
@@ -137,16 +139,25 @@ const handleAuth0Login = async () => {
   }
 };
 
-const showErrorModal = (title, body, json) => {
+const showModal = (template, templateVars, modalId, onShownCallback = null) => {
   hideLoadingScreen();
-  fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
-    title: title,
-    body: body,
-    json: JSON.stringify(json, null, 2),
+  fillTemplateIntoDom(template, "#modalContainer", templateVars);
+  const modal = new bootstrap.Modal(document.getElementById(modalId), {});
+  document.getElementById(modalId).addEventListener('show.bs.modal', () => {
+    if (onShownCallback) {
+      onShownCallback(modal);
+    }
   });
 
-  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
-  myModal.show();
+  modal.show();
+}
+
+const showErrorModal = (title, body, json) => {
+  showModal(errorModalTemplate, {
+    title,
+    body,
+    json: JSON.stringify(json, null, 2),
+  }, "errorModal")
 };
 
 const authOrLoadAndFillCall = async () => {
@@ -398,9 +409,27 @@ const constructReportFromDom = () => {
   console.log(currentReport);
 };
 
+const runValidators = (onSuccess) => {
+  const publicNotes = document.querySelector("#callScriptPublicNotes")?.innerText;
+  if (validatePublicNotes(publicNotes).length > 0) {
+    showModal(submissionWarningModalTemplate, {
+      title: "Submission issue detected",
+    }, "submissionWarningModal", (modal) => {
+      bindClick("#submitReportAfterWarning", () => {
+        onSuccess();
+        modal.hide();
+      });
+    });
+  } else {
+    onSuccess();
+  }
+}
+
 const saveCallReport = () => {
-  constructReportFromDom();
-  submitCallReport();
+  runValidators(() => {
+    constructReportFromDom();
+    submitCallReport();
+  })
 };
 
 const submitBadContactInfo = () => {

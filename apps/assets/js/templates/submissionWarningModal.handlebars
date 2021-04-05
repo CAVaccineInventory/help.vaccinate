@@ -1,0 +1,20 @@
+<!-- Vertically centered scrollable modal -->
+<div class="modal fade" id="submissionWarningModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        A phone number or email address was detected in the public notes. 
+        Contact information and booking links will be already displayed. 
+        Do you want to submit or go back to edit the public notes?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"> Go back</button>
+        <button type="button" class="btn btn-primary" id="submitReportAfterWarning">submit Report</button>
+      </div>
+    </div>
+  </div>
+</div>
