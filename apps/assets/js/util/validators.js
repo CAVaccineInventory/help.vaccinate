@@ -6,17 +6,17 @@ const PUBLIC_NOTES_WARNING =
   "Looks like there is a phone number or email address in the public notes field. Contact information and booking links are already displayed, so usually they shouldn't be included in public notes. Are you sure you want to include them?";
 
 const AGE_WARNING =
-  "It's unlikely that a site in this county will be open to people that young without other restrictions. Please update the private notes with details.";
+  "It's unlikely that a site in this county will be open to people that young without other restrictions. You need to update the private notes field with details.";
 
-const CONTACT_INFO_BLOCK = "It's unexpected to have the wrong number. Please update the private notes with details.";
+const CONTACT_INFO_BLOCK = "It's unexpected to have the wrong number. You need to update the private notes field with details.";
 const NEVER_BLOCK =
-  "It's unexpected for a site to never become a vaccination site. Please update the private notes with details.";
+  "It's unexpected for a site to never become a vaccination site. You need to update the private notes field with details.";
 const PERM_CLOSED_BLOCK =
-  "It's unexpected for a site to be permanently closed. Please update the private notes with details.";
+  "It's unexpected for a site to be permanently closed. You need to update the private notes field with details.";
 const PRIVATE_ONLY_BLOCK =
-  "It's unexpected for a site to not be open to the public. Please update the private notes with details.";
+  "It's unexpected for a site to not be open to the public. You need to update the private notes field with details.";
 const WALKINS_ACCEPTED_BLOCK =
-  "It's unexpected for a site to allow walk-ins. Please update the private notes with details.";
+  "It's unexpected for a site to allow walk-ins. You need to update the private notes field with details.";
 
 const AVAIL_TO_BLOCKING_ISSUES = {
   "No: incorrect contact information": CONTACT_INFO_BLOCK,
@@ -64,6 +64,6 @@ module.exports.validateReport = (report) => {
   });
 
   reportState.requiresReview =
-    reportState.requiresReview || !!reportState.blockingIssues.length || !!reportSttate.warningIssues.length;
+    reportState.requiresReview || !!reportState.blockingIssues.length || !!reportState.warningIssues.length;
   return reportState;
 };

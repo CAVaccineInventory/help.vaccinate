@@ -411,8 +411,6 @@ const runValidators = (onSuccess) => {
     showModal(
       submissionWarningModalTemplate,
       {
-        hasWarnings: !!reportState.warningIssues.length,
-        hasErrors: !!reportState.blockingIssues.length,
         warnings: reportState.warningIssues,
         errors: reportState.blockingIssues,
       },

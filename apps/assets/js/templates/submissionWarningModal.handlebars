@@ -7,18 +7,25 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        The following issues were found with your submission:
-        <ul class="list-group">
-          {{#each errors}}
-            <li class="list-group-item list-group-item-danger">{{this}}</li>
-          {{/each}}
-          {{#each warnings}}
-            <li class="list-group-item list-group-item-warning">{{this}}</li>
-          {{/each}}
-        </ul>
+        {{#if errors}}
+          The following issues requiring change were found:
+          <ul class="list-group py-2">
+            {{#each errors}}
+              <li class="list-group-item list-group-item-danger">{{this}}</li>
+            {{/each}}
+          </ul>
+        {{/if}}
+        {{#if warnings}}
+          The following warnings were found:
+          <ul class="list-group py-2">
+            {{#each warnings}}
+              <li class="list-group-item list-group-item-warning">{{this}}</li>
+            {{/each}}
+          </ul>
+        {{/if}}
       </div>
       <div class="modal-footer">
-        {{#unless hasErrors}}<button type="button" class="btn btn-secondary" id="submitReportAfterWarning">Send Report</button>{{/unless}}
+        {{#unless errors}}<button type="button" class="btn btn-secondary" id="submitReportAfterWarning">Send Report</button>{{/unless}}
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Edit Report</button>
       </div>
     </div>
