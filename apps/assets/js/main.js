@@ -404,16 +404,12 @@ const constructReportFromDom = () => {
 const runValidators = (onSuccess) => {
   const publicNotes = document.querySelector("#callScriptPublicNotes")?.innerText;
   if (validatePublicNotes(publicNotes).length > 0) {
-    showModal(
-      submissionWarningModalTemplate, {},
-      "submissionWarningModal",
-      (modal) => {
-        bindClick("#submitReportAfterWarning", () => {
-          onSuccess();
-          modal.hide();
-        });
-      }
-    );
+    showModal(submissionWarningModalTemplate, {}, "submissionWarningModal", (modal) => {
+      bindClick("#submitReportAfterWarning", () => {
+        onSuccess();
+        modal.hide();
+      });
+    });
   } else {
     onSuccess();
   }
@@ -439,7 +435,7 @@ const submitWithAvail = (avail) => {
     constructReportFromDom();
     currentReport["Availability"] = [avail];
     submitCallReport();
-  })
+  });
 };
 
 const submitSkipUntil = (when) => {
@@ -448,7 +444,7 @@ const submitSkipUntil = (when) => {
     currentReport["Do not call until"] = when.toISOString();
     currentReport["Availability"] = [AVAIL_SKIP];
     submitCallReport();
-  })
+  });
 };
 
 // busy = 15 min delay
