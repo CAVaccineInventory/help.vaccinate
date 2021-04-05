@@ -23,10 +23,23 @@ const REVIEW_AGE_TAGS = new Set([
   "Yes: vaccinating 18+",
 ]);
 const FULLY_OPENED_COUNTIES = new Set([
+  "Alpine County",
+  "Amador County",
   "Butte County",
   "Contra Costa County",
+  "Del Norte County",
+  "Kern County",
+  "Lassen County",
+  "Madera County",
+  "Merced County",
+  "Modoc County",
+  "Nevada County",
+  "Shasta County",
+  "Sierra County",
   "Stanislaus County",
+  "Sutter County",
   "Tulare County",
+  "Yuba County",
 ]);
 
 class HTTPResponseError extends Error {
