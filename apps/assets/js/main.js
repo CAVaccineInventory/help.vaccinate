@@ -420,6 +420,10 @@ const runValidators = (onSuccess) => {
           onSuccess();
           modal.hide();
         });
+
+        bindClick("#dismissAfterWarning", () => {
+          document.getElementById("callScriptPrivateNotes")?.scrollIntoView();
+        });
       }
     );
   } else {
