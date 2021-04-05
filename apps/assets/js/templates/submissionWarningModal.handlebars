@@ -7,12 +7,18 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Looks like there's a phone number or email address in the public notes field. 
-        Contact information and booking links are already displayed, so usually the those shouldn't be included in public notes. 
-        Are you sure you want to include them?
+        The following issues were found with your submission:
+        <ul>
+          {{#each errors}}
+            <li>{{this}}</li>
+          {{/each}}
+          {{#each warnings}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="submitReportAfterWarning">Send Report</button>
+        {{#unless hasErrors}}<button type="button" class="btn btn-secondary" id="submitReportAfterWarning">Send Report</button>{{/unless}}
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Edit Report</button>
       </div>
     </div>

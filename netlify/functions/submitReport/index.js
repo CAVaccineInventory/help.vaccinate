@@ -1,7 +1,7 @@
 "use strict";
 
 const {
-  validatePublicNotes,
+  validatePublicNotes, validateReport,
 } = require("../../../apps/assets/js/util/validators.js");
 const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
@@ -65,39 +65,10 @@ function shouldReview(event, roles) {
     }
   }
 
-  // Flag based on public notes containing email addresses or phone numbers
-  if (event.Notes && validatePublicNotes(event.Notes).length > 0) {
-    return true;
-  }
-
-  // Flag based on tags that we expect to be very infrequent
-  const tags = new Set(event.Availability);
-  let potentiallySuspectTags = REVIEW_ALWAYS_TAGS;
-  if (event.County && !FULLY_OPENED_COUNTIES.has(event.County)) {
-    // Add the age tags, unless they're fully open
-    potentiallySuspectTags = new Set([
-      ...potentiallySuspectTags,
-      ...REVIEW_AGE_TAGS,
-    ]);
-  }
-  if ([...tags].filter((value) => potentiallySuspectTags.has(value)).length) {
-    return true;
-  }
-
-  // Flag based on tags that require explanation; flag if their internal notes are unchanged
-  if (
-    [...tags].filter((value) => REVIEW_IF_UNCHANGED_NOTES_TAGS.has(value))
-      .length
-  ) {
-    // Note that we trust the client to tell us if the internal notes are
-    // unchanged; a malicious client could thus fake having changed the internal
-    // notes in order to escape being flagged.  A more correct implementation
-    // would be to HMAC sign the internal notes in requestCall, and verify that
-    // signature and compare it to a regenerate version of that here.
-    if (event["internal_notes_unchanged"]) {
-      return true;
-    }
-  }
+   const issues = validateReport(event);
+   if (issues.warningIssues.length || issues.blockingIssues.length) {
+     return true;
+   }
 
   // If they checked the box, then we also mark it for review.
   return event.is_pending_review;
