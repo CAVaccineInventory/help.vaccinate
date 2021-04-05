@@ -143,21 +143,25 @@ const showModal = (template, templateVars, modalId, onShownCallback = null) => {
   hideLoadingScreen();
   fillTemplateIntoDom(template, "#modalContainer", templateVars);
   const modal = new bootstrap.Modal(document.getElementById(modalId), {});
-  document.getElementById(modalId).addEventListener('show.bs.modal', () => {
+  document.getElementById(modalId).addEventListener("show.bs.modal", () => {
     if (onShownCallback) {
       onShownCallback(modal);
     }
   });
 
   modal.show();
-}
+};
 
 const showErrorModal = (title, body, json) => {
-  showModal(errorModalTemplate, {
-    title,
-    body,
-    json: JSON.stringify(json, null, 2),
-  }, "errorModal")
+  showModal(
+    errorModalTemplate,
+    {
+      title,
+      body,
+      json: JSON.stringify(json, null, 2),
+    },
+    "errorModal"
+  );
 };
 
 const authOrLoadAndFillCall = async () => {
@@ -412,24 +416,29 @@ const constructReportFromDom = () => {
 const runValidators = (onSuccess) => {
   const publicNotes = document.querySelector("#callScriptPublicNotes")?.innerText;
   if (validatePublicNotes(publicNotes).length > 0) {
-    showModal(submissionWarningModalTemplate, {
-      title: "Submission issue detected",
-    }, "submissionWarningModal", (modal) => {
-      bindClick("#submitReportAfterWarning", () => {
-        onSuccess();
-        modal.hide();
-      });
-    });
+    showModal(
+      submissionWarningModalTemplate,
+      {
+        title: "Submission issue detected",
+      },
+      "submissionWarningModal",
+      (modal) => {
+        bindClick("#submitReportAfterWarning", () => {
+          onSuccess();
+          modal.hide();
+        });
+      }
+    );
   } else {
     onSuccess();
   }
-}
+};
 
 const saveCallReport = () => {
   runValidators(() => {
     constructReportFromDom();
     submitCallReport();
-  })
+  });
 };
 
 const submitBadContactInfo = () => {
