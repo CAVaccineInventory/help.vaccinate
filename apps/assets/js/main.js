@@ -35,6 +35,9 @@ import errorModalTemplate from "./templates/errorModal.handlebars";
 import callerStatsTemplate from "./templates/callerStats.handlebars";
 import submissionWarningModalTemplate from "./templates/submissionWarningModal.handlebars";
 
+const VIAL =
+  process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
+
 const MINUTE = 60 * 1000;
 const HOUR = MINUTE * 60;
 
@@ -59,7 +62,7 @@ let noteTimestampPrefix = null;
 let prefilledInternalNotes = null;
 
 const initCallerStats = async () => {
-  callerStats = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
+  callerStats = await fetchJsonFromEndpoint("/callerStats");
   if (callerStats.error) {
     // just swallow and hide since not critical
     console.warn("error fetching callerStats: ", callerStats);
@@ -72,7 +75,7 @@ const initCallerStatsTemplate = () => {
   fillTemplateIntoDom(callerStatsTemplate, "#callerStats", {
     displayCallerStats: !!callerStats,
     callsToday: callerStats?.today,
-    callsThisWeek: callerStats?.week,
+    callsTotal: callerStats?.total,
   });
 };
 
@@ -117,7 +120,7 @@ const fetchJsonFromEndpoint = async (endpoint, method, body) => {
   const accessToken = await auth0.getTokenSilently({
     audience: AUTH0_AUDIENCE,
   });
-  const result = await fetch(endpoint, {
+  const result = await fetch(`${VIAL}${endpoint}`, {
     method,
     body,
     headers: {
@@ -173,9 +176,9 @@ const authOrLoadAndFillCall = async () => {
 const requestCall = async (id) => {
   showLoadingScreen();
   if (id) {
-    currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall?location_id=" + id);
+    currentLocation = await fetchJsonFromEndpoint("/requestCall?location_id=" + id);
   } else {
-    currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+    currentLocation = await fetchJsonFromEndpoint("/requestCall");
   }
   hideLoadingScreen();
   const user = await auth0.getUser();
@@ -513,7 +516,7 @@ const submitCallMonday = () => {
 
 const submitCallReport = async () => {
   showLoadingScreen();
-  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(currentReport));
+  const data = await fetchJsonFromEndpoint("/submitReport", "POST", JSON.stringify(currentReport));
   hideLoadingScreen();
   if (data.error) {
     showErrorModal(
@@ -529,7 +532,7 @@ const submitCallReport = async () => {
     if (callId) {
       callerStats = {
         today: callerStats ? callerStats.today + 1 : 1,
-        week: callerStats ? callerStats.week + 1 : 1,
+        total: callerStats ? callerStats.total + 1 : 1,
       };
       showCompletionToast(currentLocation.Name);
 
