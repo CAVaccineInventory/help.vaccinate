@@ -395,7 +395,6 @@ const constructReportFromDom = () => {
   currentReport["internal_notes_unchanged"] = prefilledInternalNotes === internalNotes;
   currentReport["County"] = currentLocation?.["County"];
   currentReport["extra_dose_info"] = document.querySelector("#callScriptExtraDoseNotes")?.innerText;
-  currentReport["documentation_requirements"] = document.querySelector("#callScriptHighRiskDocNotes")?.innerText;
   console.log(currentReport);
 };
 
