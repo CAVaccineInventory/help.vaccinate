@@ -5,6 +5,8 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+const { validateReport } = require("./util/validators.js");
+
 import {
   bindClick,
   fillTemplateIntoDom,
@@ -16,7 +18,6 @@ import {
   uncheckRadio,
   showModal,
 } from "./util/fauxFramework.js";
-import { validateReport } from "./util/validators";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
 import locationTemplate from "./templates/location.handlebars";
