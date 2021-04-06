@@ -97,7 +97,7 @@
             value="staffOnly"
             data-show-also="scoobyRecordCall"
           />
-          <label class="btn btn-outline-danger" for="noStaffOnly">Only staff</label>
+          <label class="btn btn-outline-danger" title="Only vaccinating their own employees" for="noStaffOnly">Only staff</label>
           <input
             class="btn-check"
             type="radio"
@@ -106,7 +106,7 @@
             value="hcwOnly"
             data-show-also="scoobyRecordCall"
           />
-          <label class="btn btn-outline-danger" for="noHCWOnly">Only healthcare workers</label>
+          <label class="btn btn-outline-danger" title="Limited to healthcare workers only" for="noHCWOnly">Only healthcare workers</label>
           <input
             class="btn-check"
             type="radio"
@@ -143,7 +143,7 @@
         <div class="yousay">How old does someone need to be to get vaccinated if they're <u>not</u> in a special group?</div>
         <div class="btn-group role=group">
           <input class="btn-check" type="checkbox" id="checkSite" value="checkSite" data-hide-on-select="publicScriptFollowUpQuestions minAgeOptions" data-show-also="whatSite"/>
-          <label class="btn btn-outline-primary" for="checkSite">Told to check website</label>
+          <label class="btn btn-outline-primary" title="Unable to answer script questions; referred to a website" for="checkSite">Told to check website</label>
         </div>
         <div class="btn-group" id="minAgeOptions" role="group">
           <input class="btn-check" type="radio" name="minAgeSelect" value="16" id="minAge16" />
@@ -211,13 +211,13 @@
           </div>
           <div class="">
             <input class="btn-check" type="checkbox" id="veteransOnly" />
-            <label class="btn btn-outline-primary" for="veteransOnly">Veterans only</label>
+            <label class="btn btn-outline-primary" title="Ask if veterans' family members can get doses too" for="veteransOnly">Veterans only</label>
             <input class="btn-check" type="checkbox" id="patientsOnly" />
-            <label class="btn btn-outline-primary" for="patientsOnly">Current patients only</label>
+            <label class="btn btn-outline-primary" title="This is a good question to ask clinics/hospitals" for="patientsOnly">Current patients only</label>
             <input class="btn-check" type="checkbox" id="countyOnly" />
-            <label class="btn btn-outline-primary" for="countyOnly">County residents only</label>
+            <label class="btn btn-outline-primary" title="If people who work in the county are eligible too, make a public note" for="countyOnly">County residents only</label>
             <input class="btn-check" type="checkbox" id="cityOnly" />
-            <label class="btn btn-outline-primary" for="cityOnly">City residents only</label>
+            <label class="btn btn-outline-primary" title="If people who work in the city are eligible too, make a public note" for="cityOnly">City residents only</label>
             <input class="btn-check" type="checkbox" id="secondDoseOnly" />
             <label class="btn btn-outline-primary" for="secondDoseOnly">Second dose only</label>
           </div>
@@ -236,7 +236,7 @@
                 id="apptWalkin"
                 data-hide-on-select="appointmentDetails"
               />
-              <label class="btn btn-outline-secondary" for="apptWalkin">Walkins are welcome</label>
+              <label class="btn btn-outline-secondary" title="If there are specific days/times walk-ins are accepted, put in public note" for="apptWalkin">Walkins are welcome</label>
               <input
                 class="btn-check"
                 type="radio"
@@ -244,7 +244,7 @@
                 value="required"
                 id="appointmentRequired"
               />
-              <label class="btn btn-outline-secondary" for="appointmentRequired">Appointment Required</label>
+              <label class="btn btn-outline-secondary" title="A scheduled appointment is required" for="appointmentRequired">Appointment Required</label>
             </div>
           </div>
           <div id="appointmentDetails">
@@ -259,7 +259,7 @@
                   id="appointmentsAvailableFull"
                   value="full"
                 />
-                <label for="appointmentsAvailableFull" class="btn btn-outline-secondary"
+                <label for="appointmentsAvailableFull" class="btn btn-outline-secondary" title="No appointment availability within 2 weeks"
                   >Full for the next two weeks</label
                 >
 
@@ -279,7 +279,7 @@
                   id="appointmentsAvailableUnknown"
                   value="unknown"
                 />
-                <label for="appointmentsAvailableUnknown" class="btn btn-outline-secondary">Not sure</label>
+                <label for="appointmentsAvailableUnknown" class="btn btn-outline-secondary" title="When they don't have the information" >Not sure</label>
               </div>
             </div>
             <div class="surveyQuestion">
@@ -318,7 +318,7 @@
                   data-show-also="appointmentPhone"
                   value="phone"
                 />
-                <label for="appointmentMethodPhone" class="btn btn-outline-secondary">phone</label>
+                <label for="appointmentMethodPhone" class="btn btn-outline-secondary" title="Only change the # if it is the incorrect # to schedule an appt" >phone</label>
                 <input
                   class="btn-check"
                   type="radio"
@@ -327,7 +327,7 @@
                   data-show-also="appointmentOtherInstructions"
                   value="other"
                 />
-                <label for="appointmentMethodOther" class="btn btn-outline-secondary">Another way</label>
+                <label for="appointmentMethodOther" class="btn btn-outline-secondary" title="Ex. hospital patient portal like MyHealthOnline" >Another way</label>
               </div>
               <div id="appointmentMethodDetail" class="mt-2">
                 <input
@@ -360,29 +360,12 @@
         <div class="instruction mb-1">What site they did they tell you to check? Ask which one if they did not tell you specifically.</div>
         <div class="btn-group" role="group">
           <input class="btn-check" type="radio" name="siteSelect" value="provider" id="providerSite" />
-          <label class="btn btn-outline-secondary" for="providerSite">Provider website</label>
+          <label class="btn btn-outline-secondary" title="Ex. Pharmacy/hospital/clinic website" for="providerSite">Provider website</label>
           <input class="btn-check" type="radio" name="siteSelect" value="county" id="countySite" />
-          <label class="btn btn-outline-secondary" for="countySite">County website</label>
+          <label class="btn btn-outline-secondary" title="County scheduling website" for="countySite">County website</label>
           <input class="btn-check" type="radio" name="siteSelect" value="state" id="stateSite" />
-          <label class="btn btn-outline-secondary" for="stateSite">State website</label>
+          <label class="btn btn-outline-secondary" title="myturn.ca.gov is the state website" for="stateSite">State website</label>
         </div>
-      </div>
-
-      <div class="surveyQuestion appointmentDocs">
-        <div class="yousay"
-          >What does someone need to show you at their appointment to prove that they're eligible to get their shot? Do
-          people in high-risk groups need to show you any special documentation to prove that they're eligible?</div
-        >
-        <div class="small p-1 text-muted">
-          Many of the folks you speak to will not have a good answer for this question. That is ok! If they say they
-          don’t know or can’t tell you, just write that down. It won't appear on our website, but our team will still read it. It's also ok to leave this box blank.</div
-        >
-        <div
-          id="callScriptHighRiskDocNotes"
-          class="input form-control form-control-sm"
-          role="textbox"
-          contenteditable
-        ></div>
       </div>
 
       <div class="surveyQuestion">
