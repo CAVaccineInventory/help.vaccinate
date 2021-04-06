@@ -5,7 +5,7 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-const { validateReport } = require("./util/validators.js");
+const { validateReport } = require("../../../common/validators.js");
 
 import {
   bindClick,
@@ -142,15 +142,11 @@ const handleAuth0Login = async () => {
 };
 
 const showErrorModal = (title, body, json) => {
-  showModal(
-    errorModalTemplate,
-    {
-      title,
-      body,
-      json: JSON.stringify(json, null, 2),
-    },
-    "errorModal"
-  );
+  showModal(errorModalTemplate, {
+    title,
+    body,
+    json: JSON.stringify(json, null, 2),
+  });
 };
 
 const authOrLoadAndFillCall = async () => {
@@ -415,7 +411,6 @@ const runValidators = (onSuccess) => {
         warnings: reportState.warningIssues,
         errors: reportState.blockingIssues,
       },
-      "submissionWarningModal",
       (modal) => {
         bindClick("#submitReportAfterWarning", () => {
           onSuccess();

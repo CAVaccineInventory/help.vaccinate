@@ -134,11 +134,12 @@ const hideLoadingScreen = () => {
   hideElement("#loading");
 };
 
-const showModal = (template, templateVars, modalId, onShownCallback = null) => {
+const showModal = (template, templateVars, onShownCallback = null) => {
   hideLoadingScreen();
   fillTemplateIntoDom(template, "#modalContainer", templateVars);
-  const modal = new bootstrap.Modal(document.getElementById(modalId), {});
-  document.getElementById(modalId).addEventListener("show.bs.modal", () => {
+  const modalDom = document.querySelector("#modalContainer .modal");
+  const modal = new bootstrap.Modal(modalDom, {});
+  modalDom.addEventListener("show.bs.modal", () => {
     if (onShownCallback) {
       onShownCallback(modal);
     }

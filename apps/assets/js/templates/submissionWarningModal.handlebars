@@ -8,7 +8,7 @@
       </div>
       <div class="modal-body">
         {{#if errors}}
-          The following issues requiring change were found:
+          Please fix the following issues and submit again:
           <ul class="list-group py-2">
             {{#each errors}}
               <li class="list-group-item list-group-item-danger">{{this}}</li>
@@ -16,7 +16,7 @@
           </ul>
         {{/if}}
         {{#if warnings}}
-          The following warnings were found:
+          {{#if errors}}Also, please{{else}}Please{{/if}} double-check the following:
           <ul class="list-group py-2">
             {{#each warnings}}
               <li class="list-group-item list-group-item-warning">{{this}}</li>

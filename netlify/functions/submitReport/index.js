@@ -1,8 +1,6 @@
 "use strict";
 
-const {
-  validateReport,
-} = require("../../../apps/assets/js/util/validators.js");
+const { validateReport } = require("../../../common/validators.js");
 const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
 const { base, duplicateBase } = require("../../lib/airtable.js");
