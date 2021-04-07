@@ -31,6 +31,13 @@ function shouldReview(event, roles) {
     }
   }
 
+  /**
+   * Note that we trust the client to tell us if the internal notes are
+   * unchanged; a malicious client could thus fake having changed the internal
+   * notes in order to escape being flagged.  A more correct implementation
+   * would be to HMAC sign the internal notes in requestCall, and verify that
+   * signature and compare it to a regenerate version of that here.
+   */
   const issues = validateReport(event);
   if (issues.requiresReview) {
     return true;
