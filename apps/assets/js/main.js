@@ -60,6 +60,11 @@ let prefilledInternalNotes = null;
 
 const initCallerStats = async () => {
   callerStats = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
+  if (callerStats.error) {
+    // just swallow and hide since not critical
+    console.warn("error fetching callerStats: ", callerStats);
+    callerStats = null;
+  }
   initCallerStatsTemplate();
 };
 
@@ -119,8 +124,13 @@ const fetchJsonFromEndpoint = async (endpoint, method, body) => {
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  const data = await result.json();
-  return data;
+
+  try {
+    return await result.json();
+  } catch (e) {
+    // didnt get json back - treat as an error
+    return { error: true, error_description: result.statusText };
+  }
 };
 
 const doLogin = () => {
