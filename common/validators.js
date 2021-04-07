@@ -30,13 +30,6 @@ const ALWAYS_REVIEW_TAGS = new Set(["Yes: walk-ins accepted"]);
 const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
 const emailRegex = /\S+@\S+\.\S+/; // This is very much not RFC-compliant, but generally matches common addresses.
 
-/**
- * Note that we trust the client to tell us if the internal notes are
- * unchanged; a malicious client could thus fake having changed the internal
- * notes in order to escape being flagged.  A more correct implementation
- * would be to HMAC sign the internal notes in requestCall, and verify that
- * signature and compare it to a regenerate version of that here.
- */
 module.exports.validateReport = (report) => {
   const reportState = {
     blockingIssues: [], // issues we block on
