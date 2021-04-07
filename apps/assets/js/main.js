@@ -35,9 +35,6 @@ import errorModalTemplate from "./templates/errorModal.handlebars";
 import callerStatsTemplate from "./templates/callerStats.handlebars";
 import submissionWarningModalTemplate from "./templates/submissionWarningModal.handlebars";
 
-const VIAL =
-  process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
-
 const MINUTE = 60 * 1000;
 const HOUR = MINUTE * 60;
 
@@ -114,13 +111,26 @@ const initAuth0 = async (cb) => {
 };
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
+  let apiTarget;
+  switch (process.env.API_TARGET) {
+    case "VIAL_PROD":
+      apiTarget = "https://vial.calltheshots.us/api";
+      break;
+    case "VIAL_STAGING":
+      apiTarget = "https://vial-staging.calltheshots.us/api";
+      break;
+    case "AIRTABLE":
+      apiTarget = "/.netlify/functions";
+      break;
+  }
+
   if (!method) {
     method = "POST";
   }
   const accessToken = await auth0.getTokenSilently({
     audience: AUTH0_AUDIENCE,
   });
-  const result = await fetch(`${VIAL}${endpoint}`, {
+  const result = await fetch(`${apiTarget}${endpoint}`, {
     method,
     body,
     headers: {
@@ -420,6 +430,9 @@ const constructReportFromDom = () => {
 
 const runValidators = (onSuccess) => {
   const reportState = validateReport(currentReport);
+  if (reportState.requiresReview) {
+    currentReport.is_pending_review = true;
+  }
   if (reportState.warningIssues.length || reportState.blockingIssues.length) {
     showModal(
       submissionWarningModalTemplate,
