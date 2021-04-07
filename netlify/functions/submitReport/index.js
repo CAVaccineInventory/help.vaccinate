@@ -1,5 +1,6 @@
 "use strict";
 
+const { validateReport } = require("../../../common/validators.js");
 const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
 const { base, duplicateBase } = require("../../lib/airtable.js");
@@ -9,38 +10,6 @@ const fetch = require("node-fetch");
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
 const JOURNEYMAN_ROLE_NAME = "Journeyman";
-const REVIEW_IF_UNCHANGED_NOTES_TAGS = new Set([
-  "No: incorrect contact information",
-  "No: will never be a vaccination site",
-  "No: location permanently closed",
-  "No: not open to the public",
-]);
-const REVIEW_ALWAYS_TAGS = new Set(["Yes: walk-ins accepted"]);
-
-// Flag these ages, if they're not in the list of counties that have opened up
-const REVIEW_AGE_TAGS = new Set([
-  "Yes: vaccinating 16+",
-  "Yes: vaccinating 18+",
-]);
-const FULLY_OPENED_COUNTIES = new Set([
-  "Alpine County",
-  "Amador County",
-  "Butte County",
-  "Contra Costa County",
-  "Del Norte County",
-  "Kern County",
-  "Lassen County",
-  "Madera County",
-  "Merced County",
-  "Modoc County",
-  "Nevada County",
-  "Shasta County",
-  "Sierra County",
-  "Stanislaus County",
-  "Sutter County",
-  "Tulare County",
-  "Yuba County",
-]);
 
 class HTTPResponseError extends Error {
   constructor(response, ...args) {
@@ -62,46 +31,9 @@ function shouldReview(event, roles) {
     }
   }
 
-  // Flag based on public notes containing email addresses or phone numbers
-  if (event.Notes) {
-    // This regex matches "(800)-123-4567", "+1 800 123 4567" and most things in between.
-    const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
-    // This is very much not RFC-compliant, but generally matches common addresses.
-    const emailRegex = /\S+@\S+\.\S+/;
-    if (event.Notes.match(phoneNumberRegex)) {
-      return true;
-    } else if (event.Notes.match(emailRegex)) {
-      return true;
-    }
-  }
-
-  // Flag based on tags that we expect to be very infrequent
-  const tags = new Set(event.Availability);
-  let potentiallySuspectTags = REVIEW_ALWAYS_TAGS;
-  if (event.County && !FULLY_OPENED_COUNTIES.has(event.County)) {
-    // Add the age tags, unless they're fully open
-    potentiallySuspectTags = new Set([
-      ...potentiallySuspectTags,
-      ...REVIEW_AGE_TAGS,
-    ]);
-  }
-  if ([...tags].filter((value) => potentiallySuspectTags.has(value)).length) {
+  const issues = validateReport(event);
+  if (issues.requiresReview) {
     return true;
-  }
-
-  // Flag based on tags that require explanation; flag if their internal notes are unchanged
-  if (
-    [...tags].filter((value) => REVIEW_IF_UNCHANGED_NOTES_TAGS.has(value))
-      .length
-  ) {
-    // Note that we trust the client to tell us if the internal notes are
-    // unchanged; a malicious client could thus fake having changed the internal
-    // notes in order to escape being flagged.  A more correct implementation
-    // would be to HMAC sign the internal notes in requestCall, and verify that
-    // signature and compare it to a regenerate version of that here.
-    if (event["internal_notes_unchanged"]) {
-      return true;
-    }
   }
 
   // If they checked the box, then we also mark it for review.
@@ -214,6 +146,7 @@ const handler = async (event, context, logger) => {
   }
   delete input["County"];
   delete input["internal_notes_unchanged"];
+  delete input["unexpected_min_age"];
 
   const creation = new Promise(async (resolve) => {
     try {

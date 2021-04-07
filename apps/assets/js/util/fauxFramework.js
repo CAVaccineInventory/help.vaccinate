@@ -134,6 +134,20 @@ const hideLoadingScreen = () => {
   hideElement("#loading");
 };
 
+const showModal = (template, templateVars, onShownCallback = null) => {
+  hideLoadingScreen();
+  fillTemplateIntoDom(template, "#modalContainer", templateVars);
+  const modalDom = document.querySelector("#modalContainer .modal");
+  const modal = new bootstrap.Modal(modalDom, {});
+  modalDom.addEventListener("show.bs.modal", () => {
+    if (onShownCallback) {
+      onShownCallback(modal);
+    }
+  });
+
+  modal.show();
+};
+
 export {
   bindClick,
   fillTemplateIntoDom,
@@ -143,4 +157,5 @@ export {
   showLoadingScreen,
   hideLoadingScreen,
   uncheckRadio,
+  showModal,
 };

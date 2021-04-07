@@ -5,6 +5,8 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+const { validateReport } = require("../../../common/validators.js");
+
 import {
   bindClick,
   fillTemplateIntoDom,
@@ -14,7 +16,8 @@ import {
   showLoadingScreen,
   hideLoadingScreen,
   uncheckRadio,
-} from "./fauxFramework.js";
+  showModal,
+} from "./util/fauxFramework.js";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
 import locationTemplate from "./templates/location.handlebars";
@@ -30,6 +33,7 @@ import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/callScript.handlebars";
 import errorModalTemplate from "./templates/errorModal.handlebars";
 import callerStatsTemplate from "./templates/callerStats.handlebars";
+import submissionWarningModalTemplate from "./templates/submissionWarningModal.handlebars";
 
 const MINUTE = 60 * 1000;
 const HOUR = MINUTE * 60;
@@ -138,15 +142,11 @@ const handleAuth0Login = async () => {
 };
 
 const showErrorModal = (title, body, json) => {
-  hideLoadingScreen();
-  fillTemplateIntoDom(errorModalTemplate, "#applicationError", {
-    title: title,
-    body: body,
+  showModal(errorModalTemplate, {
+    title,
+    body,
     json: JSON.stringify(json, null, 2),
   });
-
-  const myModal = new bootstrap.Modal(document.getElementById("errorModal"), {});
-  myModal.show();
 };
 
 const authOrLoadAndFillCall = async () => {
@@ -392,15 +392,46 @@ const constructReportFromDom = () => {
 
   const internalNotes = document.querySelector("#callScriptPrivateNotes")?.innerText;
   currentReport["Internal Notes"] = internalNotes;
-  currentReport["internal_notes_unchanged"] = prefilledInternalNotes === internalNotes;
   currentReport["County"] = currentLocation?.["County"];
   currentReport["extra_dose_info"] = document.querySelector("#callScriptExtraDoseNotes")?.innerText;
+
+  // fields used for validation
+  currentReport["internal_notes_unchanged"] = prefilledInternalNotes === internalNotes;
+  currentReport["unexpected_min_age"] =
+    !document.querySelector("#reallyVaccinatingEveryone")?.classList?.contains("hidden") || false;
   console.log(currentReport);
+};
+
+const runValidators = (onSuccess) => {
+  const reportState = validateReport(currentReport);
+  if (reportState.warningIssues.length || reportState.blockingIssues.length) {
+    showModal(
+      submissionWarningModalTemplate,
+      {
+        warnings: reportState.warningIssues,
+        errors: reportState.blockingIssues,
+      },
+      (modal) => {
+        bindClick("#submitReportAfterWarning", () => {
+          onSuccess();
+          modal.hide();
+        });
+
+        bindClick("#dismissAfterWarning", () => {
+          document.getElementById("callScriptPrivateNotes")?.scrollIntoView();
+        });
+      }
+    );
+  } else {
+    onSuccess();
+  }
 };
 
 const saveCallReport = () => {
   constructReportFromDom();
-  submitCallReport();
+  runValidators(() => {
+    submitCallReport();
+  });
 };
 
 const submitBadContactInfo = () => {
@@ -414,14 +445,18 @@ const submitPermanentlyClosed = () => {
 const submitWithAvail = (avail) => {
   constructReportFromDom();
   currentReport["Availability"] = [avail];
-  submitCallReport();
+  runValidators(() => {
+    submitCallReport();
+  });
 };
 
 const submitSkipUntil = (when) => {
   constructReportFromDom();
   currentReport["Do not call until"] = when.toISOString();
   currentReport["Availability"] = [AVAIL_SKIP];
-  submitCallReport();
+  runValidators(() => {
+    submitCallReport();
+  });
 };
 
 // busy = 15 min delay
