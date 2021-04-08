@@ -293,6 +293,7 @@ const constructReportFromDom = () => {
   if (isYes) {
     const siteToCheck = document.querySelector("[name=siteSelect]:checked")?.value;
     if (siteToCheck) {
+      answers.push("Yes: appointment required");
       switch (siteToCheck) {
         case "provider":
           answers.push("Eligibility determined by provider website");
@@ -306,87 +307,87 @@ const constructReportFromDom = () => {
         default:
           console.log("unknown site to check");
       }
-    }
-
-    const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
-    if (minAgeAnswer) {
-      answers.push("Yes: vaccinating " + minAgeAnswer + "+");
-    }
-
-    const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
-    switch (apptRequired) {
-      case "walkinOk":
-        answers.push("Yes: walk-ins accepted");
-        break;
-      case "required":
-        answers.push("Yes: appointment required");
-        break;
-      default:
-        answers.push("Yes: appointment required");
-        console.log("no appt required selected - defaulting to appt required");
-    }
-
-    if (apptRequired === "required") {
-      if (document.querySelector("[name=appointmentsAvailable]:checked")?.value === "full") {
-        answers.push("Yes: appointment calendar currently full");
+    } else {
+      const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
+      if (minAgeAnswer) {
+        answers.push("Yes: vaccinating " + minAgeAnswer + "+");
       }
 
-      const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
-      switch (apptMethod) {
-        case "phone":
-          currentReport["Appointments by phone?"] = true;
-          currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
+      const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
+      switch (apptRequired) {
+        case "walkinOk":
+          answers.push("Yes: walk-ins accepted");
           break;
-        case "county":
-          currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
-          break;
-        case "myturn":
-          currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
-          break;
-        case "web":
-          currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
-          break;
-        case "other":
-          currentReport["Appointment scheduling instructions"] = document.querySelector(
-            "#appointmentOtherInstructions"
-          )?.value;
+        case "required":
+          answers.push("Yes: appointment required");
           break;
         default:
-          break;
+          answers.push("Yes: appointment required");
+          console.log("no appt required selected - defaulting to appt required");
       }
-    }
-    if (document.querySelector("#essentialWorkersAccepted")?.checked) {
-      answers.push("Vaccinating essential workers");
-    }
-    if (document.querySelector("#emergencyServicesAccepted")?.checked) {
-      answers.push("Vaccinating emergency services workers");
-    }
-    if (document.querySelector("#educatorsAccepted")?.checked) {
-      answers.push("Vaccinating education and childcare workers");
-    }
-    if (document.querySelector("#foodAndAgAccepted")?.checked) {
-      answers.push("Vaccinating agriculture and food workers");
-    }
-    if (document.querySelector("#highRiskIndividualsAccepted")?.checked) {
-      answers.push("Vaccinating high-risk individuals");
-    }
 
-    if (document.querySelector("#veteransOnly")?.checked) {
-      answers.push("Yes: must be a veteran");
-    }
+      if (apptRequired === "required") {
+        if (document.querySelector("[name=appointmentsAvailable]:checked")?.value === "full") {
+          answers.push("Yes: appointment calendar currently full");
+        }
 
-    if (document.querySelector("#patientsOnly")?.checked) {
-      answers.push("Yes: must be a current patient");
-    }
-    if (document.querySelector("#countyOnly")?.checked) {
-      answers.push("Yes: restricted to county residents");
-    }
-    if (document.querySelector("#cityOnly")?.checked) {
-      answers.push("Yes: restricted to city residents");
-    }
+        const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
+        switch (apptMethod) {
+          case "phone":
+            currentReport["Appointments by phone?"] = true;
+            currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
+            break;
+          case "county":
+            currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
+            break;
+          case "myturn":
+            currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
+            break;
+          case "web":
+            currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
+            break;
+          case "other":
+            currentReport["Appointment scheduling instructions"] = document.querySelector(
+              "#appointmentOtherInstructions"
+            )?.value;
+            break;
+          default:
+            break;
+        }
+      }
+      if (document.querySelector("#essentialWorkersAccepted")?.checked) {
+        answers.push("Vaccinating essential workers");
+      }
+      if (document.querySelector("#emergencyServicesAccepted")?.checked) {
+        answers.push("Vaccinating emergency services workers");
+      }
+      if (document.querySelector("#educatorsAccepted")?.checked) {
+        answers.push("Vaccinating education and childcare workers");
+      }
+      if (document.querySelector("#foodAndAgAccepted")?.checked) {
+        answers.push("Vaccinating agriculture and food workers");
+      }
+      if (document.querySelector("#highRiskIndividualsAccepted")?.checked) {
+        answers.push("Vaccinating high-risk individuals");
+      }
 
-    if (document.querySelector("#secondDoseOnly")?.checked) {
-      answers.push(AVAIL_SECOND_DOSE_ONLY);
+      if (document.querySelector("#veteransOnly")?.checked) {
+        answers.push("Yes: must be a veteran");
+      }
+
+      if (document.querySelector("#patientsOnly")?.checked) {
+        answers.push("Yes: must be a current patient");
+      }
+      if (document.querySelector("#countyOnly")?.checked) {
+        answers.push("Yes: restricted to county residents");
+      }
+      if (document.querySelector("#cityOnly")?.checked) {
+        answers.push("Yes: restricted to city residents");
+      }
+
+      if (document.querySelector("#secondDoseOnly")?.checked) {
+        answers.push(AVAIL_SECOND_DOSE_ONLY);
+      }
     }
   }
 
