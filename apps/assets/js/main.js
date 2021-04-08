@@ -297,12 +297,17 @@ const constructReportFromDom = () => {
       switch (siteToCheck) {
         case "provider":
           answers.push("Eligibility determined by provider website");
+          if (providerSchedulingUrl) {
+            currentReport["Appointment scheduling instructions"] = providerSchedulingUrl;
+          }
           break;
         case "state":
           answers.push("Eligibility determined by state website");
+          currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
           break;
         case "county":
           answers.push("Eligibility determined by county website");
+          currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
           break;
         default:
           console.log("unknown site to check");
@@ -569,7 +574,7 @@ const fillCallTemplate = (data) => {
     const providerDiv = document.querySelector("#affiliationNotes .provider." + affiliation);
     if (providerDiv !== null) {
       providerDiv.classList.remove("hidden");
-      providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url");
+      providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url") || data.Website;
     }
   }
   if (!data.Address) {
@@ -614,7 +619,7 @@ const fillCallTemplate = (data) => {
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
-    locationWebsite: providerSchedulingUrl || data.Website,
+    locationWebsite: providerSchedulingUrl,
     responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
     locationPrivateNotes: prefilledInternalNotes,
