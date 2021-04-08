@@ -309,7 +309,7 @@
                   data-show-also="appointmentWebsite"
                   value="web"
                 />
-                <label for="appointmentMethodWeb" class="btn btn-outline-secondary">web</label>
+                <label for="appointmentMethodWeb" class="btn btn-outline-secondary">Provider website</label>
                 <input
                   type="radio"
                   class="btn-check"
@@ -359,13 +359,14 @@
       <div class="hidden surveyQuestion" id="whatSite">
         <div class="instruction mb-1">What site they did they tell you to check? Ask which one if they did not tell you specifically.</div>
         <div class="btn-group" role="group">
-          <input class="btn-check" type="radio" name="siteSelect" value="provider" id="providerSite" />
+          <input class="btn-check" type="radio" name="siteSelect" value="provider" id="providerSite" data-show-also="providerWebsiteHint" />
           <label class="btn btn-outline-secondary" title="Ex. Pharmacy/hospital/clinic website" for="providerSite">Provider website</label>
           <input class="btn-check" type="radio" name="siteSelect" value="county" id="countySite" />
           <label class="btn btn-outline-secondary" title="County scheduling website" for="countySite">County website</label>
           <input class="btn-check" type="radio" name="siteSelect" value="state" id="stateSite" />
           <label class="btn btn-outline-secondary" title="myturn.ca.gov is the state website" for="stateSite">State website</label>
         </div>
+        {{#if locationWebsite}}<div id="providerWebsiteHint" class="hidden small p-1 text-muted">We believe the provider website is {{locationWebsite}}. If they indicate this is the wrong website, please update the private notes field.</div>{{/if}}
       </div>
 
       <div class="surveyQuestion">
