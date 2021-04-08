@@ -360,9 +360,6 @@ const constructReportFromDom = () => {
             break;
         }
       }
-      if (document.querySelector("#essentialWorkersAccepted")?.checked) {
-        answers.push("Vaccinating essential workers");
-      }
       if (document.querySelector("#emergencyServicesAccepted")?.checked) {
         answers.push("Vaccinating emergency services workers");
       }
