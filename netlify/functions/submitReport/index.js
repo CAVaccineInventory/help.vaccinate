@@ -90,33 +90,6 @@ const handler = async (event, context, logger) => {
     };
   }
 
-  // Start the dual-write to VIAL; it is not authoritative, so we swallow its
-  // failures.  Because of that, it may also succeed even if we return 400 or
-  // 500 due to failures in the Airtable path.
-  awaits.push(
-    new Promise(async (resolve) => {
-      try {
-        const response = await fetch(
-          "https://vial-staging.calltheshots.us/api/submitReport",
-          {
-            method: "POST",
-            body: event.body,
-            headers: {
-              Authorization: `Bearer ${context.identityContext.token}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new HTTPResponseError(response);
-        }
-      } catch (err) {
-        logger.error("failed to dual-write to VIAL", err);
-        // No re-raise; this is not authoritative.
-      }
-      resolve();
-    })
-  );
-
   // if locations is not a list, make it one. convenience.
   if (!Array.isArray(input.Location)) {
     input.Location = [input.Location];
