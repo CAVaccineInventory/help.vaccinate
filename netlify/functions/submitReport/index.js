@@ -5,21 +5,10 @@ const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
 const { base, duplicateBase } = require("../../lib/airtable.js");
 const { logEvent } = require("../../lib/log.js");
-const fetch = require("node-fetch");
 
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
 const JOURNEYMAN_ROLE_NAME = "Journeyman";
-
-class HTTPResponseError extends Error {
-  constructor(response, ...args) {
-    super(
-      `HTTP Error Response: ${response.status} ${response.statusText}`,
-      ...args
-    );
-    this.response = response;
-  }
-}
 
 function shouldReview(event, roles) {
   // Flag based on user roles; 100% of trainee, 15% of journeyman
@@ -89,33 +78,6 @@ const handler = async (event, context, logger) => {
       body: JSON.stringify(output),
     };
   }
-
-  // Start the dual-write to VIAL; it is not authoritative, so we swallow its
-  // failures.  Because of that, it may also succeed even if we return 400 or
-  // 500 due to failures in the Airtable path.
-  awaits.push(
-    new Promise(async (resolve) => {
-      try {
-        const response = await fetch(
-          "https://vial-staging.calltheshots.us/api/submitReport",
-          {
-            method: "POST",
-            body: event.body,
-            headers: {
-              Authorization: `Bearer ${context.identityContext.token}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new HTTPResponseError(response);
-        }
-      } catch (err) {
-        logger.error("failed to dual-write to VIAL", err);
-        // No re-raise; this is not authoritative.
-      }
-      resolve();
-    })
-  );
 
   // if locations is not a list, make it one. convenience.
   if (!Array.isArray(input.Location)) {
