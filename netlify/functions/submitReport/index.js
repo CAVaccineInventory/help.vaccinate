@@ -5,21 +5,10 @@ const { loggedHandler } = require("../../lib/logger.js");
 const { requirePermission, getUserinfo } = require("../../lib/auth.js");
 const { base, duplicateBase } = require("../../lib/airtable.js");
 const { logEvent } = require("../../lib/log.js");
-const fetch = require("node-fetch");
 
 const SKIP_TAG_PREFIX = "Skip: call back later";
 const TRAINEE_ROLE_NAME = "Trainee";
 const JOURNEYMAN_ROLE_NAME = "Journeyman";
-
-class HTTPResponseError extends Error {
-  constructor(response, ...args) {
-    super(
-      `HTTP Error Response: ${response.status} ${response.statusText}`,
-      ...args
-    );
-    this.response = response;
-  }
-}
 
 function shouldReview(event, roles) {
   // Flag based on user roles; 100% of trainee, 15% of journeyman
