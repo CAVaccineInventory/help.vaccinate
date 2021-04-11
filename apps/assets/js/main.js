@@ -59,7 +59,7 @@ let noteTimestampPrefix = null;
 let prefilledInternalNotes = null;
 
 const initCallerStats = async () => {
-  callerStats = await fetchJsonFromEndpoint("/.netlify/functions/callerStats");
+  callerStats = await fetchJsonFromEndpoint("/callerStats");
   if (callerStats.error) {
     // just swallow and hide since not critical
     console.warn("error fetching callerStats: ", callerStats);
@@ -72,7 +72,7 @@ const initCallerStatsTemplate = () => {
   fillTemplateIntoDom(callerStatsTemplate, "#callerStats", {
     displayCallerStats: !!callerStats,
     callsToday: callerStats?.today,
-    callsThisWeek: callerStats?.week,
+    callsTotal: callerStats?.total,
   });
 };
 
@@ -111,13 +111,26 @@ const initAuth0 = async (cb) => {
 };
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
+  let apiTarget;
+  switch (process.env.API_TARGET) {
+    case "VIAL_PROD":
+      apiTarget = "https://vial.calltheshots.us/api";
+      break;
+    case "VIAL_STAGING":
+      apiTarget = "https://vial-staging.calltheshots.us/api";
+      break;
+    case "AIRTABLE":
+      apiTarget = "/.netlify/functions";
+      break;
+  }
+
   if (!method) {
     method = "POST";
   }
   const accessToken = await auth0.getTokenSilently({
     audience: AUTH0_AUDIENCE,
   });
-  const result = await fetch(endpoint, {
+  const result = await fetch(`${apiTarget}${endpoint}`, {
     method,
     body,
     headers: {
@@ -173,9 +186,9 @@ const authOrLoadAndFillCall = async () => {
 const requestCall = async (id) => {
   showLoadingScreen();
   if (id) {
-    currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall?location_id=" + id);
+    currentLocation = await fetchJsonFromEndpoint("/requestCall?location_id=" + id);
   } else {
-    currentLocation = await fetchJsonFromEndpoint("/.netlify/functions/requestCall");
+    currentLocation = await fetchJsonFromEndpoint("/requestCall");
   }
   hideLoadingScreen();
   const user = await auth0.getUser();
@@ -417,6 +430,9 @@ const constructReportFromDom = () => {
 
 const runValidators = (onSuccess) => {
   const reportState = validateReport(currentReport);
+  if (reportState.requiresReview) {
+    currentReport.is_pending_review = true;
+  }
   if (reportState.warningIssues.length || reportState.blockingIssues.length) {
     showModal(
       submissionWarningModalTemplate,
@@ -513,7 +529,7 @@ const submitCallMonday = () => {
 
 const submitCallReport = async () => {
   showLoadingScreen();
-  const data = await fetchJsonFromEndpoint("/.netlify/functions/submitReport", "POST", JSON.stringify(currentReport));
+  const data = await fetchJsonFromEndpoint("/submitReport", "POST", JSON.stringify(currentReport));
   hideLoadingScreen();
   if (data.error) {
     showErrorModal(
@@ -529,7 +545,7 @@ const submitCallReport = async () => {
     if (callId) {
       callerStats = {
         today: callerStats ? callerStats.today + 1 : 1,
-        week: callerStats ? callerStats.week + 1 : 1,
+        total: callerStats ? callerStats.total + 1 : 1,
       };
       showCompletionToast(currentLocation.Name);
 
