@@ -4,7 +4,6 @@ const webpack = require("webpack");
 module.exports = {
   mode: "production",
   entry: {
-    tester: "./assets/js/tester.js",
     scooby: "./assets/js/scooby.js",
   },
   devtool: "source-map",
