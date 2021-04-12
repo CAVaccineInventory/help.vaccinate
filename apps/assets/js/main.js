@@ -213,6 +213,8 @@ const requestCall = async (id) => {
 };
 
 const loadAndFillPreviousCall = () => {
+  hideElement("#nextCallPrompt");
+  showElement("#callerTool");
   hideToast(); // should do this somewhere smarter.
   currentLocation = previousLocation;
   previousLocation = null;
@@ -551,7 +553,18 @@ const submitCallReport = async () => {
 
       previousLocation = currentLocation;
       previousCallScriptDom = document.getElementById("callScript").cloneNode(1);
-      requestCall();
+      const urlParams = new URLSearchParams(window.location.search);
+
+      if (urlParams.get("location_id")) {
+        // If using scooby via location_id, reset to home view instead of requesting more calls
+        urlParams.delete("location_id");
+        window.history.replaceState({}, "", `${window.location.pathname}?${urlParams.toString()}`);
+        showElement("#nextCallPrompt");
+        hideElement("#youAreCalling");
+        hideElement("#callerTool");
+      } else {
+        requestCall();
+      }
     }
   }
 };
