@@ -1,0 +1,260 @@
+<form id="callScriptForm">
+  <div id="callScriptBody">
+    <div class="h4 highlevelStep">3. Have a conversation</div>
+    <div class="surveyQuestion">
+      <div class="instructions">
+        <p
+          >The person you're calling is working very hard to help people and may be fairly stressed out. Be friendly,
+          kind, &amp; compassionate.</p
+        >
+      </div>
+      <div class="yousay"
+        >Hi, I have some questions about getting the COVID vaccine. Could I please speak to {{ responsiblePerson
+        }}?</div
+      >
+    </div>
+    <div class="surveyQuestion">
+      <div class="instructions">When you reach the right person:</div>
+      <div class="yousay">Do you offer the COVID vaccine?</div>
+      <div class="instructions small secondary">Pick yes whether or not they have open appointments now, or have stock this week </div>
+      <div class="btn-group" role="group">
+        <input
+          type="radio"
+          name="yesNoSelect"
+          value="yesJustYes"
+          id="yesJustYes"
+          class="btn-check"
+          data-show-also="scoobyRecordCall"
+        />
+        <label
+          class="btn btn-outline-success"
+          for="yesJustYes"
+          title="Pick if they offer vaccines, even if out of stock"
+          >Yes</label
+        >
+      <input
+        type="radio"
+        name="yesNoSelect"
+        value="noJustNo"
+        id="noJustNo"
+        class="btn-check"
+        data-hide-on-select="vaccinatingPublicScript"
+        data-show-also="noDetails"
+      />
+      <label class="btn btn-outline-danger" for="noJustNo">No</label>
+    </div>
+    </div>
+
+    <div id="vaccinatingPublicScript">
+      <div class="surveyQuestion">
+        <div class="yousay">
+          Thanks! Are there any restrictions or limits on who you’re vaccinating?</div>
+          <div class="btn-group" role="group">
+            <input
+              class="btn-check"
+              type="radio"
+              name="restrictionsOrLimits"
+              value="yesRestrictions"
+              id="yesRestrictions"
+            />
+            <label class="btn btn-outline-secondary" for="yesRestrictions">Yes</label>
+            <input
+              class="btn-check"
+              type="radio"
+              name="restrictionsOrLimits"
+              value="noRestrictions"
+              id="noRestrictions"
+            />
+            <label class="btn btn-outline-secondary" for="noRestrictions">No</label>
+          </div>
+      </div>
+
+      <div id="appointmentSchedulingInfo">
+        <div class="surveyQuestion">
+          <div class="yousay">And do you require appointments, or are walk-ins accepted?</div>
+          <div class="btn-group" role="group">
+            <input
+              class="btn-check"
+              type="radio"
+              name="appointmentRequired"
+              value="required"
+              id="appointmentRequired"
+            />
+            <label class="btn btn-outline-secondary" title="A scheduled appointment is required" for="appointmentRequired">Appointment Required</label>
+            <input
+              class="btn-check"
+              type="radio"
+              name="appointmentRequired"
+              value="appointmentOrWalkin"
+              id="appointmentOrWalkin"
+            />
+            <label class="btn btn-outline-secondary" for="appointmentOrWalkin">Accept appointments and walk-ins</label>
+            <input
+              class="btn-check"
+              type="radio"
+              name="appointmentRequired"
+              value="walkinOk"
+              id="apptWalkin"
+              data-hide-on-select="appointmentDetails"
+            />
+            <label class="btn btn-outline-secondary" title="If there are specific days/times walk-ins are accepted, put in public note" for="apptWalkin">Walk-ins only</label>
+          </div>
+        </div>
+        <div id="appointmentDetails">
+          <div class="surveyQuestion">
+            <div class="yousay">
+              Great! Do you know if you have any open appointments that someone could book right now? It’s okay if they’re not for a couple of weeks. </div>
+            <div class="btn-group" role="group">
+              <input
+                class="btn-check"
+                type="radio"
+                name="appointmentsAvailable"
+                id="appointmentsAvailableYes"
+                value="yes"
+              />
+              <label for="appointmentsAvailableYes" class="btn btn-outline-secondary">Yes</label>
+              <input
+                class="btn-check"
+                type="radio"
+                name="appointmentsAvailable"
+                id="appointmentsAvailableNo"
+                value="no"
+              />
+              <label for="appointmentsAvailableNo" class="btn btn-outline-secondary"
+                >No</label
+              >
+              <input
+                class="btn-check"
+                type="radio"
+                name="appointmentsAvailable"
+                id="appointmentsAvailableUnknown"
+                value="unknown"
+              />
+              <label for="appointmentsAvailableUnknown" class="btn btn-outline-secondary" title="When they don't have the information" >Not sure</label>
+            </div>
+          </div>
+          <div class="surveyQuestion">
+            <div class="yousay">How should they make the appointment?</div>
+            <div class="btn-group" role="group">
+              <input
+                class="btn-check"
+                type="radio"
+                name="appointmentMethod"
+                id="appointmentMethodWeb"
+                data-show-also="appointmentWebsite"
+                value="web"
+              />
+              <label for="appointmentMethodWeb" class="btn btn-outline-secondary">web</label>
+              <input
+                type="radio"
+                class="btn-check"
+                name="appointmentMethod"
+                id="appointmentMethodPhone"
+                data-show-also="appointmentPhone"
+                value="phone"
+              />
+              <label for="appointmentMethodPhone" class="btn btn-outline-secondary" title="Only change the # if it is the incorrect # to schedule an appt" >phone</label>
+              <input
+                class="btn-check"
+                type="radio"
+                name="appointmentMethod"
+                id="appointmentMethodOther"
+                data-show-also="appointmentOtherInstructions"
+                value="other"
+              />
+              <label for="appointmentMethodOther" class="btn btn-outline-secondary" title="Ex. hospital patient portal like MyHealthOnline" >Another way</label>
+            </div>
+            <div id="appointmentMethodDetail" class="mt-2">
+              <input
+                type="text"
+                id="appointmentPhone"
+                class="form-control hidden"
+                placeholder="Appointment phone number"
+                value="{{locationPhone}}"
+              />
+              <input
+                type="text"
+                id="appointmentOtherInstructions"
+                class="form-control hidden"
+                placeholder="Scheduling instructions"
+              />
+              <input
+                type="text"
+                id="appointmentWebsite"
+                class="form-control hidden"
+                placeholder="Appointment website"
+                value="{{locationWebsite}}"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="requestAddress" class="hidden">
+    <div class="surveyQuestion">
+      <div class="yousay">Would you mind telling me what your address is?</div>
+      <div class="instructions">
+        <a
+          target="_blank"
+          class="text-muted small open-as-popup"
+          href="https://airtable.com/shrHlOvXyTkRufwoH?prefill_Location+ID={{locationId}}&prefill_Type=Incorrect+contact+information"
+          >Request a database update</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="surveyQuestion">
+    <div class="yousay">Thanks so much for your time! Have a great day.</div>
+  </div>
+
+  <div class="surveyQuestion">
+    <label for="callScriptPublicNotes">Public notes</label>
+    <div class="small p-1 text-muted"
+      >What do our readers need to know about this location? Please don't repeat anything you filled in above.</div
+    >
+    <div class="small"
+      >Please <b>do not write names or phone numbers in this box</b>. Everything in this box will be on our public
+      website. Please delete old, out of date notes.<div>
+        <div id="callScriptPublicNotes" class="input form-control form-control-sm" role="textbox" contenteditable
+          >{{ locationPublicNotes }}</div
+        >
+      </div>
+    </div>
+  </div>
+  <div class="surveyQuestion">
+    <div class="">
+      <label for="callScriptPrivateNotes">Private notes</label>
+      <div class="small p-1 text-muted"
+        >What should team members know about this call or location? We won't publish this information.</div
+      >
+      <div
+        id="callScriptPrivateNotes"
+        class="input border border-secondary form-control form-control-sm"
+        role="textbox"
+        contenteditable
+        >{{ locationPrivateNotes }}</div
+      >
+    </div>
+  </div>
+  <div class="surveyQuestion">
+    <div class="instructions"
+      >If you think this report should be checked by somebody before publication, check "Request review".</div
+    >
+    <div class="form-check mt-1">
+      <input data-show-also="reviewRequestedConfirmation" class="form-check-input" type="checkbox" id="reviewRequested" />
+      <label class="form-check-label text-danger" title="Please leave a [bracketed note] with the reason for the flag." for="reviewRequested">Request review</label>
+    </div>
+    <div class="d-inline-block">
+      <div id="reviewRequestedConfirmation" class="hidden alert alert-danger small mb-0"  role="alert">
+        This report will be reviewed upon submission.
+      </div>
+    </div>
+  </div>
+  <div class="d-grid gap-2 col-6 mx-auto row">
+    <input type="button" class="btn btn-primary my-4 hidden" id="scoobyRecordCall" value="Send report" />
+  </div>
+</form>
