@@ -112,9 +112,7 @@ const initAuth0 = async (cb) => {
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
   const apiTarget =
-    process.env.API_TARGET === "VIAL_PROD"
-      ? "https://vial.calltheshots.us/api"
-      : "https://vial-staging.calltheshots.us/api";
+    process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
 
   if (!method) {
     method = "POST";

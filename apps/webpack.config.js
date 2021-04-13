@@ -34,5 +34,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [new webpack.EnvironmentPlugin({ API_TARGET: "VIAL_STAGING" })],
+  plugins: [new webpack.EnvironmentPlugin({ DEPLOY: "staging" })],
 };
