@@ -30,7 +30,7 @@ import dialResultTemplate from "./templates/dialResult.handlebars";
 import callLogTemplate from "./templates/callLog.handlebars";
 import toastTemplate from "./templates/toast.handlebars";
 import affiliationNotesTemplate from "./templates/affiliationNotes.handlebars";
-import callScriptTemplate from "./templates/callScript.copy.handlebars";
+import callScriptTemplate from "./templates/callScript.new.handlebars";
 import errorModalTemplate from "./templates/errorModal.handlebars";
 import callerStatsTemplate from "./templates/callerStats.handlebars";
 import submissionWarningModalTemplate from "./templates/submissionWarningModal.handlebars";
