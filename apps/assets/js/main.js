@@ -672,6 +672,7 @@ const fillCallTemplate = (data) => {
     locationPrivateNotes: prefilledInternalNotes,
     locationPublicNotes: noteTimestampPrefix,
     county: data.County,
+    locationHours: data.Hours,
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
