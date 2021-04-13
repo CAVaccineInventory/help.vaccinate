@@ -50,6 +50,7 @@ let userRoles = null;
 let currentReport = {};
 let currentLocation = null;
 let previousLocation = null;
+let previousId = null;
 
 let previousCallScriptDom = null;
 
@@ -206,6 +207,7 @@ const requestCall = async (id) => {
   } else {
     hideLoadingScreen();
     hideElement("#nextCallPrompt");
+    showElement("#youAreCalling");
     showElement("#callerTool");
     showScriptForLocation(currentLocation);
     activateCallTemplate();
@@ -213,9 +215,18 @@ const requestCall = async (id) => {
 };
 
 const loadAndFillPreviousCall = () => {
+  hideElement("#nextCallPrompt");
+  showElement("#youAreCalling");
+  showElement("#callerTool");
   hideToast(); // should do this somewhere smarter.
+
   currentLocation = previousLocation;
+  if (previousId) {
+    window.history.replaceState({}, "", `${window.location.pathname}?location_id=${previousId}`);
+  }
+
   previousLocation = null;
+  previousId = null;
   showScriptForLocation(currentLocation);
   // Replace the call script with the call script from the previous report
   const callScript = document.getElementById("callScript");
@@ -256,6 +267,11 @@ const initScooby = () => {
         document.querySelector("#location-phone-url")?.click();
       }
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("location_id")) {
+      authOrLoadAndFillCall();
+    }
   });
 };
 
@@ -551,7 +567,19 @@ const submitCallReport = async () => {
 
       previousLocation = currentLocation;
       previousCallScriptDom = document.getElementById("callScript").cloneNode(1);
-      requestCall();
+      const urlParams = new URLSearchParams(window.location.search);
+      previousId = urlParams.get("location_id");
+
+      if (previousId) {
+        // If using scooby via location_id, reset to home view instead of requesting more calls
+        urlParams.delete("location_id");
+        window.history.replaceState({}, "", `${window.location.pathname}?${urlParams.toString()}`);
+        showElement("#nextCallPrompt");
+        hideElement("#youAreCalling");
+        hideElement("#callerTool");
+      } else {
+        requestCall();
+      }
     }
   }
 };
