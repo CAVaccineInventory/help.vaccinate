@@ -156,12 +156,18 @@ const doLogout = () => {
 };
 
 const handleAuth0Login = async () => {
-  if (auth0) {
-    await auth0.handleRedirectCallback();
-    const user = await auth0.getUser();
-    if (user) {
-      updateLogin(user);
+  // TODO: try catch to deal with if not logging in now.
+  // I know, I know. This code needs to be rethought
+  try {
+    if (auth0) {
+      await auth0.handleRedirectCallback();
+      const user = await auth0.getUser();
+      if (user) {
+        updateLogin(user);
+      }
     }
+  } catch (e) {
+    console.warn(e);
   }
 };
 
@@ -254,8 +260,8 @@ const showScriptForLocation = (place) => {
 
 const initScooby = () => {
   showLoadingScreen();
-  initAuth0(() => {
-    handleAuth0Login();
+  initAuth0(async () => {
+    await handleAuth0Login();
     hideLoadingScreen();
     fillTemplateIntoDom(nextCallPromptTemplate, "#nextCallPrompt", {});
     bindClick("#requestCallButton", authOrLoadAndFillCall);
