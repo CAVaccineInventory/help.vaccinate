@@ -207,6 +207,7 @@ const requestCall = async (id) => {
   } else {
     hideLoadingScreen();
     hideElement("#nextCallPrompt");
+    showElement("#youAreCalling");
     showElement("#callerTool");
     showScriptForLocation(currentLocation);
     activateCallTemplate();
@@ -215,6 +216,7 @@ const requestCall = async (id) => {
 
 const loadAndFillPreviousCall = () => {
   hideElement("#nextCallPrompt");
+  showElement("#youAreCalling");
   showElement("#callerTool");
   hideToast(); // should do this somewhere smarter.
 
