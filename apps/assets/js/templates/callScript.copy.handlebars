@@ -15,7 +15,6 @@
   <div class="surveyQuestion">
     <div class="instructions">When you reach the right person:</div>
     <div class="yousay">Do you offer the COVID vaccine?</div>
-    <div class="instructions small secondary">Pick yes whether or not they have open appointments now, or have stock this week </div>
     <div class="btn-group" role="group">
       <input
         type="radio"
@@ -23,7 +22,7 @@
         value="yesJustYes"
         id="yesJustYes"
         class="btn-check"
-        data-show-also="scoobyRecordCall"
+        data-show-also="scoobyRecordCall yesDetails"
       />
       <label
         class="btn btn-outline-success"
@@ -31,42 +30,54 @@
         title="Pick if they offer vaccines, even if out of stock"
         >Yes</label
       >
-    <input
-      type="radio"
-      name="yesNoSelect"
-      value="noJustNo"
-      id="noJustNo"
-      class="btn-check"
-      data-hide-on-select="vaccinatingPublicScript"
-      data-show-also="noDetails"
-    />
-    <label class="btn btn-outline-danger" for="noJustNo">No</label>
-  </div>
+      <input
+        type="radio"
+        name="yesNoSelect"
+        value="noJustNo"
+        id="noJustNo"
+        class="btn-check"
+        data-hide-on-select="vaccinatingPublicScript"
+        data-show-also="scoobyRecordCall noDetails"
+      />
+      <label class="btn btn-outline-danger" for="noJustNo">No</label>
+    </div>
+
+    <div id="yesDetails" class="hidden small p-1 text-muted"
+      >
+      This is a site that administers the vaccine (whether or not they have open appointments now, or have stock this week)
+    </div>
+    <div id="noDetails" class="hidden small p-1 text-muted"
+      >
+      This is a site that does not have the vaccine and is confident they will not in the future
+    </div>
   </div>
 
   <div id="vaccinatingPublicScript">
     <div class="surveyQuestion">
-      <div class="yousay">
-        Thanks! Are there any restrictions or limits on who you’re vaccinating?</div>
-        <div class="btn-group" role="group">
-          <input
-            class="btn-check"
-            type="radio"
-            name="restrictionsOrLimits"
-            value="yesRestrictions"
-            id="yesRestrictions"
-          />
-          <label class="btn btn-outline-secondary" for="yesRestrictions">Yes</label>
-          <input
-            class="btn-check"
-            type="radio"
-            name="restrictionsOrLimits"
-            value="noRestrictions"
-            id="noRestrictions"
-          />
-          <label class="btn btn-outline-secondary" for="noRestrictions">No</label>
-        </div>
+      <div class="yousay"> Thanks! Are there any restrictions or limits on who you’re vaccinating?</div>
+      <div class="btn-group" role="group">
+        <input
+          class="btn-check"
+          type="radio"
+          name="restrictionsOrLimits"
+          value="yesRestrictions"
+          id="yesRestrictions"
+          data-show-also="restrictionsAlert"
+        />
+        <label class="btn btn-outline-secondary" for="yesRestrictions">Yes</label>
+        <input
+          class="btn-check"
+          type="radio"
+          name="restrictionsOrLimits"
+          value="noRestrictions"
+          id="noRestrictions"
+        />
+        <label class="btn btn-outline-secondary" for="noRestrictions">No</label>
+      </div>
+      <div id="restrictionsAlert" class="hidden mt-2 alert alert-secondary" role="alert"
+        >Please add details about restrictions and limitations to the public notes field below.</div>
     </div>
+  </div>
 
     <div class="surveyQuestion">
       <div class="yousay">And do you require appointments, or are walk-ins accepted?</div>
@@ -132,57 +143,70 @@
         </div>
       </div>
       <div class="surveyQuestion">
-        <div class="yousay">How should they make the appointment?</div>
-        <div class="btn-group" role="group">
-          <input
-            class="btn-check"
-            type="radio"
-            name="appointmentMethod"
-            id="appointmentMethodWeb"
-            data-show-also="appointmentWebsite"
-            value="web"
-          />
-          <label for="appointmentMethodWeb" class="btn btn-outline-secondary">web</label>
-          <input
-            type="radio"
-            class="btn-check"
-            name="appointmentMethod"
-            id="appointmentMethodPhone"
-            data-show-also="appointmentPhone"
-            value="phone"
-          />
-          <label for="appointmentMethodPhone" class="btn btn-outline-secondary" title="Only change the # if it is the incorrect # to schedule an appt" >phone</label>
-          <input
-            class="btn-check"
-            type="radio"
-            name="appointmentMethod"
-            id="appointmentMethodOther"
-            data-show-also="appointmentOtherInstructions"
-            value="other"
-          />
-          <label for="appointmentMethodOther" class="btn btn-outline-secondary" title="Ex. hospital patient portal like MyHealthOnline" >Another way</label>
-        </div>
+        <div class="yousay">How do you make an appointment?</div>
+        <input
+          type="checkbox"
+          class="btn-check"
+          id="appointmentMethodWeb"
+          data-show-also="appointmentWebsite"
+          value="web"
+        />
+        <label for="appointmentMethodWeb" class="btn btn-outline-primary">web</label>
+        <input
+          type="checkbox"
+          class="btn-check"
+          id="appointmentMethodPhone"
+          data-show-also="appointmentPhone"
+          value="phone"
+        />
+        <label for="appointmentMethodPhone" class="btn btn-outline-primary" title="Only change the # if it is the incorrect # to schedule an appt" >phone</label>
+        <input
+          type="checkbox"
+          class="btn-check"
+          id="appointmentMethodOther"
+          data-show-also="appointmentOtherInstructions"
+          value="other"
+        />
+        <label for="appointmentMethodOther" class="btn btn-outline-primary" title="Ex. hospital patient portal like MyHealthOnline" >Another way</label>
         <div id="appointmentMethodDetail" class="mt-2">
-          <input
-            type="text"
-            id="appointmentPhone"
-            class="form-control hidden"
-            placeholder="Appointment phone number"
-            value="{{locationPhone}}"
-          />
-          <input
-            type="text"
-            id="appointmentOtherInstructions"
-            class="form-control hidden"
-            placeholder="Scheduling instructions"
-          />
-          <input
-            type="text"
-            id="appointmentWebsite"
-            class="form-control hidden"
-            placeholder="Appointment website"
-            value="{{locationWebsite}}"
-          />
+
+          <div class="hidden row m-1" id="appointmentWebsite">
+            <label for="appointmentWebsiteInput" class="col-sm-3 col-form-label">Website:</label>
+            <div class="col-sm-9">
+              <input
+                type="text"
+                id="appointmentWebsiteInput"
+                class="form-control"
+                placeholder="Appointment website"
+                value="{{locationWebsite}}"
+              />
+            </div>
+          </div>
+
+          <div class="hidden row m-1" id="appointmentPhone">
+            <label for="appointmentPhoneInput" class="col-sm-3 col-form-label">Phone number:</label>
+            <div class="col-sm-9">
+              <input
+                id="appointmentPhoneInput"
+                type="text"
+                class="form-control"
+                placeholder="Appointment phone number"
+                value="{{locationPhone}}"
+              />
+            </div>
+          </div>
+
+          <div class="hidden row m-1" id="appointmentOtherInstructions">
+            <label for="appointmentOtherInstructionsInput" class="col-sm-3 col-form-label">Another way:</label>
+            <div class="col-sm-9">
+              <input
+                id="appointmentOtherInstructionsInput"
+                type="text"
+                class="form-control"
+                placeholder="Scheduling Instructions"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -199,7 +223,7 @@
       <label class="btn btn-outline-primary" for="jjProvided">Johnson &amp; Johnson</label>
     </div>
 
-    <div class="surveyQuestion" id="firstContactConfirmation">
+    <div class="surveyQuestion hidden" id="firstContactConfirmation">
     <div class="instructions">This is our first time contacting this location. Please update the fields based on what they tell you.</div>
       {{#if locationAddress }}<div class="yousay">Is it okay if I confirm your address? Is it ...</div>
       <input type="text"
