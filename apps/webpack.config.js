@@ -34,5 +34,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [new webpack.EnvironmentPlugin({ DEPLOY: "staging" })],
+  plugins: [new webpack.EnvironmentPlugin({ DEPLOY: "development" })],
 };
