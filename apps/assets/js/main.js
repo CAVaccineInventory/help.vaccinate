@@ -637,11 +637,6 @@ const fillCallTemplate = (data) => {
   });
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
 
-  let responsiblePerson = "the right person";
-  if (data["Location Type"] === "Pharmacy") {
-    responsiblePerson = "the pharmacist on duty";
-  }
-
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
@@ -654,12 +649,12 @@ const fillCallTemplate = (data) => {
     locationId: data.id,
     locationAddress: data.Address,
     locationWebsite: providerSchedulingUrl,
-    responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
     locationPrivateNotes: prefilledInternalNotes,
     locationPublicNotes: noteTimestampPrefix,
     county: data.County,
     locationHours: data.Hours,
+    isPharmacy: data["Location Type"] === "Pharmacy",
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
