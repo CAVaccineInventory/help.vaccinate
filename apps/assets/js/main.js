@@ -112,18 +112,8 @@ const initAuth0 = async (cb) => {
 };
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
-  let apiTarget;
-  switch (process.env.API_TARGET) {
-    case "VIAL_PROD":
-      apiTarget = "https://vial.calltheshots.us/api";
-      break;
-    case "VIAL_STAGING":
-      apiTarget = "https://vial-staging.calltheshots.us/api";
-      break;
-    case "AIRTABLE":
-      apiTarget = "/.netlify/functions";
-      break;
-  }
+  const apiTarget =
+    process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
 
   if (!method) {
     method = "POST";

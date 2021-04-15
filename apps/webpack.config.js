@@ -4,7 +4,6 @@ const webpack = require("webpack");
 module.exports = {
   mode: "production",
   entry: {
-    tester: "./assets/js/tester.js",
     scooby: "./assets/js/scooby.js",
   },
   devtool: "source-map",
@@ -35,5 +34,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [new webpack.EnvironmentPlugin({ API_TARGET: "VIAL_STAGING" })],
+  plugins: [new webpack.EnvironmentPlugin({ DEPLOY: "testing" })],
 };
