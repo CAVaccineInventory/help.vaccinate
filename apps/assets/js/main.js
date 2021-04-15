@@ -614,9 +614,6 @@ const fillCallTemplate = (data) => {
       providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url") || data.Website;
     }
   }
-  if (!data.Address) {
-    showElement("#requestAddress");
-  }
 
   fillTemplateIntoDom(youAreCallingTemplate, "#youAreCalling", {
     locationName: data.Name,
