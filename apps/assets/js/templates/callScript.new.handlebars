@@ -37,7 +37,7 @@
           value="yesSoon"
           class="btn-check"
           name="yesNoSelect"
-          data-hide-on-select="vaccinatingPublicScript"
+          data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"
           data-show-also="scoobyRecordCall itsComplicatedReason"
         />
         <label
@@ -52,7 +52,7 @@
           value="noJustNo"
           id="noJustNo"
           class="btn-check"
-          data-hide-on-select="vaccinatingPublicScript"
+          data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"
           data-show-also="scoobyRecordCall"
         />
         <label class="btn btn-outline-danger" title="No can mean several things. Check for the best option from the buttons that pop up." for="noJustNo">No</label>
@@ -306,10 +306,16 @@
         />
       {{/if}}
     </div>
-    </div>
+  </div>
 
   <div class="surveyQuestion">
     <div class="yousay">Thanks so much for your time! Have a great day.</div>
+  </div>
+
+  <div id="plannedStopDatePrompt" class="surveyQuestion">
+    <label>Planned stop date</label>
+    <div class="small p-1 text-muted">If they brought up when the site will stop operating as a vaccination location, please record it here.</div>
+    <input id="plannedStopDate" class="input form-control" type="date"></input>
   </div>
 
   <div class="surveyQuestion">
