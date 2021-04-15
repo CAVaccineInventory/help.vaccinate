@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "lint": "prettier --check '**/*.js' '**/*.css' && eslint netlify/ apps/assets/js",
-    "lint:fix": "prettier --write '**/*.js' '**/*.css' && eslint --fix netlify/ apps/assets/js/",
+    "lint": "prettier --check '**/*.js' '**/*.css' && eslint apps/assets/js",
+    "lint:fix": "prettier --write '**/*.js' '**/*.css' && eslint --fix apps/assets/js/",
     "dev-functions": "rimraf dist"
   },
   "prettier": {

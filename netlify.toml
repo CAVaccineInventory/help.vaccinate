@@ -5,6 +5,5 @@
   command = "script/server"
   framework = "#custom"
 [build]
-  functions = "netlify/functions"
   command = "script/install && script/build"
   publish = "apps/_site"
