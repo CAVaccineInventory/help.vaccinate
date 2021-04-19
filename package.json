@@ -1,8 +1,7 @@
 {
   "scripts": {
     "lint": "prettier --check '**/*.js' '**/*.css' && eslint apps/assets/js",
-    "lint:fix": "prettier --write '**/*.js' '**/*.css' && eslint --fix apps/assets/js/",
-    "dev-functions": "rimraf dist"
+    "lint:fix": "prettier --write '**/*.js' '**/*.css' && eslint --fix apps/assets/js/"
   },
   "prettier": {
     "quoteProps": "consistent"
@@ -16,11 +15,6 @@
     "url": "git+https://github.com/CAVaccineInventory/help.vaccinate.git"
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.14.0",
-    "@google-cloud/logging-bunyan": "^3.0.2",
-    "@serverless-jwt/netlify": "^0.2.1",
-    "airtable": "^0.10.1",
-    "bunyan": "^1.8.15",
     "npm": "^7.7.6"
   },
   "name": "site",
