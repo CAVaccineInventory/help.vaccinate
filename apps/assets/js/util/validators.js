@@ -1,11 +1,5 @@
-/**
- * Validators reused in netlify lambdas, so we must use commonjs syntax
- */
-
 const PUBLIC_NOTES_WARNING =
   "Looks like there is a phone number or email address in the public notes field. Phone numbers and email addresses should only appear in contact information and booking links, not in public notes. Double-check it's really necessary to put in the public notes.";
-const AGE_WARNING =
-  "From what we expect from locations in this county, it's unusual for a site to be open to this age group without other restrictions. Fill in the private notes field with more details about what the pharmacist told you.";
 const CONTACT_INFO_BLOCK =
   "Fill in the private notes field with more details about this wrong number, especially if you were told what the right one is.";
 const NEVER_BLOCK =
@@ -16,6 +10,13 @@ const PRIVATE_ONLY_BLOCK =
   "Before we mark a site as not being open to the public, we'd like some more information about why. Please fill in the private notes field with as much information as you can about what the location told you.";
 const WALKINS_ACCEPTED_BLOCK =
   "In general, locations that allow walk-ins are rare. Fill in the private notes field with details about what the pharmacist told you.";
+const AGE_BLOCK =
+  "Before we mark a site as requiring 65+ outside special groups to be vaccinated, we'd like some more information about why. Fill in the private notes field with as much information as you can about what the location told you.";
+const SECOND_DOSE_AGE_BLOCK =
+  "It's unexpected for a site to be limited to second dose only if the minimum age to get vaccinated outside special groups is 16 or 18 years old. Please fill in the private notes field with as much information as you can about what the location told you.";
+
+const MAX_AGE_FOR_SECOND_DOSE_BLOCK = 18;
+const MIN_AGE_TO_BLOCK = 65;
 
 const AVAIL_TO_BLOCKING_ISSUES = {
   "No: incorrect contact information": CONTACT_INFO_BLOCK,
@@ -29,8 +30,9 @@ const ALWAYS_REVIEW_TAGS = new Set(["Yes: walk-ins accepted"]);
 
 const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
 const emailRegex = /\S+@\S+\.\S+/; // This is very much not RFC-compliant, but generally matches common addresses.
+const ageAvailabilityRegex = /Yes: vaccinating (\d+)\+/;
 
-module.exports.validateReport = (report) => {
+export const validateReport = (report) => {
   const reportState = {
     blockingIssues: [], // issues we block on
     warningIssues: [], // issues we warn on
@@ -45,15 +47,23 @@ module.exports.validateReport = (report) => {
     }
   }
 
-  // check against min age
-  if (report.internal_notes_unchanged && report.unexpected_min_age) {
-    reportState.blockingIssues.push(AGE_WARNING);
-  }
-
+  const markedSecondDoseOnly = !!report.Availability.filter((avail) => avail === "Scheduling second dose only").length;
   report.Availability.forEach((a) => {
     // check against availabilities that require private note changes
-    if (report.internal_notes_unchanged && AVAIL_TO_BLOCKING_ISSUES[a]) {
-      reportState.blockingIssues.push(AVAIL_TO_BLOCKING_ISSUES[a]);
+    if (report.internal_notes_unchanged) {
+      const ageMatch = a.match(ageAvailabilityRegex);
+      if (ageMatch && ageMatch[1]) {
+        const age = parseInt(ageMatch[1]);
+        if (age >= MIN_AGE_TO_BLOCK) {
+          reportState.blockingIssues.push(AGE_BLOCK);
+        } else if (age <= MAX_AGE_FOR_SECOND_DOSE_BLOCK && markedSecondDoseOnly) {
+          reportState.blockingIssues.push(SECOND_DOSE_AGE_BLOCK);
+        }
+      }
+
+      if (AVAIL_TO_BLOCKING_ISSUES[a]) {
+        reportState.blockingIssues.push(AVAIL_TO_BLOCKING_ISSUES[a]);
+      }
     }
 
     // check against availabilities that always should be reviewed
@@ -63,8 +73,6 @@ module.exports.validateReport = (report) => {
   });
 
   reportState.requiresReview =
-    reportState.requiresReview ||
-    !!reportState.blockingIssues.length ||
-    !!reportState.warningIssues.length;
+    reportState.requiresReview || !!reportState.blockingIssues.length || !!reportState.warningIssues.length;
   return reportState;
 };

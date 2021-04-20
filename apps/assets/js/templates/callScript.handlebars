@@ -146,9 +146,9 @@
           <label class="btn btn-outline-primary" title="Unable to answer script questions; referred to a website" for="checkSite">Told to check website</label>
         </div>
         <div class="btn-group" id="minAgeOptions" role="group">
-          <input class="btn-check" type="radio" name="minAgeSelect" value="16" id="minAge16" />
+          <input class="btn-check" type="radio" name="minAgeSelect" value="16" id="minAge16" data-hide-on-select="otherGroups veteransOnlyLabel"/>
           <label class="btn btn-outline-secondary" for="minAge16">16+</label>
-          <input class="btn-check" type="radio" name="minAgeSelect" value="18" id="minAge18" />
+          <input class="btn-check" type="radio" name="minAgeSelect" value="18" id="minAge18" data-hide-on-select="otherGroups veteransOnlyLabel"/>
           <label class="btn btn-outline-secondary" for="minAge18">18+</label>
           <input class="btn-check" type="radio" name="minAgeSelect" value="30" id="minAge30" />
           <label class="btn btn-outline-secondary" for="minAge30">30+</label>
@@ -175,12 +175,9 @@
           <input class="btn-check" type="radio" name="minAgeSelect" value="85" id="minAge85" />
           <label class="btn btn-outline-secondary" for="minAge85">85+</label>
         </div>
-        <div id="reallyVaccinatingEveryone" class="hidden alert alert-warning" role="alert"
-          >Right now, it's unlikely that a site in {{county}} will be open to people that young without other
-          restrictions. Please double-check with the person you're talking to and leave an internal note below explaining the situation.</div>
       </div>
       <div id="publicScriptFollowUpQuestions">
-        <div class="surveyQuestion expansions">
+        <div id="otherGroups" class="surveyQuestion expansions">
           <div class="yousay">Are there any other groups you are able to offer vaccines to?</div>
           <div class="instructions small secondary">
             If they say anything that's not described by the buttons below, mention it in the public notes. Please don't
@@ -211,7 +208,7 @@
           </div>
           <div class="">
             <input class="btn-check" type="checkbox" id="veteransOnly" />
-            <label class="btn btn-outline-primary" title="Ask if veterans' family members can get doses too" for="veteransOnly">Veterans only</label>
+            <label id="veteransOnlyLabel" class="btn btn-outline-primary" title="Ask if veterans' family members can get doses too" for="veteransOnly">Veterans only</label>
             <input class="btn-check" type="checkbox" id="patientsOnly" />
             <label class="btn btn-outline-primary" title="This is a good question to ask clinics/hospitals" for="patientsOnly">Current patients only</label>
             <input class="btn-check" type="checkbox" id="countyOnly" />
