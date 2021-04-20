@@ -38,7 +38,7 @@ const uncheckRadio = (name) => {
 
 const isHidden = (selector) => {
   return !!document.querySelector(selector)?.classList?.contains("hidden");
-}
+};
 
 const enableInputDataBinding = () => {
   // Automatically makes clicking any input with the data-show-also and data-hide-on-select attribute automatically toggle the associated element.

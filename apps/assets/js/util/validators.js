@@ -10,9 +10,10 @@ const PRIVATE_ONLY_BLOCK =
   "Before we mark a site as not being open to the public, we'd like some more information about why. Please fill in the private notes field with as much information as you can about what the location told you.";
 const WALKINS_ACCEPTED_BLOCK =
   "In general, locations that allow walk-ins are rare. Fill in the private notes field with details about what the pharmacist told you.";
-const AGE_BLOCK = "Before we mark a site as requiring 65+ outside special groups to be vaccinated, we'd like some more information about why. Fill in the private notes field with as much information as you can about what the location told you."
-const SECOND_DOSE_AGE_BLOCK = "It's unexpected for a site to be limited to second dose only if the minimum age to get vaccinated outside special groups is 16 or 18 years old. Please fill in the private notes field with as much information as you can about what the location told you."
-
+const AGE_BLOCK =
+  "Before we mark a site as requiring 65+ outside special groups to be vaccinated, we'd like some more information about why. Fill in the private notes field with as much information as you can about what the location told you.";
+const SECOND_DOSE_AGE_BLOCK =
+  "It's unexpected for a site to be limited to second dose only if the minimum age to get vaccinated outside special groups is 16 or 18 years old. Please fill in the private notes field with as much information as you can about what the location told you.";
 
 const MAX_AGE_FOR_SECOND_DOSE_BLOCK = 18;
 const MIN_AGE_TO_BLOCK = 65;
@@ -46,7 +47,7 @@ export const validateReport = (report) => {
     }
   }
 
-  const markedSecondDoseOnly = !!report.Availability.filter(avail => avail === "Scheduling second dose only").length;
+  const markedSecondDoseOnly = !!report.Availability.filter((avail) => avail === "Scheduling second dose only").length;
   report.Availability.forEach((a) => {
     // check against availabilities that require private note changes
     if (report.internal_notes_unchanged) {
@@ -72,8 +73,6 @@ export const validateReport = (report) => {
   });
 
   reportState.requiresReview =
-    reportState.requiresReview ||
-    !!reportState.blockingIssues.length ||
-    !!reportState.warningIssues.length;
+    reportState.requiresReview || !!reportState.blockingIssues.length || !!reportState.warningIssues.length;
   return reportState;
 };

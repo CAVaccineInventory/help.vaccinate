@@ -5,7 +5,6 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-
 import { validateReport } from "./util/validators.js";
 import {
   bindClick,
