@@ -277,6 +277,10 @@ const constructReportFromDom = () => {
   let isNo = false;
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
   switch (topLevelAnswer) {
+    case "pausedJJ":
+      isYes = true;
+      answers.push("Vaccinations may be on hold due to CDC/FDA guidance regarding the Johnson & Johnson vaccine");
+      break;
     case "yesJustYes":
       isYes = true;
       // We don't have a tag for this one
