@@ -36,6 +36,10 @@ const uncheckRadio = (name) => {
   }
 };
 
+const isHidden = (selector) => {
+  return !!document.querySelector(selector)?.classList?.contains("hidden");
+}
+
 const enableInputDataBinding = () => {
   // Automatically makes clicking any input with the data-show-also and data-hide-on-select attribute automatically toggle the associated element.
   const inputs = Array.from(document.querySelectorAll("input[data-show-also], input[data-hide-on-select]"));
@@ -154,6 +158,7 @@ export {
   enableInputDataBinding,
   hideElement,
   showElement,
+  isHidden,
   showLoadingScreen,
   hideLoadingScreen,
   uncheckRadio,
