@@ -5,14 +5,14 @@ const AUTH0_AUDIENCE = "https://help.vaccinateca.com";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-const { validateReport } = require("../../../common/validators.js");
-
+import { validateReport } from "./util/validators.js";
 import {
   bindClick,
   fillTemplateIntoDom,
   enableInputDataBinding,
   hideElement,
   showElement,
+  isHidden,
   showLoadingScreen,
   hideLoadingScreen,
   uncheckRadio,
@@ -112,18 +112,8 @@ const initAuth0 = async (cb) => {
 };
 
 const fetchJsonFromEndpoint = async (endpoint, method, body) => {
-  let apiTarget;
-  switch (process.env.API_TARGET) {
-    case "VIAL_PROD":
-      apiTarget = "https://vial.calltheshots.us/api";
-      break;
-    case "VIAL_STAGING":
-      apiTarget = "https://vial-staging.calltheshots.us/api";
-      break;
-    case "AIRTABLE":
-      apiTarget = "/.netlify/functions";
-      break;
-  }
+  const apiTarget =
+    process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
 
   if (!method) {
     method = "POST";
@@ -287,6 +277,10 @@ const constructReportFromDom = () => {
   let isNo = false;
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
   switch (topLevelAnswer) {
+    case "pausedJJ":
+      isYes = true;
+      answers.push("Vaccinations may be on hold due to CDC/FDA guidance regarding the Johnson & Johnson vaccine");
+      break;
     case "yesJustYes":
       isYes = true;
       // We don't have a tag for this one
@@ -395,20 +389,23 @@ const constructReportFromDom = () => {
             break;
         }
       }
-      if (document.querySelector("#emergencyServicesAccepted")?.checked) {
-        answers.push("Vaccinating emergency services workers");
-      }
-      if (document.querySelector("#educatorsAccepted")?.checked) {
-        answers.push("Vaccinating education and childcare workers");
-      }
-      if (document.querySelector("#foodAndAgAccepted")?.checked) {
-        answers.push("Vaccinating agriculture and food workers");
-      }
-      if (document.querySelector("#highRiskIndividualsAccepted")?.checked) {
-        answers.push("Vaccinating high-risk individuals");
+
+      if (!isHidden("#otherGroups")) {
+        if (document.querySelector("#emergencyServicesAccepted")?.checked) {
+          answers.push("Vaccinating emergency services workers");
+        }
+        if (document.querySelector("#educatorsAccepted")?.checked) {
+          answers.push("Vaccinating education and childcare workers");
+        }
+        if (document.querySelector("#foodAndAgAccepted")?.checked) {
+          answers.push("Vaccinating agriculture and food workers");
+        }
+        if (document.querySelector("#highRiskIndividualsAccepted")?.checked) {
+          answers.push("Vaccinating high-risk individuals");
+        }
       }
 
-      if (document.querySelector("#veteransOnly")?.checked) {
+      if (!isHidden("#veteransOnlyLabel") && document.querySelector("#veteransOnly")?.checked) {
         answers.push("Yes: must be a veteran");
       }
 
@@ -445,8 +442,6 @@ const constructReportFromDom = () => {
 
   // fields used for validation
   currentReport["internal_notes_unchanged"] = prefilledInternalNotes === internalNotes;
-  currentReport["unexpected_min_age"] =
-    !document.querySelector("#reallyVaccinatingEveryone")?.classList?.contains("hidden") || false;
   console.log(currentReport);
 };
 
@@ -710,23 +705,6 @@ const activateCallTemplate = () => {
   if (document.querySelector("#autodial")?.checked) {
     document.querySelector("#location-phone-url")?.click();
   }
-
-  bindAgeSelectToWarning();
-};
-
-const bindAgeSelectToWarning = () => {
-  const floor = currentLocation?.county_age_floor_without_restrictions || 18;
-  document.querySelectorAll("input[name=minAgeSelect]").forEach((input) => {
-    input.addEventListener("change", () => {
-      if (input.checked) {
-        if (parseInt(input.value) < floor) {
-          showElement("#reallyVaccinatingEveryone");
-        } else {
-          hideElement("#reallyVaccinatingEveryone");
-        }
-      }
-    });
-  });
 };
 
 // assumes we only have one toast at a time

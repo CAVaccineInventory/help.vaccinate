@@ -23,7 +23,7 @@
   "scripts": {
     "clean": "rimraf _site",
     "serve:webpack": "webpack --mode development --watch",
-    "serve:eleventy": "ELEVENTY_ENV=development eleventy --serve",
+    "serve:eleventy": "ELEVENTY_ENV=development eleventy --serve --port=4000",
     "serve": "npm-run-all clean --parallel serve:*",
     "build:webpack": "webpack --mode production",
     "build:eleventy": "ELEVENTY_ENV=production eleventy",

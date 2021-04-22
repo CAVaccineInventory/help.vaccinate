@@ -1,10 +1,8 @@
 [dev]
-  port = 4000
-  targetPort = 8080
+  targetPort = 4000
   publish = "/apps/_site"
   command = "script/server"
   framework = "#custom"
 [build]
-  functions = "netlify/functions"
   command = "script/install && script/build"
   publish = "apps/_site"

@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e -u
+
+docker build -t help.vaccinate .
+docker run -it --rm -p 35729:35729 -p 4000:4000 -v "$(pwd):/app" help.vaccinate
