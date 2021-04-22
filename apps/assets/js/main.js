@@ -298,9 +298,12 @@ const constructReportFromDom = () => {
       default:
         break;
     }
-  } else if (topLevelAnswer === "yes") {
-    // Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits
+  }
+  
+  if (!isHidden("#vaccinatingPublicScript")) {
+
     if (!isHidden("#restrictionsList")) {
+      // Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits
       if (document.querySelector("#veteransOnly")?.checked) {
         availability.push("Yes: must be a veteran");
       }
@@ -387,8 +390,6 @@ const constructReportFromDom = () => {
     if (vaccinesOffered.length > 0) {
       currentReport.vaccines_offered = vaccinesOffered;
     }
-  } else {
-    console.err("No top level answer picked");
   }
 
   // Is it okay if I confirm...

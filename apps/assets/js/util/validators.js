@@ -12,6 +12,8 @@ const WALKINS_ACCEPTED_BLOCK =
   "In general, locations that allow walk-ins are rare. Fill in the private notes field with details about what the pharmacist told you.";
 const INVALID_DATE_BLOCK =
   "The date that was entered for when the site will stop offering vaccines was in the past. Please double check you entered the date correctly.";
+const OTHER_VACCINE_BLOCK =
+  "What other vaccines does this site offer? Please fill in the private notes field with details.";
 
 const AVAIL_TO_BLOCKING_ISSUES = {
   "No: incorrect contact information": CONTACT_INFO_BLOCK,
@@ -50,16 +52,21 @@ export const validateReport = (report) => {
   }
 
   report.Availability.forEach((a) => {
-    // check against availabilities that require private note changes
-    if (report.internal_notes_unchanged) {
-      if (AVAIL_TO_BLOCKING_ISSUES[a]) {
-        reportState.blockingIssues.push(AVAIL_TO_BLOCKING_ISSUES[a]);
-      }
+    if (report.internal_notes_unchanged && AVAIL_TO_BLOCKING_ISSUES[a]) {
+      reportState.blockingIssues.push(AVAIL_TO_BLOCKING_ISSUES[a]);
     }
 
     // check against availabilities that always should be reviewed
     if (ALWAYS_REVIEW_TAGS.has(a)) {
       reportState.requiresReview = true;
+    }
+
+    if (report.vaccines_offered && reportState.vaccines_offered.includes("Other")) {
+      // always review if Other chosen for vaccines
+      reportState.requiresReview = true;
+      if (report.internal_notes_unchanged) {
+        reportState.blockingIssues.push(OTHER_VACCINE_BLOCK);
+      }
     }
   });
 
