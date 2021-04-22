@@ -52,7 +52,7 @@
         value="noJustNo"
         id="noJustNo"
         class="btn-check"
-        data-hide-on-select="vaccinatingPublicScript"
+        data-hide-on-select="vaccinatingPublicScript contactConfirmation plannedStopDatePrompt"
         data-show-also="scoobyRecordCall"
       />
       <label
@@ -69,15 +69,15 @@
         >Why sort of? If there's more details to provide or a caveat, please update the private notes.</div
       >
       <div class="btn-group" role="group">
-        <input class="btn-check" type="radio" name="itsComplicatedReason" value="private" id="private" />
+        <input class="btn-check" type="radio" name="sortOfReason" value="private" id="private" />
         <label class="btn btn-outline-secondary" for="private">Private site</label>
-        <input class="btn-check" type="radio" name="itsComplicatedReason" value="noStaffOnly" id="noStaffOnly" />
+        <input class="btn-check" type="radio" name="sortOfReason" value="noStaffOnly" id="noStaffOnly" />
         <label class="btn btn-outline-secondary" for="noStaffOnly">Only staff</label>
-        <input class="btn-check" type="radio" name="itsComplicatedReason" value="expectSoon" id="expectSoon" />
+        <input class="btn-check" type="radio" name="sortOfReason" value="expectSoon" id="expectSoon" />
         <label class="btn btn-outline-secondary" for="expectSoon">Solidly expected to offer within 2 weeks</label>
-        <input class="btn-check" type="radio" name="itsComplicatedReason" value="noNotYet" id="noNotYet" />
+        <input class="btn-check" type="radio" name="sortOfReason" value="noNotYet" id="noNotYet" />
         <label class="btn btn-outline-secondary" for="noNotYet">Want to, don't know when</label>
-        <input type="radio" name="itsComplicatedReason" value="pausedJJ" id="pausedJJ" class="btn-check" />
+        <input type="radio" name="sortOfReason" value="pausedJJ" id="pausedJJ" class="btn-check" />
         <label
           class="btn btn-outline-secondary"
           title="Select if vaccinations on hold because of pausing use of the Johnson & Johnson vaccine"
@@ -122,17 +122,10 @@
             for="countyOnly"
             >County residents/workers only</label
           >
-          <input class="btn-check" type="checkbox" id="cityOnly" />
-          <label
-            class="btn btn-outline-primary"
-            title="If people who work in the city are eligible too, make a public note"
-            for="cityOnly"
-            >City residents only</label
-          >
-          <input class="btn-check" type="checkbox" id="other" data-show-also="otherReason" />
+          <input class="btn-check" type="checkbox" id="other" data-show-also="otherRestriction" />
           <label class="btn btn-outline-primary" for="other">Other</label>
 
-          <div id="otherReason" class="hidden mt-2">
+          <div id="otherRestriction" class="hidden mt-2">
             <div class="small p-1 text-muted">What are the restrictions or limits?</div>
             <div
               id="restrictionsReasonForm"
@@ -289,41 +282,42 @@
       <label class="btn btn-outline-primary" for="otherProvided">Other</label>
     </div>
 
-    <div class="surveyQuestion" id="contactConfirmation">
-      <label
-        >We'd like to confirm a few details about this location. Please update them if what we have is incorrect:</label
-      >
-      {{#if locationAddress }}<div class="yousay">Is it okay if I confirm your address? Is it ...</div>
-      <input
-        type="text"
-        class="form-control"
-        id="confirmAddress"
-        placeholder="Provider address"
-        value="{{locationAddress}}"
-      />
-      {{/if}} {{#if locationHours}} {{#if locationAddress}}
-      <div class="yousay mt-2">Can I also double-check your vaccination clinic hours? Are they…</div>
-      {{else}}
-      <div class="yousay mt-2">Can I double-check your vaccination clinic hours? Are they…</div>
-      {{/if}}
-      <input type="text" class="form-control" id="confirmHours" placeholder="Clinic hours" value="{{locationHours}}" />
-      {{/if}} {{#if locationWebsite }}
-      <div class="yousay mt-2">And is your website...</div>
-      <input type="text" class="form-control" id="confirmSite" placeholder="website" value="{{locationWebsite}}" />
-      {{/if}}
+  </div>
+
+  <div class="surveyQuestion" id="contactConfirmation">
+    <label
+      >We'd like to confirm a few details about this location. Please update them if what we have is incorrect:</label
+    >
+    {{#if locationAddress }}<div class="yousay">Is it okay if I confirm your address? Is it ...</div>
+    <input
+      type="text"
+      class="form-control"
+      id="confirmAddress"
+      placeholder="Provider address"
+      value="{{locationAddress}}"
+    />
+    {{/if}} {{#if locationHours}} {{#if locationAddress}}
+    <div class="yousay mt-2">Can I also double-check your vaccination clinic hours? Are they…</div>
+    {{else}}
+    <div class="yousay mt-2">Can I double-check your vaccination clinic hours? Are they…</div>
+    {{/if}}
+    <input type="text" class="form-control" id="confirmHours" placeholder="Clinic hours" value="{{locationHours}}" />
+    {{/if}} {{#if locationWebsite }}
+    <div class="yousay mt-2">And is your website...</div>
+    <input type="text" class="form-control" id="confirmSite" placeholder="website" value="{{locationWebsite}}" />
+    {{/if}}
+  </div>
+  <div id="plannedStopDatePrompt" class="surveyQuestion">
+    <div class="small text-danger"
+      ><b
+        >Only ask this if they brought up that they will stop operating as a vaccination location in the future.</b
+      ></div
+    >
+    <div class="yousay">
+      {{#if isPharmacy}} When will the the pharmacy stop offering COVID-19 vaccines? {{else}} When will the site stop
+      operating? {{/if}}
     </div>
-    <div id="plannedStopDatePrompt" class="surveyQuestion">
-      <div class="small text-danger"
-        ><b
-          >Only ask this if they brought up that they will stop operating as a vaccination location in the future.</b
-        ></div
-      >
-      <div class="yousay">
-        {{#if isPharmacy}} When will the the pharmacy stop offering COVID-19 vaccines? {{else}} When will the site stop
-        operating? {{/if}}
-      </div>
-      <input id="plannedStopDate" class="input form-control" type="date" />
-    </div>
+    <input id="plannedStopDate" class="input form-control" type="date" />
   </div>
 
   <div class="surveyQuestion">
