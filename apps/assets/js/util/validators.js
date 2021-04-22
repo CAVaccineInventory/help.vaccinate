@@ -61,7 +61,7 @@ export const validateReport = (report) => {
       reportState.requiresReview = true;
     }
 
-    if (report.vaccines_offered && reportState.vaccines_offered.includes("Other")) {
+    if (report.vaccines_offered && report.vaccines_offered.includes("Other")) {
       // always review if Other chosen for vaccines
       reportState.requiresReview = true;
       if (report.internal_notes_unchanged) {
