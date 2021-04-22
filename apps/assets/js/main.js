@@ -299,9 +299,8 @@ const constructReportFromDom = () => {
         break;
     }
   }
-  
-  if (!isHidden("#vaccinatingPublicScript")) {
 
+  if (!isHidden("#vaccinatingPublicScript")) {
     if (!isHidden("#restrictionsList")) {
       // Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits
       if (document.querySelector("#veteransOnly")?.checked) {
