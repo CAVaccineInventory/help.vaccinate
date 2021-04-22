@@ -291,7 +291,9 @@ const constructReportFromDom = () => {
         availability.push("No: may be a vaccination site in the future");
         break;
       case "pausedJJ":
-        availability.push("Vaccinations may be on hold due to CDC/FDA guidance regarding the Johnson & Johnson vaccine");
+        availability.push(
+          "Vaccinations may be on hold due to CDC/FDA guidance regarding the Johnson & Johnson vaccine"
+        );
         break;
       default:
         break;
@@ -333,7 +335,7 @@ const constructReportFromDom = () => {
     }
 
     if (!isHidden("#appointmentDetails")) {
-      // Great! Do you know if you have any open appointments that someone could book right now? It’s okay if they’re not for a couple of weeks. 
+      // Great! Do you know if you have any open appointments that someone could book right now? It’s okay if they’re not for a couple of weeks.
       const details = document.querySelector("[name=appointmentsAvailable]:checked")?.value;
       switch (details) {
         case "yes":
@@ -345,7 +347,7 @@ const constructReportFromDom = () => {
         case "unknown":
         default:
           break;
-            // do nothing
+        // do nothing
       }
 
       // How do you make an appointment?
@@ -405,10 +407,10 @@ const constructReportFromDom = () => {
     }
   }
 
-  // When will the site stop operating? 
+  // When will the site stop operating?
   const stopDate = document.querySelector("#plannedStopDate")?.value;
   if (!isHidden("#plannedStopDatePrompt") && stopDate) {
-    currentReport.planned_closure = stopDate 
+    currentReport.planned_closure = stopDate;
   }
 
   if (document.querySelector("#reviewRequested")?.checked) {

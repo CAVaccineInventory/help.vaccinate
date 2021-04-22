@@ -10,7 +10,8 @@ const PRIVATE_ONLY_BLOCK =
   "Before we mark a site as not being open to the public, we'd like some more information about why. Please fill in the private notes field with as much information as you can about what the location told you.";
 const WALKINS_ACCEPTED_BLOCK =
   "In general, locations that allow walk-ins are rare. Fill in the private notes field with details about what the pharmacist told you.";
-const INVALID_DATE_BLOCK = "The date that was entered for when the site will stop offering vaccines was in the past. Please double check you entered the date correctly."
+const INVALID_DATE_BLOCK =
+  "The date that was entered for when the site will stop offering vaccines was in the past. Please double check you entered the date correctly.";
 
 const AVAIL_TO_BLOCKING_ISSUES = {
   "No: incorrect contact information": CONTACT_INFO_BLOCK,
