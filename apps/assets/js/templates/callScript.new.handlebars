@@ -8,7 +8,7 @@
       >
     </div>
     <div class="yousay"
-      >Hi, I have some questions about the COVID vaccine. May I please speak to {{#if isPharmacy}}the pharmacist on
+      >Hi, I have some questions about the COVID-19 vaccine. May I please speak to {{#if isPharmacy}}the pharmacist on
       duty{{else}}the right person{{/if}}?</div
     >
   </div>
@@ -126,7 +126,7 @@
           <label class="btn btn-outline-primary" for="other">Other</label>
 
           <div id="otherRestriction" class="hidden mt-2">
-            <div class="small p-1 text-muted">What are the restrictions or limits?</div>
+            <div class="small p-1 text-muted">What are the other restrictions or limits?</div>
             <div
               id="restrictionsReasonForm"
               class="input form-control form-control-sm"
@@ -288,23 +288,19 @@
     <label
       >We'd like to confirm a few details about this location. Please update them if what we have is incorrect:</label
     >
-    {{#if locationAddress }}<div class="yousay">Is it okay if I confirm your address? Is it ...</div>
+    {{#if confirmAddress }}<div class="yousay">Is it okay if I confirm your address? Is it…</div>
     <input
       type="text"
       class="form-control"
       id="confirmAddress"
-      placeholder="Provider address"
       value="{{locationAddress}}"
     />
-    {{/if}} {{#if locationHours}} {{#if locationAddress}}
-    <div class="yousay mt-2">Can I also double-check your vaccination clinic hours? Are they…</div>
-    {{else}}
+    {{/if}} {{#if confirmHours}} 
     <div class="yousay mt-2">Can I double-check your vaccination clinic hours? Are they…</div>
-    {{/if}}
-    <input type="text" class="form-control" id="confirmHours" placeholder="Clinic hours" value="{{locationHours}}" />
-    {{/if}} {{#if locationWebsite }}
-    <div class="yousay mt-2">And is your website...</div>
-    <input type="text" class="form-control" id="confirmSite" placeholder="website" value="{{locationWebsite}}" />
+    <input type="text" class="form-control" id="confirmHours" value="{{locationHours}}" />
+    {{/if}} {{#if confirmWebsite}}
+    <div class="yousay mt-2">Is your website…</div>
+    <input type="text" class="form-control" id="confirmSite" value="{{locationWebsite}}" />
     {{/if}}
   </div>
   <div id="plannedStopDatePrompt" class="surveyQuestion">

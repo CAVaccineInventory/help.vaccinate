@@ -15,7 +15,6 @@ import {
   isHidden,
   showLoadingScreen,
   hideLoadingScreen,
-  uncheckRadio,
   showModal,
 } from "./util/fauxFramework.js";
 
@@ -339,12 +338,14 @@ const constructReportFromDom = () => {
 
     if (!isHidden("#appointmentDetails")) {
       // Great! Do you know if you have any open appointments that someone could book right now? It’s okay if they’re not for a couple of weeks. 
-      const details = document.querySelector("#appointmentsAvailable")?.value;
+      const details = document.querySelector("[name=appointmentsAvailable]:checked")?.value;
       switch (details) {
         case "yes":
           availability.push("Yes: appointments available");
+          break;
         case "no":
           availability.push("Yes: appointment calendar currently full");
+          break;
         case "unknown":
         default:
           break;
@@ -385,7 +386,9 @@ const constructReportFromDom = () => {
     if (document.querySelector("#otherProvided")?.checked) {
       vaccinesOffered.push("Other");
     }
-    currentReport["vaccines_offered"] = vaccinesOffered;
+    if (vaccinesOffered.length > 0) {
+      currentReport["vaccines_offered"] = vaccinesOffered;
+    }
   } else {
     console.err("No top level answer picked");
   }
@@ -648,6 +651,9 @@ const fillCallTemplate = (data) => {
     county: data.County,
     locationHours: data.Hours,
     isPharmacy: data["Location Type"] === "Pharmacy",
+    confirmAddress: data.confirm_address && !!data.Address,
+    confirmHours: data.confirm_hours && !!data.Hours,
+    confirmWebsite: data.confirm_website && !!providerSchedulingUrl,
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
