@@ -335,21 +335,6 @@ const constructReportFromDom = () => {
     }
 
     if (!isHidden("#appointmentDetails")) {
-      // Great! Do you know if you have any open appointments that someone could book right now? It’s okay if they’re not for a couple of weeks.
-      const details = document.querySelector("[name=appointmentsAvailable]:checked")?.value;
-      switch (details) {
-        case "yes":
-          availability.push("Yes: appointments available");
-          break;
-        case "no":
-          availability.push("Yes: appointment calendar currently full");
-          break;
-        case "unknown":
-        default:
-          break;
-        // do nothing
-      }
-
       // How do you make an appointment?
       const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
       switch (apptMethod) {
@@ -367,6 +352,21 @@ const constructReportFromDom = () => {
           break;
         default:
           break;
+      }
+
+      // Great! Do you know if you have any open appointments that someone could book right now? It’s okay if they’re not for a couple of weeks.
+      const details = document.querySelector("[name=appointmentsAvailable]:checked")?.value;
+      switch (details) {
+        case "yes":
+          availability.push("Yes: appointments available");
+          break;
+        case "no":
+          availability.push("Yes: appointment calendar currently full");
+          break;
+        case "unknown":
+        default:
+          break;
+        // do nothing
       }
     }
 

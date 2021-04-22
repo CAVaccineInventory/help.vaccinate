@@ -90,8 +90,8 @@
     <div class="surveyQuestion">
       <div class="yousay">Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits?</div>
       <div class="small text-muted mb-2"
-        >If they’re silent for a few seconds or seem confused, provide examples: “For example, are you only vaccinating
-        county residents or current patients, or anything like that?""</div
+        >If they're vaccinating everyone 16/18+, select "No Restrictions. Also, if they’re silent for a few seconds or seem confused, provide examples: “For example, are you only vaccinating
+        county residents or current patients, or anything like that?"</div
       >
       <div>
         <input class="btn-check" type="checkbox" id="noRestrictions" data-hide-on-select="restrictionsList" />
@@ -169,37 +169,6 @@
     </div>
     <div id="appointmentDetails">
       <div class="surveyQuestion">
-        <div class="yousay">
-          Great! Do you know if you have any open appointments that someone could book right now? It’s okay if they’re
-          not for a couple of weeks.
-        </div>
-        <div class="btn-group" role="group">
-          <input
-            class="btn-check"
-            type="radio"
-            name="appointmentsAvailable"
-            id="appointmentsAvailableYes"
-            value="yes"
-          />
-          <label for="appointmentsAvailableYes" class="btn btn-outline-secondary">Yes</label>
-          <input class="btn-check" type="radio" name="appointmentsAvailable" id="appointmentsAvailableNo" value="no" />
-          <label for="appointmentsAvailableNo" class="btn btn-outline-secondary">No</label>
-          <input
-            class="btn-check"
-            type="radio"
-            name="appointmentsAvailable"
-            id="appointmentsAvailableUnknown"
-            value="unknown"
-          />
-          <label
-            for="appointmentsAvailableUnknown"
-            class="btn btn-outline-secondary"
-            title="When they don't have the information"
-            >Not sure</label
-          >
-        </div>
-      </div>
-      <div class="surveyQuestion">
         <div class="yousay">How do you make an appointment?</div>
         <div class="btn-group" role="group">
           <input
@@ -263,6 +232,38 @@
           />
         </div>
       </div>
+      <div class="surveyQuestion">
+        <div class="yousay">
+          Great! Do you know if you have any open appointments that someone could book right now? It’s okay if they’re
+          not for a couple of weeks.
+        </div>
+        <div class="btn-group" role="group">
+          <input
+            class="btn-check"
+            type="radio"
+            name="appointmentsAvailable"
+            id="appointmentsAvailableYes"
+            value="yes"
+          />
+          <label for="appointmentsAvailableYes" class="btn btn-outline-secondary">Yes</label>
+          <input class="btn-check" type="radio" name="appointmentsAvailable" id="appointmentsAvailableNo" value="no" />
+          <label for="appointmentsAvailableNo" class="btn btn-outline-secondary">No</label>
+          <input
+            class="btn-check"
+            type="radio"
+            name="appointmentsAvailable"
+            id="appointmentsAvailableUnknown"
+            value="unknown"
+          />
+          <label
+            for="appointmentsAvailableUnknown"
+            class="btn btn-outline-secondary"
+            title="When they don't have the information"
+            >Not sure</label
+          >
+        </div>
+      </div>
+
     </div>
 
     <div class="surveyQuestion">
