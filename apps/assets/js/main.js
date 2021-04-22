@@ -639,6 +639,10 @@ const fillCallTemplate = (data) => {
   prefilledInternalNotes = !!data["Latest Internal Notes"]
     ? `${noteTimestampPrefix}\n\n${data["Latest Internal Notes"] || ""}`
     : noteTimestampPrefix;
+  const confirmAddress = data.confirm_address && !!data.Address;
+  const confirmHours = data.confirm_hours && !!data.Hours;
+  const confirmWebsite = data.confirm_website && !!providerSchedulingUrl;
+  const anyConfirmations = confirmAddress || confirmHours || confirmWebsite;
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
@@ -649,9 +653,10 @@ const fillCallTemplate = (data) => {
     county: data.County,
     locationHours: data.Hours,
     isPharmacy: data["Location Type"] === "Pharmacy",
-    confirmAddress: data.confirm_address && !!data.Address,
-    confirmHours: data.confirm_hours && !!data.Hours,
-    confirmWebsite: data.confirm_website && !!providerSchedulingUrl,
+    anyConfirmations,
+    confirmAddress,
+    confirmHours,
+    confirmWebsite,
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
