@@ -8,53 +8,95 @@
       >
     </div>
     <div class="yousay"
-      >Hi, I have some questions about getting the COVID vaccine. Could I please speak to {{ responsiblePerson
-      }}?</div
+      >Hi, I have some questions about the COVID vaccine. May I please speak to {{#if isPharmacy}}the pharmacist on duty{{else}}the right person{{/if}}?</div
     >
   </div>
   <div class="surveyQuestion">
     <div class="instructions">When you reach the right person:</div>
-    <div class="yousay">Do you offer the COVID vaccine?</div>
-    <div class="btn-group" role="group">
-      <input
-        type="radio"
-        name="yesNoSelect"
-        value="yesJustYes"
-        id="yesJustYes"
-        class="btn-check"
-        data-show-also="scoobyRecordCall yesDetails"
-      />
-      <label
-        class="btn btn-outline-success"
-        for="yesJustYes"
-        title="Pick if they offer vaccines, even if out of stock"
-        >Yes</label
-      >
-      <input
-        type="radio"
-        name="yesNoSelect"
-        value="noJustNo"
-        id="noJustNo"
-        class="btn-check"
-        data-hide-on-select="vaccinatingPublicScript"
-        data-show-also="scoobyRecordCall noDetails"
-      />
-      <label class="btn btn-outline-danger" for="noJustNo">No</label>
+    <div class="yousay">Are you currently a vaccination clinic for the general public?</div>
+      <div class="small text-muted p-1">Pick yes if this is a site where it's possible to get or schedule a vaccination. Pick no if this is a site that does not have the vaccine and is confident they will not in the future.</div>
+      <div id="yesNoOptions" class="btn-group" role="group">
+        <input
+          type="radio"
+          name="yesNoSelect"
+          value="yesJustYes"
+          id="yesJustYes"
+          class="btn-check"
+          data-show-also="scoobyRecordCall"
+        />
+        <label
+          class="btn btn-outline-success"
+          for="yesJustYes"
+          title="Pick if they offer vaccines, even if out of stock"
+          >Yes</label
+        >
+        <input
+          type="radio"
+          id="yesSoon"
+          value="yesSoon"
+          class="btn-check"
+          name="yesNoSelect"
+          data-hide-on-select="vaccinatingPublicScript"
+          data-show-also="scoobyRecordCall itsComplicatedReason"
+        />
+        <label
+          class="btn btn-outline-warning"
+          for="yesSoon"
+          title="Pick if they think they will start to offer vaccines soon"
+          >It's complicated</label
+        >
+        <input
+          type="radio"
+          name="yesNoSelect"
+          value="noJustNo"
+          id="noJustNo"
+          class="btn-check"
+          data-hide-on-select="vaccinatingPublicScript"
+          data-show-also="scoobyRecordCall"
+        />
+        <label class="btn btn-outline-danger" title="No can mean several things. Check for the best option from the buttons that pop up." for="noJustNo">No</label>
+      </div>
+    </div>
+  </div>
+  <div id="itsComplicatedReason" class="hidden">
+    <div class="surveyQuestion">
+      <div class="secondary mb-2">Why it complicated? If there's more detail to provide, please put it in the private notes field.</div>
+      <div class="btn-group" role="grousmall texdtp">
+        <input
+          class="btn-check"
+          type="radio"
+          name="itsComplicatedReason"
+          value="expectSoon"
+          id="expectSoon"
+        />
+        <label class="btn btn-outline-secondary" for="expectSoon">Solidly expected to offer within two weeks</label>
+        <input
+          class="btn-check"
+          type="radio"
+          name="itsComplicatedReason"
+          value="dontKnowWhen"
+          id="dontKnowWhen"
+        />
+        <label class="btn btn-outline-secondary" for="dontKnowWhen">Want to offer, but don't know when</label>
+        <input
+          class="btn-check"
+          type="radio"
+          name="itsComplicatedReason"
+          value="paused"
+          id="paused"
+        />
+        <label class="btn btn-outline-secondary" for="paused">Paused / on hold</label>
+      </div>
+
+
     </div>
 
-    <div id="yesDetails" class="hidden small p-1 text-muted"
-      >
-      This is a site that administers the vaccine (whether or not they have open appointments now, or have stock this week)
-    </div>
-    <div id="noDetails" class="hidden small p-1 text-muted"
-      >
-      This is a site that does not have the vaccine and is confident they will not in the future
-    </div>
   </div>
 
   <div id="vaccinatingPublicScript">
     <div class="surveyQuestion">
-      <div class="yousay"> Thanks! Are there any restrictions or limits on who you’re vaccinating?</div>
+      <div class="yousay">Thanks! Are there any restrictions or limits on who you’re vaccinating?</div>
+      <div class="small text-muted mb-2">For example, age restrictions related to the particular vaccines being given or county residency.</div>
       <div class="btn-group" role="group">
         <input
           class="btn-check"
@@ -62,7 +104,7 @@
           name="restrictionsOrLimits"
           value="yesRestrictions"
           id="yesRestrictions"
-          data-show-also="restrictionsAlert"
+          data-show-also="restrictionsReason"
         />
         <label class="btn btn-outline-secondary" for="yesRestrictions">Yes</label>
         <input
@@ -74,10 +116,12 @@
         />
         <label class="btn btn-outline-secondary" for="noRestrictions">No</label>
       </div>
-      <div id="restrictionsAlert" class="hidden mt-2 alert alert-secondary" role="alert"
-        >Please add details about restrictions and limitations to the public notes field below.</div>
+      <div id="restrictionsReason" class="hidden mt-2">
+        <div class="small p-1 text-muted">What are the restrictions or limits?</div>
+        <div id="restrictionsReasonForm" class="input form-control form-control-sm" role="textbox" contenteditable
+            ></div>
+      </div>
     </div>
-  </div>
 
     <div class="surveyQuestion">
       <div class="yousay">And do you require appointments, or are walk-ins accepted?</div>
@@ -168,8 +212,7 @@
           value="other"
         />
         <label for="appointmentMethodOther" class="btn btn-outline-primary" title="Ex. hospital patient portal like MyHealthOnline" >Another way</label>
-        <div id="appointmentMethodDetail" class="mt-2">
-
+        <div id="appointmentMethodDetail" class="mt-3">
           <div class="hidden row m-1" id="appointmentWebsite">
             <label for="appointmentWebsiteInput" class="col-sm-3 col-form-label">Website:</label>
             <div class="col-sm-9">
@@ -221,57 +264,58 @@
 
       <input class="btn-check" type="checkbox" id="jjProvided" />
       <label class="btn btn-outline-primary" for="jjProvided">Johnson &amp; Johnson</label>
+
+      <input class="btn-check" type="checkbox" id="otherProvided" />
+      <label class="btn btn-outline-primary" for="otherProvided">Other</label>
     </div>
 
-    <div class="surveyQuestion hidden" id="firstContactConfirmation">
-    <div class="instructions">This is our first time contacting this location. Please update the fields based on what they tell you.</div>
+    <div class="surveyQuestion " id="contactConfirmation">
+      <label>We'd like to confirm a few details about this location. Please update them if what we have is incorrect:</label>
       {{#if locationAddress }}<div class="yousay">Is it okay if I confirm your address? Is it ...</div>
-      <input type="text"
-        class="form-control"
-        id="confirmAddress"
-        placeholder="Provider address"
-        value="{{locationAddress}}"
-      />
+        <input type="text"
+          class="form-control"
+          id="confirmAddress"
+          placeholder="Provider address"
+          value="{{locationAddress}}"
+        />
       {{/if}}
 
-      {{#if locationHours }}
-      <div class="yousay mt-2">Can I also double-check your vaccination clinic hours? Are they…</div>
-      <input type="text"
-        class="form-control"
-        id="confirmAddress"
-        placeholder="Clinic hours"
-        value="{{locationHours}}"
-      />
+      {{#if locationHours}}
+        {{#if locationAddress}}
+          <div class="yousay mt-2">Can I also double-check your vaccination clinic hours? Are they…</div>
+        {{else}}
+          <div class="yousay mt-2">Can I double-check your vaccination clinic hours? Are they…</div>
+        {{/if}}
+        <input type="text"
+          class="form-control"
+          id="confirmAddress"
+          placeholder="Clinic hours"
+          value="{{locationHours}}"
+        />
       {{/if}}
 
       {{#if locationWebsite }}
-      <div class="yousay mt-2">And is your website...</div>
-      <input type="text"
-        class="form-control"
-        id="confirmAddress"
-        placeholder="website"
-        value="{{locationWebsite}}"
-      />
+        <div class="yousay mt-2">And is your website...</div>
+        <input type="text"
+          class="form-control"
+          id="confirmAddress"
+          placeholder="website"
+          value="{{locationWebsite}}"
+        />
       {{/if}}
     </div>
-
-
-
-    <div id="requestAddress" class="hidden">
-      <div class="surveyQuestion">
-        <div class="yousay">Would you mind telling me what your address is?</div>
-        <div class="instructions">
-          <a
-            target="_blank"
-            class="text-muted small open-as-popup"
-            href="https://airtable.com/shrHlOvXyTkRufwoH?prefill_Location+ID={{locationId}}&prefill_Type=Incorrect+contact+information"
-            >Request a database update</a
-          >
-        </div>
+    <div id="plannedStopDatePrompt" class="surveyQuestion">
+      <div class="small text-danger"><b>Only ask this if they brought up that they will stop operating as a vaccination location in the future.</b></div>
+      <div class="yousay">
+        {{#if isPharmacy}}
+          When will the the pharmacy stop offering COVID-19 vaccines?
+        {{else}}
+          When will the site stop operating?
+        {{/if}}
       </div>
+      <input id="plannedStopDate" class="input form-control" type="date"></input>
     </div>
   </div>
-
 
   <div class="surveyQuestion">
     <div class="yousay">Thanks so much for your time! Have a great day.</div>
@@ -283,8 +327,8 @@
       >What do our readers need to know about this location? Please don't repeat anything you filled in above.</div
     >
     <div class="small"
-      >Please <b>do not write names or phone numbers in this box</b>. Everything in this box will be on our public
-      website. Please delete old, out of date notes.<div>
+      >Please do not write names or phone numbers in this box. Everything in this box will be on our public
+      website.<div>
         <div id="callScriptPublicNotes" class="input form-control form-control-sm" role="textbox" contenteditable
           >{{ locationPublicNotes }}</div
         >
@@ -292,7 +336,7 @@
     </div>
   </div>
   <div class="surveyQuestion">
-    <div class="">
+    <div>
       <label for="callScriptPrivateNotes">Private notes</label>
       <div class="small p-1 text-muted"
         >What should team members know about this call or location? We won't publish this information.</div
