@@ -32,18 +32,18 @@
         >
         <input
           type="radio"
-          id="yesSoon"
-          value="yesSoon"
+          id="sortOf"
+          value="sortOf"
           class="btn-check"
           name="yesNoSelect"
           data-hide-on-select="vaccinatingPublicScript"
-          data-show-also="scoobyRecordCall itsComplicatedReason"
+          data-show-also="scoobyRecordCall sortOfReason"
         />
         <label
           class="btn btn-outline-warning"
-          for="yesSoon"
+          for="sortOf"
           title="Pick if they think they will start to offer vaccines soon"
-          >It's complicated</label
+          >Sort of</label
         >
         <input
           type="radio"
@@ -58,10 +58,26 @@
       </div>
     </div>
   </div>
-  <div id="itsComplicatedReason" class="hidden">
+  <div id="sortOfReason" class="hidden">
     <div class="surveyQuestion">
-      <div class="secondary mb-2">Why it complicated? If there's more detail to provide, please put it in the private notes field.</div>
-      <div class="btn-group" role="grousmall texdtp">
+      <div class="instructions">Why sort of? If there's more details to provide or a caveat, please update the private notes.</div>
+      <div class="btn-group" role="group">
+        <input
+          class="btn-check"
+          type="radio"
+          name="itsComplicatedReason"
+          value="private"
+          id="private"
+        />
+        <label class="btn btn-outline-secondary" for="private">Private site</label>
+        <input
+          class="btn-check"
+          type="radio"
+          name="itsComplicatedReason"
+          value="noStaffOnly"
+          id="noStaffOnly"
+        />
+        <label class="btn btn-outline-secondary" for="noStaffOnly">Only staff</label>
         <input
           class="btn-check"
           type="radio"
@@ -69,57 +85,53 @@
           value="expectSoon"
           id="expectSoon"
         />
-        <label class="btn btn-outline-secondary" for="expectSoon">Solidly expected to offer within two weeks</label>
+        <label class="btn btn-outline-secondary" for="expectSoon">Solidly expected to offer within 2 weeks</label>
         <input
           class="btn-check"
           type="radio"
           name="itsComplicatedReason"
-          value="dontKnowWhen"
-          id="dontKnowWhen"
+          value="noNotYet"
+          id="noNotYet"
         />
-        <label class="btn btn-outline-secondary" for="dontKnowWhen">Want to offer, but don't know when</label>
+        <label class="btn btn-outline-secondary" for="noNotYet">Want to, don't know when</label>
         <input
-          class="btn-check"
           type="radio"
           name="itsComplicatedReason"
-          value="paused"
-          id="paused"
+          value="pausedJJ"
+          id="pausedJJ"
+          class="btn-check"
         />
-        <label class="btn btn-outline-secondary" for="paused">Paused / on hold</label>
+        <label class="btn btn-outline-secondary" title="Select if vaccinations on hold because of pausing use of the Johnson & Johnson vaccine" for="pausedJJ">J&amp;J Paused</label>
       </div>
-
-
     </div>
-
   </div>
 
   <div id="vaccinatingPublicScript">
     <div class="surveyQuestion">
-      <div class="yousay">Thanks! Are there any restrictions or limits on who you’re vaccinating?</div>
-      <div class="small text-muted mb-2">For example, age restrictions related to the particular vaccines being given or county residency.</div>
-      <div class="btn-group" role="group">
-        <input
-          class="btn-check"
-          type="radio"
-          name="restrictionsOrLimits"
-          value="yesRestrictions"
-          id="yesRestrictions"
-          data-show-also="restrictionsReason"
-        />
-        <label class="btn btn-outline-secondary" for="yesRestrictions">Yes</label>
-        <input
-          class="btn-check"
-          type="radio"
-          name="restrictionsOrLimits"
-          value="noRestrictions"
-          id="noRestrictions"
-        />
-        <label class="btn btn-outline-secondary" for="noRestrictions">No</label>
-      </div>
-      <div id="restrictionsReason" class="hidden mt-2">
-        <div class="small p-1 text-muted">What are the restrictions or limits?</div>
-        <div id="restrictionsReasonForm" class="input form-control form-control-sm" role="textbox" contenteditable
-            ></div>
+      <div class="yousay">Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits?</div>
+      <div class="small text-muted mb-2">If they’re silent for a few seconds or seem confused, provide examples: “For example, are you only vaccinating county residents or current patients, or anything like that?""</div>
+      <div>
+        <input class="btn-check" type="checkbox" id="noRestrictions" data-hide-on-select="restrictionsList"/>
+        <label class="btn btn-outline-success mb-2" for="noRestrictions">No restrictions</label>
+
+        <div id="restrictionsList">
+          <input class="btn-check" type="checkbox" id="veteransOnly" />
+          <label id="veteransOnlyLabel" class="btn btn-outline-primary" title="Ask if veterans' family members can get doses too" for="veteransOnly">Veterans only</label>
+          <input class="btn-check" type="checkbox" id="patientsOnly" />
+          <label class="btn btn-outline-primary" title="This is a good question to ask clinics/hospitals" for="patientsOnly">Current patients only</label>
+          <input class="btn-check" type="checkbox" id="countyOnly" />
+          <label class="btn btn-outline-primary" title="If people who work in the county are eligible too, make a public note" for="countyOnly">County residents/workers only</label>
+          <input class="btn-check" type="checkbox" id="cityOnly" />
+          <label class="btn btn-outline-primary" title="If people who work in the city are eligible too, make a public note" for="cityOnly">City residents only</label>
+          <input class="btn-check" type="checkbox" id="other" data-show-also="otherReason" />
+          <label class="btn btn-outline-primary" for="other">Other</label>
+
+          <div id="otherReason" class="hidden mt-2">
+            <div class="small p-1 text-muted">What are the restrictions or limits?</div>
+            <div id="restrictionsReasonForm" class="input form-control form-control-sm" role="textbox" contenteditable
+                ></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -188,86 +200,74 @@
       </div>
       <div class="surveyQuestion">
         <div class="yousay">How do you make an appointment?</div>
-        <input
-          type="checkbox"
-          class="btn-check"
-          id="appointmentMethodWeb"
-          data-show-also="appointmentWebsite"
-          value="web"
-        />
-        <label for="appointmentMethodWeb" class="btn btn-outline-primary">web</label>
-        <input
-          type="checkbox"
-          class="btn-check"
-          id="appointmentMethodPhone"
-          data-show-also="appointmentPhone"
-          value="phone"
-        />
-        <label for="appointmentMethodPhone" class="btn btn-outline-primary" title="Only change the # if it is the incorrect # to schedule an appt" >phone</label>
-        <input
-          type="checkbox"
-          class="btn-check"
-          id="appointmentMethodOther"
-          data-show-also="appointmentOtherInstructions"
-          value="other"
-        />
-        <label for="appointmentMethodOther" class="btn btn-outline-primary" title="Ex. hospital patient portal like MyHealthOnline" >Another way</label>
-        <div id="appointmentMethodDetail" class="mt-3">
-          <div class="hidden row m-1" id="appointmentWebsite">
-            <label for="appointmentWebsiteInput" class="col-sm-3 col-form-label">Website:</label>
-            <div class="col-sm-9">
-              <input
-                type="text"
-                id="appointmentWebsiteInput"
-                class="form-control"
-                placeholder="Appointment website"
-                value="{{locationWebsite}}"
-              />
-            </div>
+          <div class="btn-group" role="group">
+            <input
+              class="btn-check"
+              type="radio"
+              name="appointmentMethod"
+              id="appointmentMethodWeb"
+              data-show-also="appointmentWebsite"
+              value="web"
+            />
+            <label for="appointmentMethodWeb" class="btn btn-outline-secondary">Web</label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="appointmentMethod"
+              id="appointmentMethodPhone"
+              data-show-also="appointmentPhone"
+              value="phone"
+            />
+            <label for="appointmentMethodPhone" class="btn btn-outline-secondary" title="Only change the # if it is the incorrect # to schedule an appt" >Phone</label>
+            <input
+              class="btn-check"
+              type="radio"
+              name="appointmentMethod"
+              id="appointmentMethodOther"
+              data-show-also="appointmentOtherInstructions"
+              value="other"
+            />
+            <label for="appointmentMethodOther" class="btn btn-outline-secondary" title="Ex. hospital patient portal like MyHealthOnline" >Another way</label>
           </div>
-
-          <div class="hidden row m-1" id="appointmentPhone">
-            <label for="appointmentPhoneInput" class="col-sm-3 col-form-label">Phone number:</label>
-            <div class="col-sm-9">
-              <input
-                id="appointmentPhoneInput"
-                type="text"
-                class="form-control"
-                placeholder="Appointment phone number"
-                value="{{locationPhone}}"
-              />
-            </div>
-          </div>
-
-          <div class="hidden row m-1" id="appointmentOtherInstructions">
-            <label for="appointmentOtherInstructionsInput" class="col-sm-3 col-form-label">Another way:</label>
-            <div class="col-sm-9">
-              <input
-                id="appointmentOtherInstructionsInput"
-                type="text"
-                class="form-control"
-                placeholder="Scheduling Instructions"
-              />
-            </div>
+          <div id="appointmentMethodDetail" class="mt-2">
+            <input
+              type="text"
+              id="appointmentPhone"
+              class="form-control hidden"
+              placeholder="Appointment phone number"
+              value="{{locationPhone}}"
+            />
+            <input
+              type="text"
+              id="appointmentOtherInstructions"
+              class="form-control hidden"
+              placeholder="Scheduling instructions"
+            />
+            <input
+              type="text"
+              id="appointmentWebsite"
+              class="form-control hidden"
+              placeholder="Appointment website"
+              value="{{locationWebsite}}"
+            />
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="surveyQuestion">
-      <div class="yousay">Which vaccines do you offer?</div>
-      <input class="btn-check" type="checkbox" id="modernaProvided" />
-      <label class="btn btn-outline-primary" for="modernaProvided">Moderna</label>
+      <div class="surveyQuestion">
+        <div class="yousay">Which vaccines do you offer?</div>
+        <input class="btn-check" type="checkbox" id="modernaProvided" />
+        <label class="btn btn-outline-primary" for="modernaProvided">Moderna</label>
 
-      <input class="btn-check" type="checkbox" id="pfizerProvided" />
-      <label class="btn btn-outline-primary" for="pfizerProvided">Pfizer</label>
+        <input class="btn-check" type="checkbox" id="pfizerProvided" />
+        <label class="btn btn-outline-primary" for="pfizerProvided">Pfizer</label>
 
-      <input class="btn-check" type="checkbox" id="jjProvided" />
-      <label class="btn btn-outline-primary" for="jjProvided">Johnson &amp; Johnson</label>
+        <input class="btn-check" type="checkbox" id="jjProvided" />
+        <label class="btn btn-outline-primary" for="jjProvided">Johnson &amp; Johnson</label>
 
-      <input class="btn-check" type="checkbox" id="otherProvided" />
-      <label class="btn btn-outline-primary" for="otherProvided">Other</label>
-    </div>
+        <input class="btn-check" type="checkbox" id="otherProvided" />
+        <label class="btn btn-outline-primary" for="otherProvided">Other</label>
+      </div>
 
     <div class="surveyQuestion " id="contactConfirmation">
       <label>We'd like to confirm a few details about this location. Please update them if what we have is incorrect:</label>
@@ -288,7 +288,7 @@
         {{/if}}
         <input type="text"
           class="form-control"
-          id="confirmAddress"
+          id="confirmHours"
           placeholder="Clinic hours"
           value="{{locationHours}}"
         />
@@ -298,7 +298,7 @@
         <div class="yousay mt-2">And is your website...</div>
         <input type="text"
           class="form-control"
-          id="confirmAddress"
+          id="confirmSite"
           placeholder="website"
           value="{{locationWebsite}}"
         />
