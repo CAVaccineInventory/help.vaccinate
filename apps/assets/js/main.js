@@ -40,7 +40,6 @@ const HOUR = MINUTE * 60;
 const AVAIL_BAD_CONTACT_INFO = "No: incorrect contact information";
 const AVAIL_PERMANENTLY_CLOSED = "No: location permanently closed";
 const AVAIL_SKIP = "Skip: call back later";
-const AVAIL_SECOND_DOSE_ONLY = "Scheduling second dose only";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
@@ -184,7 +183,7 @@ const requestCall = async (id) => {
   if (id) {
     currentLocation = await fetchJsonFromEndpoint("/requestCall?location_id=" + id);
   } else {
-    currentLocation = await fetchJsonFromEndpoint("/requestCall");
+    currentLocation = await fetchJsonFromEndpoint("/requestCall?state=all");
   }
   hideLoadingScreen();
   const user = await auth0.getUser();
@@ -274,7 +273,7 @@ const constructReportFromDom = () => {
   const availability = [];
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
 
-  if (topLevelAnswer === "noJustNo") {
+  if (topLevelAnswer === "no") {
     availability.push("No: will never be a vaccination site");
   } else if (topLevelAnswer === "sortOf") {
     const sortOfReason = document.querySelector("[name=sortOfReason]:checked")?.value;
@@ -297,7 +296,7 @@ const constructReportFromDom = () => {
       default:
         break;
     }
-  } else if (topLevelAnswer === "yesJustYes") {
+  } else if (topLevelAnswer === "yes") {
     // Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits
     if (!isHidden("#restrictionsList")) {
       if (document.querySelector("#veteransOnly")?.checked) {
@@ -309,11 +308,8 @@ const constructReportFromDom = () => {
       if (document.querySelector("#countyOnly")?.checked) {
         availability.push("Yes: restricted to county residents");
       }
-      if (document.querySelector("#countyOnly")?.checked) {
-        availability.push("Yes: restricted to county residents");
-      }
       if (!isHidden("#otherRestrictions")) {
-        currentReport["restriction_notes"] = document.querySelector("#restrictionsReasonForm")?.innerText;
+        currentReport.restriction_notes = document.querySelector("#restrictionsReasonForm")?.innerText;
       }
     }
 
@@ -387,7 +383,7 @@ const constructReportFromDom = () => {
       vaccinesOffered.push("Other");
     }
     if (vaccinesOffered.length > 0) {
-      currentReport["vaccines_offered"] = vaccinesOffered;
+      currentReport.vaccines_offered = vaccinesOffered;
     }
   } else {
     console.err("No top level answer picked");
@@ -399,40 +395,40 @@ const constructReportFromDom = () => {
     const hours = document.querySelector("#confirmHours")?.value;
     const web = document.querySelector("#confirmSite")?.value;
     if (address) {
-      currentReport["address"] = address;
+      currentReport.address = address;
     }
     if (hours) {
-      currentReport["hours"] = hours;
+      currentReport.hours = hours;
     }
     if (web) {
-      currentReport["web"] = web;
+      currentReport.web = web;
     }
   }
 
   // When will the site stop operating? 
   const stopDate = document.querySelector("#plannedStopDate")?.value;
   if (!isHidden("#plannedStopDatePrompt") && stopDate) {
-    currentReport["planned_closure"] = stopDate 
+    currentReport.planned_closure = stopDate 
   }
 
   if (document.querySelector("#reviewRequested")?.checked) {
-    currentReport["is_pending_review"] = true;
+    currentReport.is_pending_review = true;
   }
 
   // End script
 
-  currentReport["Availability"] = availability;
+  currentReport.Availability = availability;
 
   // only save public notes if caller modified the prefilled date input
   const publicNotes = document.querySelector("#callScriptPublicNotes")?.innerText;
-  currentReport["Notes"] = publicNotes?.trim() === noteTimestampPrefix?.trim() ? "" : publicNotes;
+  currentReport.Notes = publicNotes?.trim() === noteTimestampPrefix?.trim() ? "" : publicNotes;
 
   const internalNotes = document.querySelector("#callScriptPrivateNotes")?.innerText;
   currentReport["Internal Notes"] = internalNotes;
-  currentReport["County"] = currentLocation?.["County"];
+  currentReport.County = currentLocation?.County;
 
   // fields used for validation
-  currentReport["internal_notes_unchanged"] = prefilledInternalNotes === internalNotes;
+  currentReport.internal_notes_unchanged = prefilledInternalNotes === internalNotes;
   console.log(currentReport);
 };
 
