@@ -15,7 +15,6 @@ import {
   isHidden,
   showLoadingScreen,
   hideLoadingScreen,
-  uncheckRadio,
   showModal,
 } from "./util/fauxFramework.js";
 
@@ -41,7 +40,6 @@ const HOUR = MINUTE * 60;
 const AVAIL_BAD_CONTACT_INFO = "No: incorrect contact information";
 const AVAIL_PERMANENTLY_CLOSED = "No: location permanently closed";
 const AVAIL_SKIP = "Skip: call back later";
-const AVAIL_SECOND_DOSE_ONLY = "Scheduling second dose only";
 
 // https://auth0.com/docs/libraries/auth0-single-page-app-sdk
 // global auth0 object. probably a better way to do this
@@ -185,7 +183,7 @@ const requestCall = async (id) => {
   if (id) {
     currentLocation = await fetchJsonFromEndpoint("/requestCall?location_id=" + id);
   } else {
-    currentLocation = await fetchJsonFromEndpoint("/requestCall");
+    currentLocation = await fetchJsonFromEndpoint("/requestCall?state=all");
   }
   hideLoadingScreen();
   const user = await auth0.getUser();
@@ -272,176 +270,167 @@ const initScooby = () => {
 };
 
 const constructReportFromDom = () => {
-  const answers = [];
-  let isYes = false;
-  let isNo = false;
+  const availability = [];
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
-  switch (topLevelAnswer) {
-    case "pausedJJ":
-      isYes = true;
-      answers.push("Vaccinations may be on hold due to CDC/FDA guidance regarding the Johnson & Johnson vaccine");
-      break;
-    case "yesJustYes":
-      isYes = true;
-      // We don't have a tag for this one
-      break;
-    case "yesSoon":
-      isYes = true;
-      answers.push("Yes: coming soon");
-      break;
-    case "noJustNo":
-      isNo = true;
-      break;
-    default:
-      console.log("No top level answer selected ");
-  }
 
-  if (isNo) {
-    const noReason = document.querySelector("[name=noReasonSelect]:checked")?.value;
-    switch (noReason) {
-      case "never":
-        answers.push("No: will never be a vaccination site");
-        break;
+  if (topLevelAnswer === "no") {
+    availability.push("No: will never be a vaccination site");
+  } else if (topLevelAnswer === "sortOf") {
+    const sortOfReason = document.querySelector("[name=sortOfReason]:checked")?.value;
+    switch (sortOfReason) {
       case "private":
-        answers.push("No: not open to the public");
+        availability.push("No: not open to the public");
         break;
-      case "staffOnly":
-        answers.push("No: only vaccinating staff");
+      case "noStaffOnly":
+        availability.push("No: only vaccinating staff");
         break;
-      case "hcwOnly":
-        answers.push("No: only vaccinating health care workers");
+      case "expectSoon":
+        availability.push("Yes: coming soon");
         break;
-      case "notYet":
-        answers.push("No: may be a vaccination site in the future");
+      case "noNotYet":
+        availability.push("No: may be a vaccination site in the future");
+        break;
+      case "pausedJJ":
+        availability.push(
+          "Vaccinations may be on hold due to CDC/FDA guidance regarding the Johnson & Johnson vaccine"
+        );
         break;
       default:
-        console.log("No 'no' reason selected");
+        break;
     }
   }
 
-  if (isYes) {
-    const siteToCheck = document.querySelector("[name=siteSelect]:checked")?.value;
-    if (siteToCheck) {
-      answers.push("Yes: appointment required");
-      switch (siteToCheck) {
-        case "provider":
-          answers.push("Eligibility determined by provider website");
-          if (providerSchedulingUrl) {
-            currentReport["Appointment scheduling instructions"] = providerSchedulingUrl;
-          }
-          break;
-        case "state":
-          answers.push("Eligibility determined by state website");
-          currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
-          break;
-        case "county":
-          answers.push("Eligibility determined by county website");
-          currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
-          break;
-        default:
-          console.log("unknown site to check");
+  if (!isHidden("#vaccinatingPublicScript")) {
+    if (!isHidden("#restrictionsList")) {
+      // Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits
+      if (document.querySelector("#veteransOnly")?.checked) {
+        availability.push("Yes: must be a veteran");
       }
-    } else {
-      const minAgeAnswer = document.querySelector("[name=minAgeSelect]:checked")?.value;
-      if (minAgeAnswer) {
-        answers.push("Yes: vaccinating " + minAgeAnswer + "+");
-      }
-
-      const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
-      switch (apptRequired) {
-        case "walkinOk":
-          answers.push("Yes: walk-ins accepted");
-          break;
-        case "required":
-          answers.push("Yes: appointment required");
-          break;
-        default:
-          answers.push("Yes: appointment required");
-          console.log("no appt required selected - defaulting to appt required");
-      }
-
-      if (apptRequired === "required") {
-        if (document.querySelector("[name=appointmentsAvailable]:checked")?.value === "full") {
-          answers.push("Yes: appointment calendar currently full");
-        }
-
-        const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
-        switch (apptMethod) {
-          case "phone":
-            currentReport["Appointments by phone?"] = true;
-            currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
-            break;
-          case "county":
-            currentReport["Appointment scheduling instructions"] = "Uses county scheduling system";
-            break;
-          case "myturn":
-            currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
-            break;
-          case "web":
-            currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
-            break;
-          case "other":
-            currentReport["Appointment scheduling instructions"] = document.querySelector(
-              "#appointmentOtherInstructions"
-            )?.value;
-            break;
-          default:
-            break;
-        }
-      }
-
-      if (!isHidden("#otherGroups")) {
-        if (document.querySelector("#emergencyServicesAccepted")?.checked) {
-          answers.push("Vaccinating emergency services workers");
-        }
-        if (document.querySelector("#educatorsAccepted")?.checked) {
-          answers.push("Vaccinating education and childcare workers");
-        }
-        if (document.querySelector("#foodAndAgAccepted")?.checked) {
-          answers.push("Vaccinating agriculture and food workers");
-        }
-        if (document.querySelector("#highRiskIndividualsAccepted")?.checked) {
-          answers.push("Vaccinating high-risk individuals");
-        }
-      }
-
-      if (!isHidden("#veteransOnlyLabel") && document.querySelector("#veteransOnly")?.checked) {
-        answers.push("Yes: must be a veteran");
-      }
-
       if (document.querySelector("#patientsOnly")?.checked) {
-        answers.push("Yes: must be a current patient");
+        availability.push("Yes: must be a current patient");
       }
       if (document.querySelector("#countyOnly")?.checked) {
-        answers.push("Yes: restricted to county residents");
+        availability.push("Yes: restricted to county residents");
       }
-      if (document.querySelector("#cityOnly")?.checked) {
-        answers.push("Yes: restricted to city residents");
-      }
-
-      if (document.querySelector("#secondDoseOnly")?.checked) {
-        answers.push(AVAIL_SECOND_DOSE_ONLY);
+      if (!isHidden("#otherRestrictions")) {
+        currentReport.restriction_notes = document.querySelector("#restrictionsReasonForm")?.innerText;
       }
     }
+
+    // And do you require appointments, or are walk-ins accepted?
+    const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
+    switch (apptRequired) {
+      case "walkinOk":
+        availability.push("Yes: walk-ins accepted");
+        break;
+      case "required":
+        availability.push("Yes: appointment required");
+        break;
+      case "appointmentOrWalkin":
+        availability.push("Yes: appointments or walk-ins accepted");
+        break;
+      default:
+        // default to appointment required
+        availability.push("Yes: appointment required");
+        console.log("no appt required selected - defaulting to appt required");
+        break;
+    }
+
+    if (!isHidden("#appointmentDetails")) {
+      // How do you make an appointment?
+      const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
+      switch (apptMethod) {
+        case "web":
+          currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
+          break;
+        case "phone":
+          currentReport["Appointments by phone?"] = true;
+          currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentPhone")?.value;
+          break;
+        case "other":
+          currentReport["Appointment scheduling instructions"] = document.querySelector(
+            "#appointmentOtherInstructions"
+          )?.value;
+          break;
+        default:
+          break;
+      }
+
+      // Great! Do you know if you have any open appointments that someone could book right now? It’s okay if they’re not for a couple of weeks.
+      const details = document.querySelector("[name=appointmentsAvailable]:checked")?.value;
+      switch (details) {
+        case "yes":
+          availability.push("Yes: appointments available");
+          break;
+        case "no":
+          availability.push("Yes: appointment calendar currently full");
+          break;
+        case "unknown":
+        default:
+          break;
+        // do nothing
+      }
+    }
+
+    // Which vaccines do you offer
+    const vaccinesOffered = [];
+    if (document.querySelector("#modernaProvided")?.checked) {
+      vaccinesOffered.push("Moderna");
+    }
+    if (document.querySelector("#pfizerProvided")?.checked) {
+      vaccinesOffered.push("Pfizer");
+    }
+    if (document.querySelector("#jjProvided")?.checked) {
+      vaccinesOffered.push("Johnson & Johnson");
+    }
+    if (document.querySelector("#otherProvided")?.checked) {
+      vaccinesOffered.push("Other");
+    }
+    if (vaccinesOffered.length > 0) {
+      currentReport.vaccines_offered = vaccinesOffered;
+    }
+  }
+
+  // Is it okay if I confirm...
+  if (!isHidden("#contactConfirmations")) {
+    const address = document.querySelector("#confirmAddress")?.value;
+    const hours = document.querySelector("#confirmHours")?.value;
+    const web = document.querySelector("#confirmSite")?.value;
+    if (address) {
+      currentReport.address = address;
+    }
+    if (hours) {
+      currentReport.hours = hours;
+    }
+    if (web) {
+      currentReport.web = web;
+    }
+  }
+
+  // When will the site stop operating?
+  const stopDate = document.querySelector("#plannedStopDate")?.value;
+  if (!isHidden("#plannedStopDatePrompt") && stopDate) {
+    currentReport.planned_closure = stopDate;
   }
 
   if (document.querySelector("#reviewRequested")?.checked) {
-    currentReport["is_pending_review"] = true;
+    currentReport.is_pending_review = true;
   }
 
-  currentReport["Availability"] = answers;
+  // End script
+
+  currentReport.Availability = availability;
 
   // only save public notes if caller modified the prefilled date input
   const publicNotes = document.querySelector("#callScriptPublicNotes")?.innerText;
-  currentReport["Notes"] = publicNotes?.trim() === noteTimestampPrefix?.trim() ? "" : publicNotes;
+  currentReport.Notes = publicNotes?.trim() === noteTimestampPrefix?.trim() ? "" : publicNotes;
 
   const internalNotes = document.querySelector("#callScriptPrivateNotes")?.innerText;
   currentReport["Internal Notes"] = internalNotes;
-  currentReport["County"] = currentLocation?.["County"];
-  currentReport["extra_dose_info"] = document.querySelector("#callScriptExtraDoseNotes")?.innerText;
+  currentReport.County = currentLocation?.County;
 
   // fields used for validation
-  currentReport["internal_notes_unchanged"] = prefilledInternalNotes === internalNotes;
+  currentReport.internal_notes_unchanged = prefilledInternalNotes === internalNotes;
   console.log(currentReport);
 };
 
@@ -619,9 +608,6 @@ const fillCallTemplate = (data) => {
       providerSchedulingUrl = providerDiv.getAttribute("data-scheduling-url") || data.Website;
     }
   }
-  if (!data.Address) {
-    showElement("#requestAddress");
-  }
 
   fillTemplateIntoDom(youAreCallingTemplate, "#youAreCalling", {
     locationName: data.Name,
@@ -645,11 +631,6 @@ const fillCallTemplate = (data) => {
   });
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
 
-  let responsiblePerson = "the right person";
-  if (data["Location Type"] === "Pharmacy") {
-    responsiblePerson = "the pharmacist on duty";
-  }
-
   fillTemplateIntoDom(ctaTemplate, "#cta", {
     locationPhone: data["Phone number"],
   });
@@ -658,15 +639,24 @@ const fillCallTemplate = (data) => {
   prefilledInternalNotes = !!data["Latest Internal Notes"]
     ? `${noteTimestampPrefix}\n\n${data["Latest Internal Notes"] || ""}`
     : noteTimestampPrefix;
+  const confirmAddress = data.confirm_address && !!data.Address;
+  const confirmHours = data.confirm_hours && !!data.Hours;
+  const confirmWebsite = data.confirm_website && !!providerSchedulingUrl;
+  const anyConfirmations = confirmAddress || confirmHours || confirmWebsite;
   fillTemplateIntoDom(callScriptTemplate, "#callScript", {
     locationId: data.id,
     locationAddress: data.Address,
     locationWebsite: providerSchedulingUrl,
-    responsiblePerson: responsiblePerson,
     locationPhone: data["Phone number"],
     locationPrivateNotes: prefilledInternalNotes,
     locationPublicNotes: noteTimestampPrefix,
     county: data.County,
+    locationHours: data.Hours,
+    isPharmacy: data["Location Type"] === "Pharmacy",
+    anyConfirmations,
+    confirmAddress,
+    confirmHours,
+    confirmWebsite,
   });
 
   fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
@@ -684,10 +674,6 @@ const activateCallTemplate = () => {
   bindClick("#closedForTheDay", submitCallTomorrow);
   bindClick("#closedForTheWeekend", submitCallMonday);
   bindClick("#longHold", submitLongHold);
-  bindClick("#checkSite", () => {
-    hideElement("#reallyVaccinatingEveryone"); // edge case fauxFramework can't handle. Unchecking a radio button doesn't trigger it's change event, so force hide this div
-    uncheckRadio("minAgeSelect");
-  });
 
   if (userRoles.includes("CC: Liveops")) {
     bindClick("#location-phone-url", liveopsDial);

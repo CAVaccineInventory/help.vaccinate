@@ -10,13 +10,10 @@ const PRIVATE_ONLY_BLOCK =
   "Before we mark a site as not being open to the public, we'd like some more information about why. Please fill in the private notes field with as much information as you can about what the location told you.";
 const WALKINS_ACCEPTED_BLOCK =
   "In general, locations that allow walk-ins are rare. Fill in the private notes field with details about what the pharmacist told you.";
-const AGE_BLOCK =
-  "Before we mark a site as requiring 65+ outside special groups to be vaccinated, we'd like some more information about why. Fill in the private notes field with as much information as you can about what the location told you.";
-const SECOND_DOSE_AGE_BLOCK =
-  "It's unexpected for a site to be limited to second dose only if the minimum age to get vaccinated outside special groups is 16 or 18 years old. Please fill in the private notes field with as much information as you can about what the location told you.";
-
-const MAX_AGE_FOR_SECOND_DOSE_BLOCK = 18;
-const MIN_AGE_TO_BLOCK = 65;
+const INVALID_DATE_BLOCK =
+  "The date that was entered for when the site will stop offering vaccines was in the past. Please double check you entered the date correctly.";
+const OTHER_VACCINE_BLOCK =
+  "What other vaccines does this site offer? Please fill in the private notes field with details.";
 
 const AVAIL_TO_BLOCKING_ISSUES = {
   "No: incorrect contact information": CONTACT_INFO_BLOCK,
@@ -30,7 +27,6 @@ const ALWAYS_REVIEW_TAGS = new Set(["Yes: walk-ins accepted"]);
 
 const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
 const emailRegex = /\S+@\S+\.\S+/; // This is very much not RFC-compliant, but generally matches common addresses.
-const ageAvailabilityRegex = /Yes: vaccinating (\d+)\+/;
 
 export const validateReport = (report) => {
   const reportState = {
@@ -38,6 +34,14 @@ export const validateReport = (report) => {
     warningIssues: [], // issues we warn on
     requiresReview: false, // whether or not we require QA review on this report
   };
+
+  // check against planned closure date. It should be in the future.
+  if (report.planned_closure) {
+    const closure = new Date(report.planned_closure);
+    if (new Date() > closure) {
+      reportState.blockingIssues.push(INVALID_DATE_BLOCK);
+    }
+  }
 
   // check against public notes for email and phone numbers
   const publicNotes = report.Notes;
@@ -47,28 +51,22 @@ export const validateReport = (report) => {
     }
   }
 
-  const markedSecondDoseOnly = !!report.Availability.filter((avail) => avail === "Scheduling second dose only").length;
   report.Availability.forEach((a) => {
-    // check against availabilities that require private note changes
-    if (report.internal_notes_unchanged) {
-      const ageMatch = a.match(ageAvailabilityRegex);
-      if (ageMatch && ageMatch[1]) {
-        const age = parseInt(ageMatch[1]);
-        if (age >= MIN_AGE_TO_BLOCK) {
-          reportState.blockingIssues.push(AGE_BLOCK);
-        } else if (age <= MAX_AGE_FOR_SECOND_DOSE_BLOCK && markedSecondDoseOnly) {
-          reportState.blockingIssues.push(SECOND_DOSE_AGE_BLOCK);
-        }
-      }
-
-      if (AVAIL_TO_BLOCKING_ISSUES[a]) {
-        reportState.blockingIssues.push(AVAIL_TO_BLOCKING_ISSUES[a]);
-      }
+    if (report.internal_notes_unchanged && AVAIL_TO_BLOCKING_ISSUES[a]) {
+      reportState.blockingIssues.push(AVAIL_TO_BLOCKING_ISSUES[a]);
     }
 
     // check against availabilities that always should be reviewed
     if (ALWAYS_REVIEW_TAGS.has(a)) {
       reportState.requiresReview = true;
+    }
+
+    if (report.vaccines_offered && report.vaccines_offered.includes("Other")) {
+      // always review if Other chosen for vaccines
+      reportState.requiresReview = true;
+      if (report.internal_notes_unchanged) {
+        reportState.blockingIssues.push(OTHER_VACCINE_BLOCK);
+      }
     }
   });
 
