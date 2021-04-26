@@ -229,10 +229,6 @@ const loadAndFillPreviousCall = () => {
 };
 
 const showScriptForLocation = (place) => {
-  // Initialize the report
-  currentReport = {};
-  currentReport["Location"] = place.id;
-
   // TODO Create a history entry for the new location
   // and bake all of our state into the state object. then also
   // implement a popstate handler, so we get proper back button support
@@ -270,6 +266,9 @@ const initScooby = () => {
 };
 
 const constructReportFromDom = () => {
+  // reset report each time
+  currentReport = {Location: currentLocation.id};
+
   const availability = [];
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
 
