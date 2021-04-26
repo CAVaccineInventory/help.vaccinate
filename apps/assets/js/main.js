@@ -229,10 +229,6 @@ const loadAndFillPreviousCall = () => {
 };
 
 const showScriptForLocation = (place) => {
-  // Initialize the report
-  currentReport = {};
-  currentReport["Location"] = place.id;
-
   // TODO Create a history entry for the new location
   // and bake all of our state into the state object. then also
   // implement a popstate handler, so we get proper back button support
@@ -270,10 +266,15 @@ const initScooby = () => {
 };
 
 const constructReportFromDom = () => {
+  // reset report each time
+  currentReport = { Location: currentLocation.id };
+
   const availability = [];
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
 
   if (topLevelAnswer === "no") {
+    availability.push("No: may be a vaccination site in the future");
+  } else if (topLevelAnswer === "noNever") {
     availability.push("No: will never be a vaccination site");
   } else if (topLevelAnswer === "sortOf") {
     const sortOfReason = document.querySelector("[name=sortOfReason]:checked")?.value;
@@ -312,7 +313,7 @@ const constructReportFromDom = () => {
       if (document.querySelector("#countyOnly")?.checked) {
         availability.push("Yes: restricted to county residents");
       }
-      if (!isHidden("#otherRestrictions")) {
+      if (!isHidden("#otherRestriction")) {
         currentReport.restriction_notes = document.querySelector("#restrictionsReasonForm")?.innerText;
       }
     }
