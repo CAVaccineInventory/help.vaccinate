@@ -80,7 +80,7 @@
         <input class="btn-check" type="radio" name="sortOfReason" value="private" id="private" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
         <label class="btn btn-outline-secondary" for="private">Private site</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="noStaffOnly" id="noStaffOnly" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
-        <label class="btn btn-outline-secondary" for="noStaffOnly">Only staff</label>
+        <label class="btn btn-outline-secondary" title="Select if the location is vaccinating only their employees." for="noStaffOnly">Only staff</label>
       </div>
     </div>
   </div>
@@ -94,7 +94,7 @@
       >
       <div>
         <input class="btn-check" type="checkbox" id="noRestrictions" data-hide-on-select="restrictionsList" />
-        <label class="btn btn-outline-success mb-2" for="noRestrictions">No restrictions</label>
+        <label class="btn btn-outline-success mb-2" title="If they are vaccinating everyone 16+/18+, select this." for="noRestrictions">No restrictions</label>
 
         <div id="restrictionsList">
           <input class="btn-check" type="checkbox" id="veteransOnly" />
@@ -115,12 +115,12 @@
           <input class="btn-check" type="checkbox" id="countyOnly" />
           <label
             class="btn btn-outline-primary"
-            title="If people who work in the county are eligible too, make a public note"
+            title="If county workers are not included, please note that in the public notes"
             for="countyOnly"
             >County residents/workers only</label
           >
           <input class="btn-check" type="checkbox" id="other" data-show-also="otherRestriction" />
-          <label class="btn btn-outline-primary" for="other">Other</label>
+          <label class="btn btn-outline-primary" title="Specify the restriction in the box that pops up below." for="other">Other</label>
 
           <div id="otherRestriction" class="hidden mt-2">
             <div class="small p-1 text-muted">What are the other restrictions or limits?</div>
@@ -149,7 +149,7 @@
           value="appointmentOrWalkin"
           id="appointmentOrWalkin"
         />
-        <label class="btn btn-outline-secondary" for="appointmentOrWalkin">Accept appointments and walk-ins</label>
+        <label class="btn btn-outline-secondary" for="appointmentOrWalkin">Put in public note if one is preferred over the other.</label>
         <input
           class="btn-check"
           type="radio"
@@ -178,7 +178,11 @@
             data-show-also="appointmentWebsite"
             value="web"
           />
-          <label for="appointmentMethodWeb" class="btn btn-outline-secondary">Web</label>
+          <label
+            for="appointmentMethodWeb"
+            title="Only change the website if it is the incorrect website for scheduling."
+            class="btn btn-outline-secondary"
+            >Web</label>
           <input
             type="radio"
             class="btn-check"
@@ -190,7 +194,7 @@
           <label
             for="appointmentMethodPhone"
             class="btn btn-outline-secondary"
-            title="Only change the # if it is the incorrect # to schedule an appt"
+            title="Only change the # if it is the incorrect # to schedule an appt."
             >Phone</label
           >
           <input
