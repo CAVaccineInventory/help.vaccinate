@@ -273,6 +273,8 @@ const constructReportFromDom = () => {
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
 
   if (topLevelAnswer === "no") {
+    availability.push("No: may be a vaccination site in the future");
+  } else if (topLevelAnswer === "noNever") {
     availability.push("No: will never be a vaccination site");
   } else if (topLevelAnswer === "sortOf") {
     const sortOfReason = document.querySelector("[name=sortOfReason]:checked")?.value;
@@ -285,9 +287,6 @@ const constructReportFromDom = () => {
         break;
       case "expectSoon":
         availability.push("Yes: coming soon");
-        break;
-      case "noNotYet":
-        availability.push("No: may be a vaccination site in the future");
         break;
       case "pausedJJ":
         availability.push(

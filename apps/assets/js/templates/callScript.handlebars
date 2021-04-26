@@ -16,7 +16,7 @@
     <div class="instructions">When you reach the right person:</div>
     <div class="yousay">Are you currently offering the COVID-19 vaccine?</div>
     <div class="small text-muted p-1"
-      >Pick yes if this is a site where it's possible to get or schedule a vaccination. Pick no if this is a site that
+      >Pick Yes if this is a site where it's possible to get or schedule a vaccination. Pick No, never if this is a site that
       does not have the vaccine and is confident they will not in the future.</div
     >
     <div id="yesNoOptions" class="btn-group" role="group">
@@ -48,16 +48,31 @@
         type="radio"
         name="yesNoSelect"
         value="no"
-        id="noJustNo"
+        id="no"
         class="btn-check"
         data-hide-on-select="vaccinatingPublicScript contactConfirmation plannedStopDatePrompt"
         data-show-also="scoobyRecordCall"
       />
       <label
         class="btn btn-outline-danger"
-        title="Choose if the answer is a straightforward No."
-        for="noJustNo"
-        >No</label
+        title="Choose if the answer is a straightforward no and that they hope to hoping to provide the vaccine"
+        for="no"
+        >No, could be in the future</label
+      >
+      <input
+        type="radio"
+        name="yesNoSelect"
+        value="noNever"
+        id="noNever"
+        class="btn-check"
+        data-hide-on-select="vaccinatingPublicScript contactConfirmation plannedStopDatePrompt"
+        data-show-also="scoobyRecordCall"
+      />
+      <label
+        class="btn btn-outline-danger"
+        title="Choose if the answer a No, and they are sure they never will."
+        for="noNever"
+        >No, never</label
       >
     </div>
   </div>
@@ -75,8 +90,6 @@
           >J&amp;J Paused</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="expectSoon" id="expectSoon" />
         <label class="btn btn-outline-secondary" for="expectSoon">Expect to offer within 2 weeks</label>
-        <input class="btn-check" type="radio" name="sortOfReason" value="noNotYet" id="noNotYet" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
-        <label class="btn btn-outline-secondary" title="Choose this option if they say the are hoping to get the vaccine, but don't know when" for="noNotYet">Want to, don't know when</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="private" id="private" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
         <label class="btn btn-outline-secondary" for="private">Private site</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="noStaffOnly" id="noStaffOnly" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
