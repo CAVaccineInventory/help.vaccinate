@@ -313,7 +313,7 @@ const constructReportFromDom = () => {
       if (document.querySelector("#countyOnly")?.checked) {
         availability.push("Yes: restricted to county residents");
       }
-      if (!isHidden("#otherRestrictions")) {
+      if (!isHidden("#otherRestriction")) {
         currentReport.restriction_notes = document.querySelector("#restrictionsReasonForm")?.innerText;
       }
     }
