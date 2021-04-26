@@ -267,7 +267,7 @@ const initScooby = () => {
 
 const constructReportFromDom = () => {
   // reset report each time
-  currentReport = {Location: currentLocation.id};
+  currentReport = { Location: currentLocation.id };
 
   const availability = [];
   const topLevelAnswer = document.querySelector("[name=yesNoSelect]:checked")?.value;
