@@ -55,9 +55,9 @@
       />
       <label
         class="btn btn-outline-danger"
-        title="Choose if the answer is a straightforward no and that they hope to hoping to provide the vaccine"
+        title="Choose if the answer is a straightforward no"
         for="no"
-        >No, could be in the future</label
+        >No</label
       >
       <input
         type="radio"
@@ -90,6 +90,8 @@
           >J&amp;J Paused</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="expectSoon" id="expectSoon" />
         <label class="btn btn-outline-secondary" for="expectSoon">Expect to offer within 2 weeks</label>
+        <input class="btn-check" type="radio" name="sortOfReason" value="noNotYet" id="noNotYet" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
+        <label class="btn btn-outline-secondary" title="Choose this option if they say the are hoping to get the vaccine, but don't know when" for="noNotYet">Want to, don't know when</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="private" id="private" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
         <label class="btn btn-outline-secondary" for="private">Private site</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="noStaffOnly" id="noStaffOnly" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
