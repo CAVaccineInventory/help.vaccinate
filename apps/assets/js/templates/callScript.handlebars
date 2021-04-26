@@ -29,8 +29,7 @@
         data-show-also="vaccinatingPublicScript scoobyRecordCall"
       />
       <label class="btn btn-outline-success" for="yesJustYes" title="Choose if the answer is a straightforward Yes."
-        >Yes</label
-      >
+        >Yes</label>
       <input
         type="radio"
         id="sortOf"
@@ -42,7 +41,7 @@
       <label
         class="btn btn-outline-warning"
         for="sortOf"
-        title=""
+        title="Sort of can mean several things. Check the best options from the buttons that pop up."
         >Sort of</label
       >
       <input
@@ -56,7 +55,7 @@
       />
       <label
         class="btn btn-outline-danger"
-        title=""
+        title="Choose if the answer is a straightforward No."
         for="noJustNo"
         >No</label
       >
@@ -71,13 +70,13 @@
         <input type="radio" name="sortOfReason" value="pausedJJ" id="pausedJJ" class="btn-check" />
         <label
           class="btn btn-outline-secondary"
-          title=""
+          title="Currently this vaccine is not on pause, so double-check that is why the vaccine is not offered."
           for="pausedJJ"
           >J&amp;J Paused</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="expectSoon" id="expectSoon" />
         <label class="btn btn-outline-secondary" for="expectSoon">Expect to offer within 2 weeks</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="noNotYet" id="noNotYet" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
-        <label class="btn btn-outline-secondary" for="noNotYet">Want to, don't know when</label>
+        <label class="btn btn-outline-secondary" title="Choose this option if they say the are hoping to get the vaccine, but don't know when" for="noNotYet">Want to, don't know when</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="private" id="private" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
         <label class="btn btn-outline-secondary" for="private">Private site</label>
         <input class="btn-check" type="radio" name="sortOfReason" value="noStaffOnly" id="noStaffOnly" data-hide-on-select="vaccinatingPublicScript plannedStopDatePrompt"/>
