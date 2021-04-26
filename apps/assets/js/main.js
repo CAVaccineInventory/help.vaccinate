@@ -341,6 +341,9 @@ const constructReportFromDom = () => {
       // How do you make an appointment?
       const apptMethod = document.querySelector("[name=appointmentMethod]:checked")?.value;
       switch (apptMethod) {
+        case "myturn":
+          currentReport["Appointment scheduling instructions"] = "https://myturn.ca.gov/";
+          break;
         case "web":
           currentReport["Appointment scheduling instructions"] = document.querySelector("#appointmentWebsite")?.value;
           break;
@@ -640,6 +643,7 @@ const fillCallTemplate = (data) => {
   prefilledInternalNotes = !!data["Latest Internal Notes"]
     ? `${noteTimestampPrefix}\n\n${data["Latest Internal Notes"] || ""}`
     : noteTimestampPrefix;
+  const showMyTurn = data.State === "CA";
   const confirmAddress = data.confirm_address && !!data.Address;
   const confirmHours = data.confirm_hours && !!data.Hours;
   const confirmWebsite = data.confirm_website && !!providerSchedulingUrl;
@@ -654,6 +658,7 @@ const fillCallTemplate = (data) => {
     county: data.County,
     locationHours: data.Hours,
     isPharmacy: data["Location Type"] === "Pharmacy",
+    showMyTurn,
     anyConfirmations,
     confirmAddress,
     confirmHours,
