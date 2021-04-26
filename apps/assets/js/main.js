@@ -258,8 +258,7 @@ const initScooby = () => {
       }
     });
 
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("location_id")) {
+    if (isWebBanked()) {
       authOrLoadAndFillCall();
     }
   });
@@ -432,6 +431,7 @@ const constructReportFromDom = () => {
 
   // fields used for validation
   currentReport.internal_notes_unchanged = prefilledInternalNotes === internalNotes;
+  currentReport.web_banked = isWebBanked();
   console.log(currentReport);
 };
 
@@ -721,6 +721,12 @@ const showCompletionToast = (locationName) => {
 
 const hideToast = () => {
   document.querySelector("#onlyToast")?.classList.add("hide");
+};
+
+const isWebBanked = () => {
+  // TODO: possible we may also want to check against auth0 roles
+  const urlParams = new URLSearchParams(window.location.search);
+  return !!urlParams.get("location_id");
 };
 
 export { doLogin, doLogout, initScooby, fetchJsonFromEndpoint, handleAuth0Login, initAuth0 };

@@ -23,7 +23,7 @@ const AVAIL_TO_BLOCKING_ISSUES = {
   "Yes: walk-ins accepted": WALKINS_ACCEPTED_BLOCK,
 };
 
-const ALWAYS_REVIEW_TAGS = new Set(["Yes: walk-ins accepted"]);
+const ALWAYS_REVIEW_CALL_TAGS = new Set(["Yes: walk-ins accepted"]);
 
 const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
 const emailRegex = /\S+@\S+\.\S+/; // This is very much not RFC-compliant, but generally matches common addresses.
@@ -56,8 +56,8 @@ export const validateReport = (report) => {
       reportState.blockingIssues.push(AVAIL_TO_BLOCKING_ISSUES[a]);
     }
 
-    // check against availabilities that always should be reviewed
-    if (ALWAYS_REVIEW_TAGS.has(a)) {
+    // check against availabilities that always should be reviewed for calls
+    if (ALWAYS_REVIEW_CALL_TAGS.has(a) && !report.is_web_banked) {
       reportState.requiresReview = true;
     }
 
