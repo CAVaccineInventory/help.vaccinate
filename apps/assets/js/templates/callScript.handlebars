@@ -189,6 +189,21 @@
       <div class="surveyQuestion">
         <div class="yousay">How do you make an appointment?</div>
         <div class="btn-group" role="group">
+          {{#if showMyTurn}}
+          <input
+            class="btn-check"
+            type="radio"
+            name="appointmentMethod"
+            id="appointmentMethodMyTurn"
+            value="myturn"
+          />
+          <label 
+            id="myTurnLabel"
+            for="appointmentMethodMyTurn" 
+            title="This is the California state website for vaccination appointments" 
+            class="btn btn-outline-secondary"
+            >myturn.ca.gov</label>
+          {{/if}}
           <input
             class="btn-check"
             type="radio"
