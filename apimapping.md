@@ -25,7 +25,9 @@ This document maps answers in Scooby to (expected) outcomes in VIAL for Reports.
 
 - Appointment Required - Adds availability tag `Yes: appointment required`
 - Accept appointments and walk-ins - Adds availability tag `Yes: appointments or walk-ins accepted`
-- Walk-ins only - Adds availability tag `Yes: appointments or walk-ins accepted`
+- Walk-ins only - Adds availability tag `Yes: walk-ins accepted`
+
+***If nothing is selected, defaults to `Yes: appointment required`***
 
 ## How do you make an appointment
 
@@ -35,7 +37,7 @@ Sets `Appointment details` to the value of the input. VIAL determines the `Appoi
 
 - Yes - Adds availability tag `Yes: appointments available`
 - No - Adds avaialbility tag `Yes: appointment calendar currently full`
-- Not sure
+- Not sure - Does nothing
 
 ## Which vaccines do you offer?
 
