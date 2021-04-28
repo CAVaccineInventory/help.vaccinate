@@ -12,6 +12,8 @@ const WALKINS_ACCEPTED_BLOCK =
   "In general, locations that allow walk-ins are rare. Fill in the private notes field with details about what the pharmacist told you.";
 const INVALID_DATE_BLOCK =
   "The date that was entered for when the site will stop offering vaccines was in the past. Please double check you entered the date correctly.";
+const INVALID_DATE_FORMAT_BLOCK =
+  "The date that was entered for when the site will stop offering vaccines was not in a format we recognize. If you are using Safari, that would be yyyy-mm-dd. For example: 2021-05-25.";
 const OTHER_VACCINE_BLOCK =
   "What other vaccines does this site offer? Please fill in the private notes field with details.";
 
@@ -27,6 +29,7 @@ const ALWAYS_REVIEW_CALL_TAGS = new Set(["Yes: walk-ins accepted"]);
 
 const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
 const emailRegex = /\S+@\S+\.\S+/; // This is very much not RFC-compliant, but generally matches common addresses.
+const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 export const validateReport = (report) => {
   const reportState = {
@@ -35,11 +38,15 @@ export const validateReport = (report) => {
     requiresReview: false, // whether or not we require QA review on this report
   };
 
-  // check against planned closure date. It should be in the future.
+  // check against planned closure date. It should be in the future and should be yyyy-mm-dd format.
   if (report.planned_closure) {
-    const closure = new Date(report.planned_closure);
-    if (new Date() > closure) {
-      reportState.blockingIssues.push(INVALID_DATE_BLOCK);
+    if (report.planned_closure.match(dateRegex)) {
+      const closure = new Date(report.planned_closure);
+      if (new Date() > closure) {
+        reportState.blockingIssues.push(INVALID_DATE_BLOCK);
+      }
+    } else {
+      reportState.blockingIssues.push(INVALID_DATE_FORMAT_BLOCK);
     }
   }
 
