@@ -498,24 +498,10 @@ const submitSkipUntil = (when) => {
   });
 };
 
-// busy = 15 min delay
-const submitBusy = () => {
+// Busy signals, no answer, voice mail, and long holds
+const submitCallTwoHours = () => {
   const when = new Date();
-  when.setTime(when.getTime() + 15 * MINUTE);
-  submitSkipUntil(when);
-};
-
-// no answer = an hour delay - totally arbitrary choice
-const submitNoAnswer = () => {
-  const when = new Date();
-  when.setTime(when.getTime() + 1 * HOUR);
-  submitSkipUntil(when);
-};
-
-// long hold = an hour delay - totally arbitrary choice
-const submitLongHold = () => {
-  const when = new Date();
-  when.setTime(when.getTime() + 1 * HOUR);
+  when.setTime(when.getTime() + 2 * HOUR);
   submitSkipUntil(when);
 };
 
@@ -675,11 +661,10 @@ const activateCallTemplate = () => {
   bindClick("#scoobyRecordCall", saveCallReport);
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
-  bindClick("#noAnswer", submitNoAnswer);
-  bindClick("#phoneBusy", submitBusy);
   bindClick("#closedForTheDay", submitCallTomorrow);
   bindClick("#closedForTheWeekend", submitCallMonday);
-  bindClick("#longHold", submitLongHold);
+  bindClick("#noAnswer", submitCallTwoHours);
+  bindClick("#longHold", submitCallTwoHours);
 
   if (userRoles.includes("CC: Liveops")) {
     bindClick("#location-phone-url", liveopsDial);
