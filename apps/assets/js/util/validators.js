@@ -13,7 +13,7 @@ const WALKINS_ACCEPTED_BLOCK =
 const INVALID_DATE_BLOCK =
   "The date that was entered for when the site will stop offering vaccines was in the past. Please double check you entered the date correctly.";
 const INVALID_DATE_FORMAT_BLOCK =
-  "The date that was entered for when the site will stop offering vaccines was not in a format we recognize. We expect the date to be formatted yyyy-mm-dd. For example: 2021-05-25.";
+  "The date that was entered for when the site will stop offering vaccines was not in a format we recognize. If you are using Safari, that would be yyyy-mm-dd. For example: 2021-05-25.";
 const OTHER_VACCINE_BLOCK =
   "What other vaccines does this site offer? Please fill in the private notes field with details.";
 
