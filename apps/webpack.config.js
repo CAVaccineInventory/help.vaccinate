@@ -5,6 +5,7 @@ module.exports = {
   mode: "production",
   entry: {
     scooby: "./assets/js/scooby.js",
+    velma: "./assets/js/velma.js",
   },
   devtool: "source-map",
   output: {
