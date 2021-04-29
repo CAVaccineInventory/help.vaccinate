@@ -59,8 +59,8 @@ export const validateReport = (report) => {
       reportState.blockingIssues.push(AVAIL_TO_BLOCKING_ISSUES[a]);
     }
 
-    // check against availabilities that always should be reviewed for calls
-    if (ALWAYS_REVIEW_CALL_TAGS.has(a) && !report.web_banked) {
+    // check against availabilities that always should be reviewed
+    if (ALWAYS_REVIEW_CALL_TAGS.has(a)) {
       reportState.requiresReview = true;
     }
 
@@ -75,5 +75,11 @@ export const validateReport = (report) => {
 
   reportState.requiresReview =
     reportState.requiresReview || !!reportState.blockingIssues.length || !!reportState.warningIssues.length;
+
+  // web bankers are excluded from QA review
+  if (report.web_banked) {
+    reportState.requiresReview = false;
+  }
+
   return reportState;
 };
