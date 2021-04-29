@@ -10,8 +10,6 @@ const PRIVATE_ONLY_BLOCK =
   "Before we mark a site as not being open to the public, we'd like some more information about why. Please fill in the private notes field with as much information as you can about what the location told you.";
 const WALKINS_ACCEPTED_BLOCK =
   "In general, locations that allow walk-ins are rare. Fill in the private notes field with details about what the pharmacist told you.";
-const INVALID_DATE_BLOCK =
-  "The date that was entered for when the site will stop offering vaccines was in the past. Please double check you entered the date correctly.";
 const INVALID_DATE_FORMAT_BLOCK =
   "The date that was entered for when the site will stop offering vaccines was not in a format we recognize. If you are using Safari, that would be yyyy-mm-dd. For example: 2021-05-25.";
 const OTHER_VACCINE_BLOCK =
@@ -29,7 +27,7 @@ const ALWAYS_REVIEW_CALL_TAGS = new Set(["Yes: walk-ins accepted"]);
 
 const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
 const emailRegex = /\S+@\S+\.\S+/; // This is very much not RFC-compliant, but generally matches common addresses.
-const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+const dateRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export const validateReport = (report) => {
   const reportState = {
@@ -40,14 +38,10 @@ export const validateReport = (report) => {
 
   // check against planned closure date. It should be in the future and should be yyyy-mm-dd format.
   if (report.planned_closure) {
-    if (report.planned_closure.match(dateRegex)) {
-      const closure = new Date(report.planned_closure);
-      if (new Date() > closure) {
-        reportState.blockingIssues.push(INVALID_DATE_BLOCK);
-      }
-    } else {
+    if (!report.planned_closure.match(dateRegex)) {
       reportState.blockingIssues.push(INVALID_DATE_FORMAT_BLOCK);
     }
+    // TODO: if it matches, validate date is in the future or is today. Hard to do because of timezones.
   }
 
   // check against public notes for email and phone numbers
@@ -63,8 +57,8 @@ export const validateReport = (report) => {
       reportState.blockingIssues.push(AVAIL_TO_BLOCKING_ISSUES[a]);
     }
 
-    // check against availabilities that always should be reviewed for calls
-    if (ALWAYS_REVIEW_CALL_TAGS.has(a) && !report.web_banked) {
+    // check against availabilities that always should be reviewed
+    if (ALWAYS_REVIEW_CALL_TAGS.has(a)) {
       reportState.requiresReview = true;
     }
 
@@ -79,5 +73,11 @@ export const validateReport = (report) => {
 
   reportState.requiresReview =
     reportState.requiresReview || !!reportState.blockingIssues.length || !!reportState.warningIssues.length;
+
+  // web bankers are excluded from QA review
+  if (report.web_banked) {
+    reportState.requiresReview = false;
+  }
+
   return reportState;
 };
