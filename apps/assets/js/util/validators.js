@@ -29,7 +29,7 @@ const ALWAYS_REVIEW_CALL_TAGS = new Set(["Yes: walk-ins accepted"]);
 
 const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
 const emailRegex = /\S+@\S+\.\S+/; // This is very much not RFC-compliant, but generally matches common addresses.
-const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+const dateRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export const validateReport = (report) => {
   const reportState = {
@@ -40,14 +40,10 @@ export const validateReport = (report) => {
 
   // check against planned closure date. It should be in the future and should be yyyy-mm-dd format.
   if (report.planned_closure) {
-    if (report.planned_closure.match(dateRegex)) {
-      const closure = new Date(report.planned_closure);
-      if (new Date() > closure) {
-        reportState.blockingIssues.push(INVALID_DATE_BLOCK);
-      }
-    } else {
+    if (!report.planned_closure.match(dateRegex)) {
       reportState.blockingIssues.push(INVALID_DATE_FORMAT_BLOCK);
     }
+    // TODO: if it matches, validate date is in the future or is today. Hard to do because of timezones.
   }
 
   // check against public notes for email and phone numbers
