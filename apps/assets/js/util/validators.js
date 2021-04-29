@@ -64,7 +64,7 @@ export const validateReport = (report) => {
     }
 
     // check against availabilities that always should be reviewed for calls
-    if (ALWAYS_REVIEW_CALL_TAGS.has(a) && !report.is_web_banked) {
+    if (ALWAYS_REVIEW_CALL_TAGS.has(a) && !report.web_banked) {
       reportState.requiresReview = true;
     }
 
