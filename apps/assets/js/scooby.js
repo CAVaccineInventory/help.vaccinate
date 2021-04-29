@@ -22,8 +22,8 @@ import locationTemplate from "./templates/scooby/location.handlebars";
 import youAreCallingTemplate from "./templates/scooby/youAreCalling.handlebars";
 import ctaTemplate from "./templates/scooby/cta.handlebars";
 import nextCallPromptTemplate from "./templates/scooby/nextCallPrompt.handlebars";
-import loggedInAsTemplate from "./templates/scooby/loggedInAs.handlebars";
-import notLoggedInTemplate from "./templates/scooby/notLoggedIn.handlebars";
+import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
+import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import dialResultTemplate from "./templates/scooby/dialResult.handlebars";
 import callLogTemplate from "./templates/scooby/callLog.handlebars";
 import toastTemplate from "./templates/scooby/toast.handlebars";
@@ -91,7 +91,7 @@ const updateLogin = (user) => {
     initCallerStats();
   } else {
     fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
-    bindClick("#loginButton", doLogin);
+    bindClick("#loginButton", loginWithRedirect);
   }
 };
 
@@ -119,10 +119,6 @@ const fetchJsonFromEndpoint = async (endpoint, method, body) => {
   }
 };
 
-const doLogin = () => {
-  loginWithRedirect();
-};
-
 const showErrorModal = (title, body, json) => {
   showModal(errorModalTemplate, {
     title,
@@ -138,7 +134,7 @@ const authOrLoadAndFillCall = async () => {
     const forceLocation = urlParams.get("location_id");
     requestCall(forceLocation);
   } else {
-    doLogin();
+    loginWithRedirect();
   }
 };
 
