@@ -2,7 +2,7 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 
 import { initAuth0, getUser, logout, loginWithRedirect } from "./util/auth.js";
-import { showLoadingScreen, hideLoadingScreen, fillTemplateIntoDom, bindClick} from "./util/fauxFramework.js";
+import { showLoadingScreen, hideLoadingScreen, fillTemplateIntoDom, bindClick } from "./util/fauxFramework.js";
 
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
