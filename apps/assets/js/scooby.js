@@ -378,6 +378,7 @@ const constructReportFromDom = () => {
 
   if (document.querySelector("#reviewRequested")?.checked) {
     currentReport.is_pending_review = true;
+    currentReport.pending_review_because = "Reporter explicitly asked for review";
   }
 
   // End script
@@ -400,8 +401,9 @@ const constructReportFromDom = () => {
 
 const runValidators = (onSuccess) => {
   const reportState = validateReport(currentReport);
-  if (reportState.requiresReview) {
+  if (reportState.reviewBecause.length) {
     currentReport.is_pending_review = true;
+    currentReport.pending_review_because = reportState.reviewBecause.join("; ");
   }
   if (reportState.warningIssues.length || reportState.blockingIssues.length) {
     showModal(
