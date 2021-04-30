@@ -526,18 +526,6 @@ const submitCallReport = async () => {
   }
 };
 
-// If the caller is in the liveops group we want them to dial through the liveops dialer, not ours
-const liveopsDial = (event) => {
-  const button = document.getElementById("location-phone-url");
-  let num = button?.getAttribute("data-phone-number");
-  num = num.replace(/[^\d]/g, "");
-  button.target = "scratch-frame";
-  button.href =
-    "https://app-scl.five9.com/appsvcs/rs/svc/orgs/131050/interactions/click_to_dial?number=" +
-    num +
-    "&campaignId=VaccinateCA&contactId=&dialImmediately=false";
-};
-
 const fillCallTemplate = (data) => {
   fillTemplateIntoDom(affiliationNotesTemplate, "#affiliationNotes", {});
 
@@ -627,10 +615,6 @@ const activateCallTemplate = () => {
   bindClick("#closedForTheWeekend", submitCallMonday);
   bindClick("#noAnswer", submitCallTwoHours);
   bindClick("#longHold", submitCallTwoHours);
-
-  if (userRoles.includes("CC: Liveops")) {
-    bindClick("#location-phone-url", liveopsDial);
-  }
 
   // don't show "on hold for more than 4 minutes" until 4 min have elapsed
   const el = document.querySelector("#longHold");
