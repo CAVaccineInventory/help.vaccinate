@@ -62,15 +62,15 @@ export const validateReport = (report) => {
     if (ALWAYS_REVIEW_CALL_TAGS.has(a)) {
       reportState.reviewBecause.push("Use of tag '" + a + "' requires review");
     }
-
-    if (report.vaccines_offered && report.vaccines_offered.includes("Other")) {
-      // always review if Other chosen for vaccines
-      reportState.reviewBecause.push("Use of 'Other' vaccine requires review");
-      if (report.internal_notes_unchanged) {
-        reportState.blockingIssues.push(OTHER_VACCINE_BLOCK);
-      }
-    }
   });
+
+  if (report.vaccines_offered && report.vaccines_offered.includes("Other")) {
+    // always review if Other chosen for vaccines
+    reportState.reviewBecause.push("Use of 'Other' vaccine requires review");
+    if (report.internal_notes_unchanged) {
+      reportState.blockingIssues.push(OTHER_VACCINE_BLOCK);
+    }
+  }
 
   // web bankers are excluded from QA review
   if (report.web_banked) {
