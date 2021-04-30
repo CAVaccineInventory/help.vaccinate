@@ -33,7 +33,7 @@ export const validateReport = (report) => {
   const reportState = {
     blockingIssues: [], // issues we block on
     warningIssues: [], // issues we warn on
-    requiresReview: false, // whether or not we require QA review on this report
+    reviewBecause: [], // all issues we're going to mark as pending review because
   };
 
   // check against planned closure date. It should be in the future and should be yyyy-mm-dd format.
@@ -48,6 +48,7 @@ export const validateReport = (report) => {
   const publicNotes = report.Notes;
   if (publicNotes) {
     if (publicNotes.match(phoneNumberRegex) || publicNotes.match(emailRegex)) {
+      reportState.reviewBecause.push("Phone number or email in public notes");
       reportState.warningIssues.push(PUBLIC_NOTES_WARNING);
     }
   }
@@ -59,24 +60,21 @@ export const validateReport = (report) => {
 
     // check against availabilities that always should be reviewed
     if (ALWAYS_REVIEW_CALL_TAGS.has(a)) {
-      reportState.requiresReview = true;
+      reportState.reviewBecause.push("Use of tag '" + a + "' requires review");
     }
 
     if (report.vaccines_offered && report.vaccines_offered.includes("Other")) {
       // always review if Other chosen for vaccines
-      reportState.requiresReview = true;
+      reportState.reviewBecause.push("Use of 'Other' vaccine requires review");
       if (report.internal_notes_unchanged) {
         reportState.blockingIssues.push(OTHER_VACCINE_BLOCK);
       }
     }
   });
 
-  reportState.requiresReview =
-    reportState.requiresReview || !!reportState.blockingIssues.length || !!reportState.warningIssues.length;
-
   // web bankers are excluded from QA review
   if (report.web_banked) {
-    reportState.requiresReview = false;
+    reportState.reviewBecause = [];
   }
 
   return reportState;
