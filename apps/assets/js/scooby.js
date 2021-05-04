@@ -556,18 +556,19 @@ const fillCallTemplate = (data) => {
     countyURL: data["County vaccine info URL"],
   });
 
+  let localTime = null;
+  if (data.timezone) {
+    try {
+      localTime = new Date().toLocaleTimeString("en-us", { timeZone: data.timezone, timeZoneName: "short" });
+    } catch (e) {
+      console.warn(e);
+      Sentry.captureException(e);
+    }
+  }
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
-    locationName: data.Name,
-    locationAddress: data.Address || "No address information available",
     locationHours: data.Hours,
-    locationWebsite: data.Website,
-    locationType: data["Location Type"],
-    locationAffiliation: data["Location Affiliation"],
-    countyName: data.County,
-    countyURL: data["County vaccine info URL"],
-    countyInfo: data.county_notes,
-    internalNotes: data["Internal Notes"],
+    localTime,
   });
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
 
