@@ -556,7 +556,15 @@ const fillCallTemplate = (data) => {
     countyURL: data["County vaccine info URL"],
   });
 
-  const localTime = data.timezone ? new Date().toLocaleTimeString('en-us', {timeZone: data.timezone, timeZoneName: 'short'}) : null;
+  let localTime = null;
+  if (data.timezone) {
+    try {
+      localTime = new Date().toLocaleTimeString('en-us', {timeZone: data.timezone, timeZoneName: 'short'});
+    } catch (e) {
+      console.warn(e);
+      Sentry.captureException(e);
+    }
+  }
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
     locationHours: data.Hours,
