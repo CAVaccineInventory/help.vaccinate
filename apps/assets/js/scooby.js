@@ -556,18 +556,11 @@ const fillCallTemplate = (data) => {
     countyURL: data["County vaccine info URL"],
   });
 
+  const localTime = data.timezone ? new Date().toLocaleTimeString('en-us', {timeZone: data.timezone, timeZoneName: 'short'}) : null;
   fillTemplateIntoDom(locationTemplate, "#locationInfo", {
     locationId: data.id,
-    locationName: data.Name,
-    locationAddress: data.Address || "No address information available",
     locationHours: data.Hours,
-    locationWebsite: data.Website,
-    locationType: data["Location Type"],
-    locationAffiliation: data["Location Affiliation"],
-    countyName: data.County,
-    countyURL: data["County vaccine info URL"],
-    countyInfo: data.county_notes,
-    internalNotes: data["Internal Notes"],
+    localTime,
   });
   fillTemplateIntoDom(dialResultTemplate, "#dialResult", {});
 
