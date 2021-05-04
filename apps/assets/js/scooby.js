@@ -559,7 +559,7 @@ const fillCallTemplate = (data) => {
   let localTime = null;
   if (data.timezone) {
     try {
-      localTime = new Date().toLocaleTimeString('en-us', {timeZone: data.timezone, timeZoneName: 'short'});
+      localTime = new Date().toLocaleTimeString("en-us", { timeZone: data.timezone, timeZoneName: "short" });
     } catch (e) {
       console.warn(e);
       Sentry.captureException(e);
