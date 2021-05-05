@@ -164,7 +164,7 @@ const fillItemTemplate = (data, candidates) => {
     hours: data.hours,
     latitude: data.latitude,
     longitude: data.longitude,
-    website: data.import_json?.contact[0]?.website || data.import_json?.contact[1]?.website,
+    website: data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website,
   });
   console.log(data.import_json);
   candidates?.forEach((candidate) => {
