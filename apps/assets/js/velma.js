@@ -209,10 +209,10 @@ const fillItemTemplate = (data, candidates) => {
 const matchLocation = () => { 
 	var target = event.target;
   	const id = target?.getAttribute("data-id");
-  fetchJsonFromEndpoint("/updateSourceLocationMatch", "POST", {
+  fetchJsonFromEndpoint("/updateSourceLocationMatch", "POST", JSON.stringify ({
   "source_location": sourceLocation?.import_json?.id,
   "location": id
-}
+})
   ).then(
 console.log("ok")).then(
 	requestItem()
@@ -220,9 +220,9 @@ console.log("ok")).then(
 };
 const createLocation = () => {
 
-  fetchJsonFromEndpoint("/createLocationFromSourceLocation", "POST", {
+  fetchJsonFromEndpoint("/createLocationFromSourceLocation", "POST", JSON.stringify({
   "source_location": sourceLocation?.import_json?.id,
-}
+})
   ).then(
 console.log("ok")).then(
 	requestItem()
