@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "lint": "prettier --check '**/*.js' '**/*.css' && eslint apps/assets/js",
-    "lint:fix": "prettier --write '**/*.js' '**/*.css' && eslint --fix apps/assets/js/"
+    "lint": "prettier --check apps/assets/**/*.js '**/*.html' && prettier --parser=html apps/assets/**/*.handlebars && eslint apps/assets/js",
+    "lint:fix": "prettier --write apps/assets/**/*.js **/*.html && prettier --write --parser=html apps/assets/**/*.handlebars && eslint --fix apps/assets/js"
   },
   "prettier": {
     "quoteProps": "consistent"
