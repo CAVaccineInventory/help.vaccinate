@@ -24,8 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initVelma();
 });
 
-
-var sourceLocation;
+let sourceLocation;
 
 const initVelma = async () => {
   showLoadingScreen();
@@ -98,12 +97,12 @@ const skipItem = () => {
   requestItem();
 };
 const requestItem = async (id) => {
-  var sourceLocationContainer;
+  let sourceLocationContainer;
   showLoadingScreen();
   // we appear to have some source locations with no latlon !?
   while (!sourceLocationContainer?.results[0]?.latitude) {
     if (id) {
-      //sourceLocation = await fetchJsonFromEndpoint("/requestItem?location_id=" + id);
+      // sourceLocation = await fetchJsonFromEndpoint("/requestItem?location_id=" + id);
     } else {
       sourceLocationContainer = await fetchJsonFromEndpoint(
         "/searchSourceLocations?random=1&unmatched=1&size=1",
@@ -112,7 +111,7 @@ const requestItem = async (id) => {
     }
   }
   sourceLocation = sourceLocationContainer.results[0];
-  var candidates = await fetchJsonFromEndpoint(
+  const candidates = await fetchJsonFromEndpoint(
     "/searchLocations?size=20&latitude=" +
       sourceLocation.latitude +
       "&longitude=" +
@@ -131,7 +130,6 @@ const requestItem = async (id) => {
 
   hideLoadingScreen();
   const user = await getUser();
-  const userRoles = user["https://help.vaccinateca.com/roles"];
   if (sourceLocation.error) {
     showErrorModal(
       "Error fetching a call",
@@ -166,12 +164,12 @@ const fillItemTemplate = (data, candidates) => {
     hours: data.hours,
     latitude: data.latitude,
     longitude: data.longitude,
-    website: data.import_json?.contact[0]?.website || data.import_json?.contact[1]?.website
+    website: data.import_json?.contact[0]?.website || data.import_json?.contact[1]?.website,
   });
   console.log(data.import_json);
   candidates?.forEach((candidate) => {
     if (candidate.latitude && candidate.longitude) {
-      var mymap = L.map("map-" + candidate.id).setView([candidate.latitude, candidate.longitude], 13);
+      const mymap = L.map("map-" + candidate.id).setView([candidate.latitude, candidate.longitude], 13);
 
       L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution:
@@ -182,19 +180,21 @@ const fillItemTemplate = (data, candidates) => {
         zoomOffset: -1,
         accessToken: "pk.eyJ1IjoiY2FsbHRoZXNob3RzIiwiYSI6ImNrbzNod3B0eDB3cm4ycW1ieXJpejR4cGQifQ.oZSg34AkLAVhksJjLt7kKA",
       }).addTo(mymap);
-      var srcLoc = L.circle([data.latitude, data.longitude], {
+      const srcLoc = L.circle([data.latitude, data.longitude], {
         color: "red",
         fillColor: "#f03",
         fillOpacity: 0.5,
         radius: 15,
       }).addTo(mymap);
-      var candidateLoc = L.circle([candidate.latitude, candidate.longitude], {
+      const candidateLoc = L.circle([candidate.latitude, candidate.longitude], {
         color: "blue",
         fillColor: "#30f",
         fillOpacity: 0.5,
         radius: 15,
       }).addTo(mymap);
-      var group = new L.featureGroup([srcLoc, candidateLoc]);
+
+      // eslint-disable-next-line
+      const group = new L.featureGroup([srcLoc, candidateLoc]);
 
       mymap.fitBounds(group.getBounds(), { padding: L.point(5, 5) });
     }
@@ -203,43 +203,45 @@ const fillItemTemplate = (data, candidates) => {
   bindClick("#skip", skipItem);
   bindClick("#createLocation", createLocation);
   candidates?.forEach((candidate) => {
-      bindClick("#match-" + candidate.id, matchLocation);
-});
+    bindClick("#match-" + candidate.id, matchLocation);
+  });
 };
-const matchLocation = () => { 
-	var target = event.target;
-  	const id = target?.getAttribute("data-id");
-  fetchJsonFromEndpoint("/updateSourceLocationMatch", "POST", JSON.stringify ({
-  "source_location": sourceLocation?.import_json?.id,
-  "location": id
-})
-  ).then(
-console.log("ok")).then(
-	requestItem()
-);
+const matchLocation = () => {
+  const target = event.target;
+  const id = target?.getAttribute("data-id");
+  fetchJsonFromEndpoint(
+    "/updateSourceLocationMatch",
+    "POST",
+    JSON.stringify({
+      source_location: sourceLocation?.import_json?.id,
+      location: id,
+    })
+  )
+    .then(console.log("ok"))
+    .then(requestItem());
 };
 const createLocation = () => {
-
-  fetchJsonFromEndpoint("/createLocationFromSourceLocation", "POST", JSON.stringify({
-  "source_location": sourceLocation?.import_json?.id,
-})
-  ).then(
-console.log("ok")).then(
-	requestItem()
-);
-
+  fetchJsonFromEndpoint(
+    "/createLocationFromSourceLocation",
+    "POST",
+    JSON.stringify({
+      source_location: sourceLocation?.import_json?.id,
+    })
+  )
+    .then(console.log("ok"))
+    .then(requestItem());
 };
-//This distance routine is licensed under LGPLv3.
-//source: https://www.geodatasource.com/developers/javascript
+// This distance routine is licensed under LGPLv3.
+// source: https://www.geodatasource.com/developers/javascript
 const distance = (lat1, lon1, lat2, lon2) => {
   if (lat1 == lat2 && lon1 == lon2) {
     return 0;
   } else {
-    var radlat1 = (Math.PI * lat1) / 180;
-    var radlat2 = (Math.PI * lat2) / 180;
-    var theta = lon1 - lon2;
-    var radtheta = (Math.PI * theta) / 180;
-    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    const radlat1 = (Math.PI * lat1) / 180;
+    const radlat2 = (Math.PI * lat2) / 180;
+    const theta = lon1 - lon2;
+    const radtheta = (Math.PI * theta) / 180;
+    let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
     if (dist > 1) {
       dist = 1;
     }
