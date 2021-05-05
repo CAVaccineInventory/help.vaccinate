@@ -1,0 +1,22 @@
+<div style="position: fixed; max-width: 30%">
+  <h2>{{ name }}</h2>
+
+  <div class="address">
+    <div>{{address}}</div>
+    <div>{{city}}, {{state}} {{zip}}</div>
+  </div>
+  <div></div>
+  <div>{{phone}}</div>
+
+  <div>
+    <a href="{{website}}" target="_new">{{website}}</a>
+
+  </div>
+  <h3>Nearby on VTS</h3>
+  <div>(If you see the location on this map, but not on the right, click the red skip button)</div>
+  <iframe         frameborder="0"
+        scrolling="no" 
+	height=600
+        style="overflow:hidden;width:100%" 
+ src="https://www.vaccinatethestates.com/embed?lat={{latitude}}&amp;lng={{longitude}}&amp;zoom=12"></iframe>
+</div>

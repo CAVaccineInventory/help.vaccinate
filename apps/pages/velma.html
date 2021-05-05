@@ -10,17 +10,38 @@ layout: base.html
   </div>
 </nav>
 
-Welcome to Velma 
+<div id="app">
+  <div class="" id="nextItemPrompt"></div>
 
-<div id="loadingScreen">
-  <div class="container-fluid h-100" id="loading">
-      <div class="position-absolute top-50 start-50">
-      <div class="row bg-light p-5 borer">
-          <div class="spinner-border" role="status">
-          <span class="visually-hidden p-5 m-5 bg-light">Loading...</span>
-          </div>
+  <div class="container-fluid h-100 hidden" id="velmaUI">
+    <div class="row">
+      <div class="col-sm-12 col-md-4 overflow-auto">
+        <div id="sourceLocation"></div>
       </div>
+      <div class="col-sm-12 col-md-8 overflow-auto">
+        <div id="locationMatchCandidates"> candidate location list</div>
+        <div id="locationCreate">
+          <h3>None of these look right.</h3>
+          <input type="button" class="btn btn-warning" id="createLocation" value="Create a new location" />
+        </div>
+        <div id="locationSkip">
+          <h3>Something looks weird and I don't want to deal with it</h3>
+          <input type="button" class="btn btn-danger" id="skip" value="Skip this location. Someone else can deal." />
+        </div>
       </div>
+    </div>
   </div>
+
+  <div id="loadingScreen">
+    <div class="container-fluid h-100" id="loading">
+      <div class="position-absolute top-50 start-50">
+        <div class="row bg-light p-5 borer">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden p-5 m-5 bg-light">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/assets/js/velma.js"></script>
 </div>
-<script src="/assets/js/velma.js"></script>
