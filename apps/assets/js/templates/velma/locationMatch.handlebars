@@ -1,19 +1,20 @@
-<ul>
+<div class="container-fluid">
   {{#each candidates }}
-  <li>
-    <div class="container">
-      <div class="row">
-        <div class="col-6">
-          {{ this.name }} {{ this.full_address }}<br />
-          {{ this.latitude }} , {{ this.longitude}} <br />
-          <a href="{{ this.website }}" target="_blank">{{ this.website }}</a>
-          <input type="button" class="btn btn-primary" value="Matches this one!" />
-        </div>
-        <div class="col-6">
-          <div class="map" style="height: 200px" id="map-{{this.id}}">Map goes here</div>
-        </div>
+  <div class="row no-gutters">
+    <div class="col-6">
+      <h3>{{ this.name }}</h3>
+      <div class="address">{{ this.full_address }}</div>
+      <br />
+      {{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}}) <br />
+      <a href="{{ this.website }}" target="_blank">{{ this.website }}</a>
+      <div>
+        <input type="button" class="btn btn-primary" value="Matches this one!" />
       </div>
     </div>
-  </li>
+    <div class="col-6">
+      <div class="map" style="height: 200px" id="map-{{this.id}}">Map goes here</div>
+    </div>
+  </div>
+  <hr />
   {{/each}}
-</ul>
+</div>

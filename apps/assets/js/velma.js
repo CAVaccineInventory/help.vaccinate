@@ -91,27 +91,41 @@ const authOrLoadAndFillItem = async () => {
   }
 };
 
+const skipItem = () => {
+  requestItem();
+};
 const requestItem = async (id) => {
-  var sourceLocation;
+  var sourceLocationContainer;
   showLoadingScreen();
-  if (id) {
-    //sourceLocation = await fetchJsonFromEndpoint("/requestItem?location_id=" + id);
-  } else {
-    // sourceLocation = await fetchJsonFromEndpoint("/requestItem?state=all");
+  // we appear to have some source locations with no latlon !?
+  while (!sourceLocationContainer?.results[0]?.latitude) {
+    if (id) {
+      //sourceLocation = await fetchJsonFromEndpoint("/requestItem?location_id=" + id);
+    } else {
+      sourceLocationContainer = await fetchJsonFromEndpoint(
+        "/searchSourceLocations?random=1&unmatched=1&size=1",
+        "GET"
+      );
+    }
   }
-
-  sourceLocation = {
-    name: "name blah",
-    street1: "22 street st",
-    city: "Oakland",
-    state: "CA",
-    zip: "94609",
-    lat: "37.84096048875298",
-    lon: "-122.2658426695491",
-  };
-  var candidates = fetchJsonFromEndpoint(
-    "/searchLocations?size=20&latitude=" + sourceLocation.lat + "&longitude=" + sourceLocation.lon + "&radius=1000"
+  var sourceLocation = sourceLocationContainer.results[0];
+  var candidates = await fetchJsonFromEndpoint(
+    "/searchLocations?size=20&latitude=" +
+      sourceLocation.latitude +
+      "&longitude=" +
+      sourceLocation.longitude +
+      "&radius=2500",
+    "GET"
   );
+
+  // record the distance. then sort the results by it
+  candidates?.results.forEach((item) => {
+    item.distance =
+      Math.round(100 * distance(item.latitude, item.longitude, sourceLocation.latitude, sourceLocation.longitude)) /
+      100;
+  });
+  candidates?.results.sort((a, b) => (a.distance > b.distance ? 1 : -1));
+
   hideLoadingScreen();
   const user = await getUser();
   const userRoles = user["https://help.vaccinateca.com/roles"];
@@ -128,7 +142,7 @@ const requestItem = async (id) => {
   } else {
     hideLoadingScreen();
     showElement("#velmaUI");
-    fillItemTemplate(sourceLocation, candidates);
+    fillItemTemplate(sourceLocation, candidates?.results);
     activateItemTemplate();
     hideElement("#nextItemPrompt");
   }
@@ -142,14 +156,19 @@ const fillItemTemplate = (data, candidates) => {
   fillTemplateIntoDom(sourceLocationTemplate, "#sourceLocation", {
     id: data.id,
     name: data.name,
-    address: data.address || "No address information available",
+    phone: data.phone_number,
+    city: data.import_json.address.city,
+    state: data.import_json.address.state,
+    zip: data.import_json.address.zip,
+    address: data.import_json.address.street1 || "No address information available",
     hours: data.hours,
-    lat: data.lat,
-    lon: data.lon,
+    lat: data.latitude,
+    lon: data.longitude,
     website: data.website,
   });
-  candidates.forEach((candidate) => {
-    if (candidate.lat && candidate.lon) {
+  console.log(candidates);
+  candidates?.forEach((candidate) => {
+    if (candidate.latitude && candidate.longitude) {
       var mymap = L.map("map-" + candidate.id).setView([candidate.latitude, candidate.longitude], 13);
 
       L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -161,17 +180,17 @@ const fillItemTemplate = (data, candidates) => {
         zoomOffset: -1,
         accessToken: "pk.eyJ1IjoiY2FsbHRoZXNob3RzIiwiYSI6ImNrbzNod3B0eDB3cm4ycW1ieXJpejR4cGQifQ.oZSg34AkLAVhksJjLt7kKA",
       }).addTo(mymap);
-      var srcLoc = L.circle([data.lat, data.lon], {
+      var srcLoc = L.circle([data.latitude, data.longitude], {
         color: "red",
         fillColor: "#f03",
         fillOpacity: 0.5,
-        radius: 5,
+        radius: 10,
       }).addTo(mymap);
-      var candidateLoc = L.circle([candidate.laitudet, candidate.longitude], {
+      var candidateLoc = L.circle([candidate.latitude, candidate.longitude], {
         color: "blue",
         fillColor: "#30f",
         fillOpacity: 0.5,
-        radius: 5,
+        radius: 10,
       }).addTo(mymap);
       var group = new L.featureGroup([srcLoc, candidateLoc]);
 
@@ -182,9 +201,26 @@ const fillItemTemplate = (data, candidates) => {
 };
 const activateItemTemplate = () => {
   enableInputDataBinding();
-  //bindClick("#longHold", submitItemTwoHours);
+  bindClick("#skip", skipItem);
+};
 
-  if (document.querySelector("#autodial")?.checked) {
-    document.querySelector("#location-phone-url")?.click();
+//This distance routine is licensed under LGPLv3.
+//source: https://www.geodatasource.com/developers/javascript
+const distance = (lat1, lon1, lat2, lon2) => {
+  if (lat1 == lat2 && lon1 == lon2) {
+    return 0;
+  } else {
+    var radlat1 = (Math.PI * lat1) / 180;
+    var radlat2 = (Math.PI * lat2) / 180;
+    var theta = lon1 - lon2;
+    var radtheta = (Math.PI * theta) / 180;
+    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    if (dist > 1) {
+      dist = 1;
+    }
+    dist = Math.acos(dist);
+    dist = (dist * 180) / Math.PI;
+    dist = dist * 60 * 1.1515;
+    return dist;
   }
 };

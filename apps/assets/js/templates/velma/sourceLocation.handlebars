@@ -1,1 +1,16 @@
-Source location to match {{ name }}
+<div style="position: fixed; max-width: 30%">
+  <h2>{{ name }}</h2>
+
+  <div class="address">
+    <div>{{address}}</div>
+    <div>{{city}}, {{state}} {{zip}}</div>
+  </div>
+  <div></div>
+  <div>{{phone}}</div>
+
+  <div>
+    <a href="{{website}}" target="_new">{{website}}</a>
+
+    <div class="raw">{{ json }}</div>
+  </div>
+</div>
