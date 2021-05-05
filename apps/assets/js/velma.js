@@ -166,9 +166,9 @@ const fillItemTemplate = (data, candidates) => {
     hours: data.hours,
     latitude: data.latitude,
     longitude: data.longitude,
-    website: data.website,
+    website: data.import_json?.contact[0]?.website || data.import_json?.contact[1]?.website
   });
-  console.log(candidates);
+  console.log(data.import_json);
   candidates?.forEach((candidate) => {
     if (candidate.latitude && candidate.longitude) {
       var mymap = L.map("map-" + candidate.id).setView([candidate.latitude, candidate.longitude], 13);
