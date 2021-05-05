@@ -153,6 +153,10 @@ const fillItemTemplate = (data, candidates) => {
     candidates: candidates,
   });
 
+  var url = "";
+ try  { url = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website}
+ catch (e) { console.log("Jesse was too lazy to figure out how to find the first contact that had a website on this location");
+ }; 
   fillTemplateIntoDom(sourceLocationTemplate, "#sourceLocation", {
     id: data.id,
     name: data.name,
@@ -164,7 +168,7 @@ const fillItemTemplate = (data, candidates) => {
     hours: data.hours,
     latitude: data.latitude,
     longitude: data.longitude,
-    website: data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website,
+    website: url
   });
   console.log(data.import_json);
   candidates?.forEach((candidate) => {
