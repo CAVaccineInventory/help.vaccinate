@@ -21,6 +21,7 @@ const AVAIL_TO_BLOCKING_ISSUES = {
   "No: location permanently closed": PERM_CLOSED_BLOCK,
   "No: not open to the public": PRIVATE_ONLY_BLOCK,
   "Yes: walk-ins accepted": WALKINS_ACCEPTED_BLOCK,
+  "Yes: appointments or walk-ins accepted": WALKINS_ACCEPTED_BLOCK,
 };
 
 const ALWAYS_REVIEW_CALL_TAGS = new Set(["Yes: walk-ins accepted"]);
