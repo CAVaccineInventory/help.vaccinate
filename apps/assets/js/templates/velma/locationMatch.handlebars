@@ -8,7 +8,7 @@
       {{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}}) <br />
       <a href="{{ this.website }}" target="_blank">{{ this.website }}</a>
       <div>
-        <input type="button" class="btn btn-primary" value="Matches this one!" />
+	      <input type="button" id="match-{{this.id}}" data-id="{{this.id}}" class="btn btn-primary" value="Matches this one!" />
       </div>
     </div>
     <div class="col-6">

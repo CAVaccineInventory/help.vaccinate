@@ -24,6 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
   initVelma();
 });
 
+
+var sourceLocation;
+
 const initVelma = async () => {
   showLoadingScreen();
 
@@ -108,7 +111,7 @@ const requestItem = async (id) => {
       );
     }
   }
-  var sourceLocation = sourceLocationContainer.results[0];
+  sourceLocation = sourceLocationContainer.results[0];
   var candidates = await fetchJsonFromEndpoint(
     "/searchLocations?size=20&latitude=" +
       sourceLocation.latitude +
@@ -143,7 +146,6 @@ const requestItem = async (id) => {
     hideLoadingScreen();
     showElement("#velmaUI");
     fillItemTemplate(sourceLocation, candidates?.results);
-    activateItemTemplate();
     hideElement("#nextItemPrompt");
   }
 };
@@ -162,8 +164,8 @@ const fillItemTemplate = (data, candidates) => {
     zip: data.import_json.address.zip,
     address: data.import_json.address.street1 || "No address information available",
     hours: data.hours,
-    lat: data.latitude,
-    lon: data.longitude,
+    latitude: data.latitude,
+    longitude: data.longitude,
     website: data.website,
   });
   console.log(candidates);
@@ -184,26 +186,49 @@ const fillItemTemplate = (data, candidates) => {
         color: "red",
         fillColor: "#f03",
         fillOpacity: 0.5,
-        radius: 10,
+        radius: 15,
       }).addTo(mymap);
       var candidateLoc = L.circle([candidate.latitude, candidate.longitude], {
         color: "blue",
         fillColor: "#30f",
         fillOpacity: 0.5,
-        radius: 10,
+        radius: 15,
       }).addTo(mymap);
       var group = new L.featureGroup([srcLoc, candidateLoc]);
 
       mymap.fitBounds(group.getBounds(), { padding: L.point(5, 5) });
     }
   });
-  //fillTemplateIntoDom(callLogTemplate, "#callLog", { callId: data["id"] });
-};
-const activateItemTemplate = () => {
   enableInputDataBinding();
   bindClick("#skip", skipItem);
+  bindClick("#createLocation", createLocation);
+  candidates?.forEach((candidate) => {
+      bindClick("#match-" + candidate.id, matchLocation);
+});
 };
+const matchLocation = () => { 
+	var target = event.target;
+  	const id = target?.getAttribute("data-id");
+  fetchJsonFromEndpoint("/updateSourceLocationMatch", "POST", {
+  "source_location": sourceLocation?.import_json?.id,
+  "location": id
+}
+  ).then(
+console.log("ok")).then(
+	requestItem()
+);
+};
+const createLocation = () => {
 
+  fetchJsonFromEndpoint("/createLocationFromSourceLocation", "POST", {
+  "source_location": sourceLocation?.import_json?.id,
+}
+  ).then(
+console.log("ok")).then(
+	requestItem()
+);
+
+};
 //This distance routine is licensed under LGPLv3.
 //source: https://www.geodatasource.com/developers/javascript
 const distance = (lat1, lon1, lat2, lon2) => {
