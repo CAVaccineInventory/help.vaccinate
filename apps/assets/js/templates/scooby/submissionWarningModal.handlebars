@@ -7,26 +7,27 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        {{#if errors}}
-          Please fix the following issues and submit again:
-          <ul class="list-group py-2">
-            {{#each errors}}
-              <li class="list-group-item list-group-item-danger">{{this}}</li>
-            {{/each}}
-          </ul>
-        {{/if}}
-        {{#if warnings}}
-          {{#if errors}}Also, please{{else}}Please{{/if}} double-check the following:
-          <ul class="list-group py-2">
-            {{#each warnings}}
-              <li class="list-group-item list-group-item-warning">{{this}}</li>
-            {{/each}}
-          </ul>
+        {{#if errors}} Please fix the following issues and submit again:
+        <ul class="list-group py-2">
+          {{#each errors}}
+          <li class="list-group-item list-group-item-danger">{{this}}</li>
+          {{/each}}
+        </ul>
+        {{/if}} {{#if warnings}} {{#if errors}}Also, please{{else}}Please{{/if}} double-check the following:
+        <ul class="list-group py-2">
+          {{#each warnings}}
+          <li class="list-group-item list-group-item-warning">{{this}}</li>
+          {{/each}}
+        </ul>
         {{/if}}
       </div>
       <div class="modal-footer">
-        {{#unless errors}}<button type="button" class="btn btn-secondary" id="submitReportAfterWarning">Send Report</button>{{/unless}}
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="dismissAfterWarning">Edit Report</button>
+        {{#unless errors}}<button type="button" class="btn btn-secondary" id="submitReportAfterWarning">
+          Send Report</button
+        >{{/unless}}
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="dismissAfterWarning">
+          Edit Report
+        </button>
       </div>
     </div>
   </div>
