@@ -163,6 +163,7 @@
           name="appointmentRequired"
           value="appointmentOrWalkin"
           id="appointmentOrWalkin"
+          data-show-also="walkin-warning"
         />
         <label 
           class="btn btn-outline-secondary" 
@@ -176,6 +177,7 @@
           value="walkinOk"
           id="apptWalkin"
           data-hide-on-select="appointmentDetails"
+          data-show-also="walkin-warning"
         />
         <label
           class="btn btn-outline-secondary"
@@ -183,6 +185,9 @@
           for="apptWalkin"
           >Walk-ins only</label
         >
+      </div>
+      <div id="walkin-warning" class="alert alert-warning mt-2 w-75 hidden" role="alert">
+        Please add a Public note to explain any walk-in restrictions (e.g. days, times, etc.)
       </div>
     </div>
     <div id="appointmentDetails">
