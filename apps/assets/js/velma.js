@@ -19,6 +19,7 @@ import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import errorModalTemplate from "./templates/scooby/errorModal.handlebars";
 
+import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
 import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
 import sourceLocationTemplate from "./templates/velma/sourceLocation.handlebars";
@@ -219,6 +220,17 @@ const fillItemTemplate = (data, candidates) => {
       hideElement(`#record-${id}`);
     });
   });
+  bindClick("#debugSource", () => {
+    const debugData = {
+      id: data.id,
+      source_uid: data.source_uid,
+      source_name: data.source_name,
+      name: data.name
+    }
+    showModal(debugModalTemplate, {
+      sourceJson: JSON.stringify(debugData, null, 2),
+    });
+  })
 };
 
 const matchLocation = async (e) => {
