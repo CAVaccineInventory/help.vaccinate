@@ -1,39 +1,39 @@
 <div class="container-fluid">
   {{#each candidates }}
   <div id="record-{{this.id}}">
-  <div class="row no gutters">
-	  <div class="col-12">
-		  <input id="close-{{this.id}}" class="btn-check" type="checkbox" data-hide-on-select="record-{{this.id}}" />
-		  <label for="close-{{this.id}}">x</>
-	  </div>
-  </div>
-  <div class="row no-gutters">
-    <div class="col-6">
-      <h3>{{ this.sourceName }} vs</h3>
-      <h3><b>{{ this.name }}</b></h3>
-      <div class="address">
-        {{ this.sourceAddress }} vs <br />
-        <b>{{ this.full_address }}</b>
+    <div class="row no gutters">
+      <div class="col-12">
+        <input id="close-{{this.id}}" class="btn-check" type="checkbox" data-hide-on-select="record-{{this.id}}" />
+        <label for="close-{{this.id}}">x</label>
       </div>
+    </div>
+    <div class="row no-gutters">
+      <div class="col-6">
+        <h3>{{ this.sourceName }} vs</h3>
+        <h3><b>{{ this.name }}</b></h3>
+        <div class="address">
+          {{ this.sourceAddress }} vs <br />
+          <b>{{ this.full_address }}</b>
+        </div>
 
-      <br />
-      {{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}}) <br />
-      <a href="{{ this.website }}" target="_blank">{{ this.website }}</a>
-      <div>
-        <input
-          type="button"
-          id="match-{{this.id}}"
-          data-id="{{this.id}}"
-          class="btn btn-success"
-          value="Matches this one!"
-        />
+        <br />
+        {{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}}) <br />
+        <a href="{{ this.website }}" target="_blank">{{ this.website }}</a>
+        <div>
+          <input
+            type="button"
+            id="match-{{this.id}}"
+            data-id="{{this.id}}"
+            class="btn btn-success"
+            value="Matches this one!"
+          />
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="map" style="height: 200px" id="map-{{this.id}}">Map goes here</div>
       </div>
     </div>
-    <div class="col-6">
-      <div class="map" style="height: 200px" id="map-{{this.id}}">Map goes here</div>
-    </div>
-  </div>
-  <hr />
+    <hr />
   </div>
   {{/each}}
 </div>
