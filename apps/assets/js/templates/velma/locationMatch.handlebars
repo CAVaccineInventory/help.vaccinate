@@ -1,11 +1,6 @@
 <div>
   {{#each candidates }}
   <div id="record-{{this.id}}"" class="border-bottom border-secondary py-3">
-    <div class="row no gutters">
-      <div class="col-12">
-        <button type="button" class="js-close btn-close" aria-label="Close"></button>
-      </div>
-    </div>
     <div class="row no-gutters">
       <div class="col-6">
         <h3 class="text-danger d-inline">{{ this.sourceName }}</h3>
@@ -22,13 +17,20 @@
         </div>
 
         <a class="mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
-        <div class="mt-2">
+        <div class="mt-4">
           <input
             type="button"
             id="match-{{this.id}}"
             data-id="{{this.id}}"
             class="btn btn-success"
             value="Matches this one!"
+          />
+
+          <input
+            type="button"
+            id="close-{{this.id}}"
+            class="js-close btn btn-secondary ms-2"
+            value="Dismiss"
           />
         </div>
       </div>
