@@ -106,7 +106,8 @@ const requestItem = async () => {
     if (response.results && response.results.length) {
       // we appear to have some source locations with no latlon !?
       haveValidSourceLocation = !!response.results[0].latitude;
-    } else { // no results
+    } else {
+      // no results
       showErrorModal(
         "Error fetching source location",
         "We were unable to find a source location to match that meets the provided query parameters",
@@ -299,7 +300,7 @@ const completeLocation = () => {
   } else {
     requestItem();
   }
-}
+};
 
 // This distance routine is licensed under LGPLv3.
 // source: https://www.geodatasource.com/developers/javascript
@@ -338,9 +339,9 @@ const createSearchQueryParams = () => {
     params.state = state;
   }
   return new URLSearchParams(params).toString();
-}
+};
 
 const getForceLocation = () => {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get("source_location_id");
-}
+};
