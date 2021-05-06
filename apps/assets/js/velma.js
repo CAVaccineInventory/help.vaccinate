@@ -42,6 +42,7 @@ const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
       email: user.email,
+      cta: "Done Matching - Log out"
     });
     bindClick("#logoutButton", logout);
   } else {
