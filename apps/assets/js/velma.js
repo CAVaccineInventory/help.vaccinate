@@ -148,34 +148,39 @@ const requestItem = async (id) => {
   }
 };
 
-
 const fillItemTemplate = (data, candidates) => {
-
-const sourceAddr = data.import_json.address.street1 + ", " + data.import_json.address.city + ", " + data.import_json.address.state + " " +data.import_json.address.zip
+  const sourceAddr =
+    data.import_json.address.street1 +
+    ", " +
+    data.import_json.address.city +
+    ", " +
+    data.import_json.address.state +
+    " " +
+    data.import_json.address.zip;
   candidates?.forEach((candidate) => {
-	  // For some reason I can't access other keys inside a handlebars template's each
-	  // so i shove them in the candidate struct
-	  candidate.sourceAddress = sourceAddr;
-	  candidate.sourceName = data.name;
+    // For some reason I can't access other keys inside a handlebars template's each
+    // so i shove them in the candidate struct
+    candidate.sourceAddress = sourceAddr;
+    candidate.sourceName = data.name;
     if (candidate.latitude && candidate.longitude) {
-	candidate.latitude =  Math.round(candidate.latitude  * 10000)/10000;
-	candidate.longitude =  Math.round(candidate.longitude  * 10000)/10000;
-	}});
-
-
+      candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
+      candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
+    }
+  });
 
   fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
     candidates: candidates,
   });
 
+  data.latitude = Math.round(data.latitude * 10000) / 10000;
+  data.longitude = Math.round(data.longitude * 10000) / 10000;
 
- data.latitude = Math.round(data.latitude  * 10000)/10000;
-data.longitude = Math.round(data.longitude * 10000)/10000;
-
-  var url = "";
- try  { url = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website}
- catch (e) { console.log("Jesse was too lazy to figure out how to find the first contact that had a website on this location");
- }; 
+  let url = "";
+  try {
+    url = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website;
+  } catch (e) {
+    console.log("Jesse was too lazy to figure out how to find the first contact that had a website on this location");
+  }
   fillTemplateIntoDom(sourceLocationTemplate, "#sourceLocation", {
     id: data.id,
     name: data.name,
@@ -187,12 +192,11 @@ data.longitude = Math.round(data.longitude * 10000)/10000;
     hours: data.hours,
     latitude: data.latitude,
     longitude: data.longitude,
-    website: url
+    website: url,
   });
   console.log(data.import_json);
   candidates?.forEach((candidate) => {
     if (candidate.latitude && candidate.longitude) {
-	
       const mymap = L.map("map-" + candidate.id).setView([candidate.latitude, candidate.longitude], 13);
 
       L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
