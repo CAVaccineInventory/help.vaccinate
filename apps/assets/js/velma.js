@@ -82,8 +82,8 @@ const requestItem = async () => {
   const user = await getUser();
   const forceLocation = getForceLocation();
 
-  // we appear to have some source locations with no latlon !?
-  while (!sourceLocationContainer?.results[0]?.latitude) {
+  let haveValidSourceLocation = false;
+  while (!haveValidSourceLocation) {
     let response;
     if (forceLocation) {
       response = await fetchJsonFromEndpoint("/searchSourceLocations?id=" + forceLocation, "GET");
@@ -101,9 +101,21 @@ const requestItem = async () => {
         response
       );
       return;
-    } else {
-      sourceLocationContainer = response;
     }
+
+    if (response.results && response.results.length) {
+      // we appear to have some source locations with no latlon !?
+      haveValidSourceLocation = !!response.results[0].latitude;
+    } else { // no results
+      showErrorModal(
+        "Error fetching source location",
+        "We were unable to find a source location to match that meets the provided query parameters",
+        forceLocation || createSearchQueryParams()
+      );
+      return;
+    }
+
+    sourceLocationContainer = response;
   }
 
   sourceLocation = sourceLocationContainer.results[0];
