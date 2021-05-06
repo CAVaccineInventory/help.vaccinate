@@ -1,10 +1,21 @@
-# help.vaccinateca.com (AKA: Scooby)
+# help.vaccinateca.com
+
+help.vaccinateca.com is the home for internal webapps. Today, that consists of Scooby and Velma.
 
 ## What does Scooby do?
 
 Scooby is the web frontend for phone banking and web banking. Scooby requests calls from VIAL, 
 displays a script of questions callers use to ask sites about vaccines, and then submits the results back to VIAL.
 [This document](apimapping.md) is a human readable mapping of script answers to VIAL details.
+
+## What does Velma do?
+
+Velma is the web frontend for manually deduping and matching up vaccination locations in VIAL. By default,
+Velma randomly picks unmatched source locations, but can be passed query parameters to be more targeted.
+
+- `q=<name>` to search locations by name.
+- `state=<state_code>` to search locations by state code such as `CA`
+- `source_location_id=<id>` to specifically open Velma for a location ID.
 
 ## Report bugs and feature requests using Github [Issues](https://github.com/CAVaccineInventory/help.vaccinate/issues)
 
