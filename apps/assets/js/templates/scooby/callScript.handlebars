@@ -400,9 +400,8 @@
     <div class="small">
       Please do not write names or phone numbers in this box. Everything in this box will be on our public website.
       <div>
-        <div id="callScriptPublicNotes" class="input form-control form-control-sm" role="textbox" contenteditable>
-          {{ locationPublicNotes }}
-        </div>
+        <!-- prettier-ignore -->
+        <div id="callScriptPublicNotes" class="input form-control form-control-sm" role="textbox" contenteditable>{{ locationPublicNotes }}</div>
       </div>
     </div>
   </div>
@@ -412,14 +411,8 @@
       <div class="small p-1 text-muted">
         What should team members know about this call or location? We won't publish this information.
       </div>
-      <div
-        id="callScriptPrivateNotes"
-        class="input border border-secondary form-control form-control-sm"
-        role="textbox"
-        contenteditable
-      >
-        {{ locationPrivateNotes }}
-      </div>
+      <!-- prettier-ignore -->
+      <div id="callScriptPrivateNotes" class="input border border-secondary form-control form-control-sm" role="textbox" contenteditable >{{ locationPrivateNotes }}</div>
     </div>
   </div>
   <div class="surveyQuestion">
