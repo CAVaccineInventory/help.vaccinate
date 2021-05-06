@@ -2,8 +2,10 @@
   {{#each candidates }}
   <div class="row no-gutters">
     <div class="col-6">
-      <h3>{{ this.name }}</h3>
-      <div class="address">{{ this.full_address }}</div>
+	    <h3> {{ this.sourceName }} vs </h3>
+	    <h3><b>{{ this.name }}</b></h3>
+      <div class="address">{{ this.sourceAddress }} vs <br/> <b>{{ this.full_address }}</b></div>
+
       <br />
       {{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}}) <br />
       <a href="{{ this.website }}" target="_blank">{{ this.website }}</a>
