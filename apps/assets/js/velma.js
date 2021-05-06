@@ -1,7 +1,8 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-import { initAuth0, getAccessToken, loginWithRedirect, logout, getUser } from "./util/auth.js";
+import { fetchJsonFromEndpoint } from "./util/api.js";
+import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
 
 import {
   enableInputDataBinding,
@@ -42,35 +43,12 @@ const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
       email: user.email,
+      cta: "Done Matching - Log out",
     });
     bindClick("#logoutButton", logout);
   } else {
     fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
     bindClick("#loginButton", loginWithRedirect);
-  }
-};
-
-const fetchJsonFromEndpoint = async (endpoint, method, body) => {
-  const apiTarget =
-    process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
-
-  if (!method) {
-    method = "POST";
-  }
-  const accessToken = await getAccessToken();
-  const result = await fetch(`${apiTarget}${endpoint}`, {
-    method,
-    body,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  try {
-    return await result.json();
-  } catch (e) {
-    // didnt get json back - treat as an error
-    return { error: true, error_description: result.statusText };
   }
 };
 
@@ -96,6 +74,7 @@ const authOrLoadAndFillItem = async () => {
 const skipItem = () => {
   requestItem();
 };
+
 const requestItem = async (id) => {
   let sourceLocationContainer;
   showLoadingScreen();
@@ -149,14 +128,7 @@ const requestItem = async (id) => {
 };
 
 const fillItemTemplate = (data, candidates) => {
-  const sourceAddr =
-    data.import_json.address.street1 +
-    ", " +
-    data.import_json.address.city +
-    ", " +
-    data.import_json.address.state +
-    " " +
-    data.import_json.address.zip;
+  const sourceAddr = `${data.import_json.address.street1}, ${data.import_json.address.city}, ${data.import_json.address.state} ${data.import_json.address.zip}`;
   candidates?.forEach((candidate) => {
     // For some reason I can't access other keys inside a handlebars template's each
     // so i shove them in the candidate struct
@@ -175,12 +147,7 @@ const fillItemTemplate = (data, candidates) => {
   data.latitude = Math.round(data.latitude * 10000) / 10000;
   data.longitude = Math.round(data.longitude * 10000) / 10000;
 
-  let url = "";
-  try {
-    url = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website;
-  } catch (e) {
-    console.log("Jesse was too lazy to figure out how to find the first contact that had a website on this location");
-  }
+  const website = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website;
   fillTemplateIntoDom(sourceLocationTemplate, "#sourceLocation", {
     id: data.id,
     name: data.name,
@@ -192,12 +159,13 @@ const fillItemTemplate = (data, candidates) => {
     hours: data.hours,
     latitude: data.latitude,
     longitude: data.longitude,
-    website: url,
+    website,
   });
+
   console.log(data.import_json);
   candidates?.forEach((candidate) => {
     if (candidate.latitude && candidate.longitude) {
-      const mymap = L.map("map-" + candidate.id).setView([candidate.latitude, candidate.longitude], 13);
+      const mymap = L.map(`map-${candidate.id}`).setView([candidate.latitude, candidate.longitude], 13);
 
       L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution:
@@ -231,34 +199,41 @@ const fillItemTemplate = (data, candidates) => {
   bindClick("#skip", skipItem);
   bindClick("#createLocation", createLocation);
   candidates?.forEach((candidate) => {
-    bindClick("#match-" + candidate.id, matchLocation);
+    const id = candidate.id;
+    bindClick(`#match-${id}`, matchLocation);
+    bindClick(`#record-${id} .js-close`, () => {
+      hideElement(`#record-${id}`);
+    });
   });
 };
-const matchLocation = () => {
-  const target = event.target;
+
+const matchLocation = async (e) => {
+  const target = e.target;
   const id = target?.getAttribute("data-id");
-  fetchJsonFromEndpoint(
+  await fetchJsonFromEndpoint(
     "/updateSourceLocationMatch",
     "POST",
     JSON.stringify({
       source_location: sourceLocation?.import_json?.id,
       location: id,
     })
-  )
-    .then(console.log("ok"))
-    .then(requestItem());
+  );
+
+  requestItem();
 };
-const createLocation = () => {
-  fetchJsonFromEndpoint(
+
+const createLocation = async () => {
+  await fetchJsonFromEndpoint(
     "/createLocationFromSourceLocation",
     "POST",
     JSON.stringify({
       source_location: sourceLocation?.import_json?.id,
     })
-  )
-    .then(console.log("ok"))
-    .then(requestItem());
+  );
+
+  requestItem();
 };
+
 // This distance routine is licensed under LGPLv3.
 // source: https://www.geodatasource.com/developers/javascript
 const distance = (lat1, lon1, lat2, lon2) => {
