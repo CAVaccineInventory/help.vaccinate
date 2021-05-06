@@ -224,7 +224,7 @@ const fillItemTemplate = (data, candidates) => {
 const matchLocation = async (e) => {
   const target = e.target;
   const id = target?.getAttribute("data-id");
-  await fetchJsonFromEndpoint(
+  const response = await fetchJsonFromEndpoint(
     "/updateSourceLocationMatch",
     "POST",
     JSON.stringify({
@@ -232,19 +232,31 @@ const matchLocation = async (e) => {
       location: id,
     })
   );
-
+  if (response.error) {
+    showErrorModal(
+      "Error matching location",
+      "We ran into an error trying to match the location. Please show this error message to your captain or lead on Slack."
+        .response
+    );
+  }
   requestItem();
 };
 
 const createLocation = async () => {
-  await fetchJsonFromEndpoint(
+  const response = await fetchJsonFromEndpoint(
     "/createLocationFromSourceLocation",
     "POST",
     JSON.stringify({
       source_location: sourceLocation?.import_json?.id,
     })
   );
-
+  if (response.error) {
+    showErrorModal(
+      "Error creating location",
+      "We ran into an error trying to create the location. Please show this error message to your captain or lead on Slack."
+        .response
+    );
+  }
   requestItem();
 };
 
