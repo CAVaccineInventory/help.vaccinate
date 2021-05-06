@@ -334,8 +334,8 @@ const distance = (lat1, lon1, lat2, lon2) => {
 
 const createSearchQueryParams = () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const q = urlParams.get("q");
-  const state = urlParams.get("state");
+  const q = urlParams.get("source_q");
+  const state = urlParams.get("source_state");
   const params = {
     random: 1,
     unmatched: 1,
