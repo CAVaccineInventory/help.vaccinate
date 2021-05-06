@@ -84,24 +84,25 @@ const requestItem = async (id) => {
 
   // we appear to have some source locations with no latlon !?
   while (!sourceLocationContainer?.results[0]?.latitude) {
+    let response;
     if (id) {
-      // sourceLocation = await fetchJsonFromEndpoint("/requestItem?location_id=" + id);
+      response = await fetchJsonFromEndpoint("/searchSourceLocations?id=" + id, "GET");
     } else {
-      const response = await fetchJsonFromEndpoint("/searchSourceLocations?random=1&unmatched=1&size=1", "GET");
+      response = await fetchJsonFromEndpoint("/searchSourceLocations?random=1&unmatched=1&size=1", "GET");
+    }
 
-      if (response.error) {
-        showErrorModal(
-          "Error fetching source location",
-          "We ran into an error trying to fetch you a source location to match. Please show this error message to your captain or lead on Slack." +
-            " They may also need to know that you are logged in as " +
-            user?.email +
-            ".",
-          response
-        );
-        return;
-      } else {
-        sourceLocationContainer = response;
-      }
+    if (response.error) {
+      showErrorModal(
+        "Error fetching source location",
+        "We ran into an error trying to fetch you a source location to match. Please show this error message to your captain or lead on Slack." +
+          " They may also need to know that you are logged in as " +
+          user?.email +
+          ".",
+        response
+      );
+      return;
+    } else {
+      sourceLocationContainer = response;
     }
   }
 
@@ -219,6 +220,19 @@ const fillItemTemplate = (data, candidates) => {
       hideElement(`#record-${id}`);
     });
   });
+
+  bindClick("#debugSource", () => {
+    console.log(data);
+    const debugData = {
+      id: data.id,
+      source_uid: data.source_uid,
+      source_name: data.source_name,
+      name: data.name,
+    };
+    showModal(debugModalTemplate, {
+      sourceJson: JSON.stringify(debugData, null, 2),
+    });
+  });
 };
 
 const matchLocation = async (e) => {
@@ -235,8 +249,8 @@ const matchLocation = async (e) => {
   if (response.error) {
     showErrorModal(
       "Error matching location",
-      "We ran into an error trying to match the location. Please show this error message to your captain or lead on Slack."
-        .response
+      "We ran into an error trying to match the location. Please show this error message to your captain or lead on Slack.",
+      response
     );
   }
   requestItem();
@@ -253,8 +267,8 @@ const createLocation = async () => {
   if (response.error) {
     showErrorModal(
       "Error creating location",
-      "We ran into an error trying to create the location. Please show this error message to your captain or lead on Slack."
-        .response
+      "We ran into an error trying to create the location. Please show this error message to your captain or lead on Slack.",
+      response
     );
   }
   requestItem();
