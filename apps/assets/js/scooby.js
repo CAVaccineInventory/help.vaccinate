@@ -30,7 +30,7 @@ import callLogTemplate from "./templates/scooby/callLog.handlebars";
 import toastTemplate from "./templates/scooby/toast.handlebars";
 import affiliationNotesTemplate from "./templates/scooby/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/scooby/callScript.handlebars";
-import errorModalTemplate from "./templates/scooby/errorModal.handlebars";
+import errorModalTemplate from "./templates/errorModal.handlebars";
 import callerStatsTemplate from "./templates/scooby/callerStats.handlebars";
 import submissionWarningModalTemplate from "./templates/scooby/submissionWarningModal.handlebars";
 
