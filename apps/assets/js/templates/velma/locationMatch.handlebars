@@ -8,16 +8,20 @@
     </div>
     <div class="row no-gutters">
       <div class="col-6">
-        <h3>{{ this.sourceName }} vs</h3>
-        <h3><b>{{ this.name }}</b></h3>
+        <h3 class="text-danger d-inline">{{ this.sourceName }}</h3>
+        <h3 class="d-inline"> vs </h3>
+        <h3 class="text-primary fw-bold">{{ this.name }}</h3>
+
         <div class="address">
           {{ this.sourceAddress }} vs <br />
           <b>{{ this.full_address }}</b>
         </div>
 
-        <br />
-        {{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}}) <br />
-        <a href="{{ this.website }}" target="_blank">{{ this.website }}</a>
+        <div class="mt-2">
+          {{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}})
+        </div>
+
+        <a class="mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
         <div class="mt-2">
           <input
             type="button"
