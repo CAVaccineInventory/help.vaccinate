@@ -77,7 +77,6 @@ const authOrLoadAndFillItem = async () => {
 };
 
 const requestItem = async () => {
-  let sourceLocationContainer;
   showLoadingScreen();
   const user = await getUser();
 
@@ -103,9 +102,8 @@ const requestItem = async () => {
     showHomeUI();
     return;
   }
-  sourceLocationContainer = response;
 
-  sourceLocation = sourceLocationContainer.results[0];
+  sourceLocation = response.results[0];
   const candidates = await fetchJsonFromEndpoint(
     "/searchLocations?size=50&latitude=" +
       sourceLocation.latitude +
@@ -317,13 +315,13 @@ const distance = (lat1, lon1, lat2, lon2) => {
 };
 
 const createSearchQueryParams = () => {
-  const params =  {};
+  const params = {};
   const id = getForceLocation();
 
   if (id) {
     params.id = id;
     params.haspoint = 1;
-  } else  {
+  } else {
     const urlParams = new URLSearchParams(window.location.search);
     const q = urlParams.get("source_q");
     const state = urlParams.get("source_state");
