@@ -225,12 +225,12 @@ const fillItemTemplate = (data, candidates) => {
       id: data.id,
       source_uid: data.source_uid,
       source_name: data.source_name,
-      name: data.name
-    }
+      name: data.name,
+    };
     showModal(debugModalTemplate, {
       sourceJson: JSON.stringify(debugData, null, 2),
     });
-  })
+  });
 };
 
 const matchLocation = async (e) => {
