@@ -145,10 +145,6 @@ const requestItem = async (id) => {
 const fillItemTemplate = (data, candidates) => {
   const sourceAddr = `${data.import_json.address.street1}, ${data.import_json.address.city}, ${data.import_json.address.state} ${data.import_json.address.zip}`;
   candidates?.forEach((candidate) => {
-    // For some reason I can't access other keys inside a handlebars template's each
-    // so i shove them in the candidate struct
-    candidate.sourceAddress = sourceAddr;
-    candidate.sourceName = data.name;
     if (candidate.latitude && candidate.longitude) {
       candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
       candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
@@ -157,6 +153,8 @@ const fillItemTemplate = (data, candidates) => {
 
   fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
     candidates: candidates,
+    sourceAddress: sourceAddr,
+    sourceName: data.name,
   });
 
   data.latitude = Math.round(data.latitude * 10000) / 10000;
@@ -177,7 +175,6 @@ const fillItemTemplate = (data, candidates) => {
     website,
   });
 
-  console.log(data.import_json);
   candidates?.forEach((candidate) => {
     if (candidate.latitude && candidate.longitude) {
       const mymap = L.map(`map-${candidate.id}`).setView([candidate.latitude, candidate.longitude], 13);
