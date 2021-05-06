@@ -23,6 +23,7 @@ import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
 import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
 import sourceLocationTemplate from "./templates/velma/sourceLocation.handlebars";
+import noMatchesTemplate from "./templates/velma/noMatches.handlebars";
 
 document.addEventListener("DOMContentLoaded", () => {
   initVelma();
@@ -156,6 +157,10 @@ const fillItemTemplate = (data, candidates) => {
     candidates: candidates,
     sourceAddress: sourceAddr,
     sourceName: data.name,
+  });
+
+  fillTemplateIntoDom(noMatchesTemplate, "#locationNoMatchesOptions", {
+    hasCandidates: !!candidates?.length,
   });
 
   data.latitude = Math.round(data.latitude * 10000) / 10000;
