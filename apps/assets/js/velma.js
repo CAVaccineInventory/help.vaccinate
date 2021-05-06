@@ -12,16 +12,18 @@ import {
   hideLoadingScreen,
   fillTemplateIntoDom,
   bindClick,
+  showModal,
 } from "./util/fauxFramework.js";
 
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
+import errorModalTemplate from "./templates/scooby/errorModal.handlebars";
 
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
 import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
 import sourceLocationTemplate from "./templates/velma/sourceLocation.handlebars";
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   initVelma();
 });
 
@@ -78,17 +80,31 @@ const skipItem = () => {
 const requestItem = async (id) => {
   let sourceLocationContainer;
   showLoadingScreen();
+  const user = await getUser();
+
   // we appear to have some source locations with no latlon !?
   while (!sourceLocationContainer?.results[0]?.latitude) {
     if (id) {
       // sourceLocation = await fetchJsonFromEndpoint("/requestItem?location_id=" + id);
     } else {
-      sourceLocationContainer = await fetchJsonFromEndpoint(
-        "/searchSourceLocations?random=1&unmatched=1&size=1",
-        "GET"
-      );
+      const response = await fetchJsonFromEndpoint("/searchSourceLocations?random=1&unmatched=1&size=1", "GET");
+
+      if (response.error) {
+        showErrorModal(
+          "Error fetching source location",
+          "We ran into an error trying to fetch you a source location to match. Please show this error message to your captain or lead on Slack." +
+            " They may also need to know that you are logged in as " +
+            user?.email +
+            ".",
+          response
+        );
+        return;
+      } else {
+        sourceLocationContainer = response;
+      }
     }
   }
+
   sourceLocation = sourceLocationContainer.results[0];
   const candidates = await fetchJsonFromEndpoint(
     "/searchLocations?size=50&latitude=" +
@@ -99,6 +115,18 @@ const requestItem = async (id) => {
     "GET"
   );
 
+  if (candidates.error) {
+    showErrorModal(
+      "Error fetching locations to match against",
+      "We ran into an error trying to fetch you a locations to match against. Please show this error message to your captain or lead on Slack." +
+        " They may also need to know that you are logged in as " +
+        user?.email +
+        ".",
+      response
+    );
+    return;
+  }
+
   // record the distance. then sort the results by it
   candidates?.results.forEach((item) => {
     item.distance =
@@ -108,23 +136,9 @@ const requestItem = async (id) => {
   candidates?.results.sort((a, b) => (a.distance > b.distance ? 1 : -1));
 
   hideLoadingScreen();
-  const user = await getUser();
-  if (sourceLocation.error) {
-    showErrorModal(
-      "Error fetching a call",
-      "It looks like you might not yet have permission to use this tool. Please show this error message to your captain or lead on Slack: '" +
-        sourceLocation.error_description +
-        "'. They may also need to know that you are logged in as " +
-        user?.email +
-        ".",
-      { user: user, error: sourceLocation }
-    );
-  } else {
-    hideLoadingScreen();
-    showElement("#velmaUI");
-    fillItemTemplate(sourceLocation, candidates?.results);
-    hideElement("#nextItemPrompt");
-  }
+  showElement("#velmaUI");
+  fillItemTemplate(sourceLocation, candidates?.results);
+  hideElement("#nextItemPrompt");
 };
 
 const fillItemTemplate = (data, candidates) => {
