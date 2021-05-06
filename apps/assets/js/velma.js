@@ -1,6 +1,8 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+import * as Sentry from "@sentry/browser";
+
 import { fetchJsonFromEndpoint } from "./util/api.js";
 import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
 
@@ -26,6 +28,11 @@ import sourceLocationTemplate from "./templates/velma/sourceLocation.handlebars"
 import noMatchesTemplate from "./templates/velma/noMatches.handlebars";
 
 document.addEventListener("DOMContentLoaded", () => {
+  Sentry.init({
+    dsn: "https://f4f6dd9c4060438da4ae154183d9f7c6@o509416.ingest.sentry.io/5737071",
+    integrations: [new Integrations.BrowserTracing()],
+    tracesSampleRate: 0.2,
+  });
   initVelma();
 });
 
