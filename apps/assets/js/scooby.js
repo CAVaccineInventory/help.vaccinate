@@ -4,7 +4,8 @@ import "regenerator-runtime/runtime";
 import * as Sentry from "@sentry/browser";
 import { Integrations } from "@sentry/tracing";
 
-import { initAuth0, getAccessToken, loginWithRedirect, logout, getUser } from "./util/auth.js";
+import { fetchJsonFromEndpoint } from "./util/api.js";
+import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
 import { validateReport } from "./util/validators.js";
 import {
   bindClick,
@@ -93,30 +94,6 @@ const updateLogin = (user) => {
   } else {
     fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
     bindClick("#loginButton", loginWithRedirect);
-  }
-};
-
-const fetchJsonFromEndpoint = async (endpoint, method, body) => {
-  const apiTarget =
-    process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
-
-  if (!method) {
-    method = "POST";
-  }
-  const accessToken = await getAccessToken();
-  const result = await fetch(`${apiTarget}${endpoint}`, {
-    method,
-    body,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  try {
-    return await result.json();
-  } catch (e) {
-    // didnt get json back - treat as an error
-    return { error: true, error_description: result.statusText };
   }
 };
 
