@@ -1,25 +1,21 @@
-<div class="container-fluid">
+<div>
   {{#each candidates }}
-  <div id="record-{{this.id}}">
-    <div class="row no gutters">
-      <div class="col-12">
-        <input id="close-{{this.id}}" class="btn-check" type="checkbox" data-hide-on-select="record-{{this.id}}" />
-        <label for="close-{{this.id}}">x</label>
-      </div>
-    </div>
+  <div id="record-{{this.id}}" class="border-bottom border-secondary py-3">
     <div class="row no-gutters">
       <div class="col-6">
-        <h3>{{ this.sourceName }} vs</h3>
-        <h3><b>{{ this.name }}</b></h3>
+        <h3 class="text-danger d-inline">{{ ../sourceName }}</h3>
+        <h3 class="d-inline">vs</h3>
+        <h3 class="text-primary fw-bold">{{ this.name }}</h3>
+
         <div class="address">
-          {{ this.sourceAddress }} vs <br />
+          {{ ../sourceAddress }} vs <br />
           <b>{{ this.full_address }}</b>
         </div>
 
-        <br />
-        {{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}}) <br />
-        <a href="{{ this.website }}" target="_blank">{{ this.website }}</a>
-        <div>
+        <div class="mt-2">{{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}})</div>
+
+        <a class="mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
+        <div class="mt-4">
           <input
             type="button"
             id="match-{{this.id}}"
@@ -27,13 +23,14 @@
             class="btn btn-success"
             value="Matches this one!"
           />
+
+          <input type="button" id="close-{{this.id}}" class="js-close btn btn-secondary ms-2" value="Dismiss" />
         </div>
       </div>
       <div class="col-6">
-        <div class="map" style="height: 200px" id="map-{{this.id}}">Map goes here</div>
+        <div class="map h-100" id="map-{{this.id}}">Map goes here</div>
       </div>
     </div>
-    <hr />
   </div>
   {{/each}}
 </div>

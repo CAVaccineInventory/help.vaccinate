@@ -1,7 +1,8 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-import { initAuth0, getAccessToken, loginWithRedirect, logout, getUser } from "./util/auth.js";
+import { fetchJsonFromEndpoint } from "./util/api.js";
+import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
 
 import {
   enableInputDataBinding,
@@ -11,16 +12,20 @@ import {
   hideLoadingScreen,
   fillTemplateIntoDom,
   bindClick,
+  showModal,
 } from "./util/fauxFramework.js";
 
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
+import errorModalTemplate from "./templates/errorModal.handlebars";
 
+import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
 import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
 import sourceLocationTemplate from "./templates/velma/sourceLocation.handlebars";
+import noMatchesTemplate from "./templates/velma/noMatches.handlebars";
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   initVelma();
 });
 
@@ -42,35 +47,12 @@ const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
       email: user.email,
+      cta: "Done Matching - Log out",
     });
     bindClick("#logoutButton", logout);
   } else {
     fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
     bindClick("#loginButton", loginWithRedirect);
-  }
-};
-
-const fetchJsonFromEndpoint = async (endpoint, method, body) => {
-  const apiTarget =
-    process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
-
-  if (!method) {
-    method = "POST";
-  }
-  const accessToken = await getAccessToken();
-  const result = await fetch(`${apiTarget}${endpoint}`, {
-    method,
-    body,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  try {
-    return await result.json();
-  } catch (e) {
-    // didnt get json back - treat as an error
-    return { error: true, error_description: result.statusText };
   }
 };
 
@@ -96,20 +78,36 @@ const authOrLoadAndFillItem = async () => {
 const skipItem = () => {
   requestItem();
 };
+
 const requestItem = async (id) => {
   let sourceLocationContainer;
   showLoadingScreen();
+  const user = await getUser();
+
   // we appear to have some source locations with no latlon !?
   while (!sourceLocationContainer?.results[0]?.latitude) {
+    let response;
     if (id) {
-      // sourceLocation = await fetchJsonFromEndpoint("/requestItem?location_id=" + id);
+      response = await fetchJsonFromEndpoint("/searchSourceLocations?id=" + id, "GET");
     } else {
-      sourceLocationContainer = await fetchJsonFromEndpoint(
-        "/searchSourceLocations?random=1&unmatched=1&size=1",
-        "GET"
+      response = await fetchJsonFromEndpoint("/searchSourceLocations?random=1&unmatched=1&size=1", "GET");
+    }
+
+    if (response.error) {
+      showErrorModal(
+        "Error fetching source location",
+        "We ran into an error trying to fetch you a source location to match. Please show this error message to your captain or lead on Slack." +
+          " They may also need to know that you are logged in as " +
+          user?.email +
+          ".",
+        response
       );
+      return;
+    } else {
+      sourceLocationContainer = response;
     }
   }
+
   sourceLocation = sourceLocationContainer.results[0];
   const candidates = await fetchJsonFromEndpoint(
     "/searchLocations?size=50&latitude=" +
@@ -120,6 +118,18 @@ const requestItem = async (id) => {
     "GET"
   );
 
+  if (candidates.error) {
+    showErrorModal(
+      "Error fetching locations to match against",
+      "We ran into an error trying to fetch you a locations to match against. Please show this error message to your captain or lead on Slack." +
+        " They may also need to know that you are logged in as " +
+        user?.email +
+        ".",
+      response
+    );
+    return;
+  }
+
   // record the distance. then sort the results by it
   candidates?.results.forEach((item) => {
     item.distance =
@@ -129,39 +139,14 @@ const requestItem = async (id) => {
   candidates?.results.sort((a, b) => (a.distance > b.distance ? 1 : -1));
 
   hideLoadingScreen();
-  const user = await getUser();
-  if (sourceLocation.error) {
-    showErrorModal(
-      "Error fetching a call",
-      "It looks like you might not yet have permission to use this tool. Please show this error message to your captain or lead on Slack: '" +
-        sourceLocation.error_description +
-        "'. They may also need to know that you are logged in as " +
-        user?.email +
-        ".",
-      { user: user, error: sourceLocation }
-    );
-  } else {
-    hideLoadingScreen();
-    showElement("#velmaUI");
-    fillItemTemplate(sourceLocation, candidates?.results);
-    hideElement("#nextItemPrompt");
-  }
+  showElement("#velmaUI");
+  fillItemTemplate(sourceLocation, candidates?.results);
+  hideElement("#nextItemPrompt");
 };
 
 const fillItemTemplate = (data, candidates) => {
-  const sourceAddr =
-    data.import_json.address.street1 +
-    ", " +
-    data.import_json.address.city +
-    ", " +
-    data.import_json.address.state +
-    " " +
-    data.import_json.address.zip;
+  const sourceAddr = `${data.import_json.address.street1}, ${data.import_json.address.city}, ${data.import_json.address.state} ${data.import_json.address.zip}`;
   candidates?.forEach((candidate) => {
-    // For some reason I can't access other keys inside a handlebars template's each
-    // so i shove them in the candidate struct
-    candidate.sourceAddress = sourceAddr;
-    candidate.sourceName = data.name;
     if (candidate.latitude && candidate.longitude) {
       candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
       candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
@@ -170,17 +155,18 @@ const fillItemTemplate = (data, candidates) => {
 
   fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
     candidates: candidates,
+    sourceAddress: sourceAddr,
+    sourceName: data.name,
+  });
+
+  fillTemplateIntoDom(noMatchesTemplate, "#locationNoMatchesOptions", {
+    hasCandidates: !!candidates?.length,
   });
 
   data.latitude = Math.round(data.latitude * 10000) / 10000;
   data.longitude = Math.round(data.longitude * 10000) / 10000;
 
-  let url = "";
-  try {
-    url = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website;
-  } catch (e) {
-    console.log("Jesse was too lazy to figure out how to find the first contact that had a website on this location");
-  }
+  const website = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website;
   fillTemplateIntoDom(sourceLocationTemplate, "#sourceLocation", {
     id: data.id,
     name: data.name,
@@ -192,12 +178,12 @@ const fillItemTemplate = (data, candidates) => {
     hours: data.hours,
     latitude: data.latitude,
     longitude: data.longitude,
-    website: url,
+    website,
   });
-  console.log(data.import_json);
+
   candidates?.forEach((candidate) => {
     if (candidate.latitude && candidate.longitude) {
-      const mymap = L.map("map-" + candidate.id).setView([candidate.latitude, candidate.longitude], 13);
+      const mymap = L.map(`map-${candidate.id}`).setView([candidate.latitude, candidate.longitude], 13);
 
       L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution:
@@ -231,34 +217,64 @@ const fillItemTemplate = (data, candidates) => {
   bindClick("#skip", skipItem);
   bindClick("#createLocation", createLocation);
   candidates?.forEach((candidate) => {
-    bindClick("#match-" + candidate.id, matchLocation);
+    const id = candidate.id;
+    bindClick(`#match-${id}`, matchLocation);
+    bindClick(`#record-${id} .js-close`, () => {
+      hideElement(`#record-${id}`);
+    });
+  });
+  bindClick("#debugSource", () => {
+    const debugData = {
+      id: data.id,
+      source_uid: data.source_uid,
+      source_name: data.source_name,
+      name: data.name,
+    };
+    showModal(debugModalTemplate, {
+      sourceJson: JSON.stringify(debugData, null, 2),
+    });
   });
 };
-const matchLocation = () => {
-  const target = event.target;
+
+const matchLocation = async (e) => {
+  const target = e.target;
   const id = target?.getAttribute("data-id");
-  fetchJsonFromEndpoint(
+  const response = await fetchJsonFromEndpoint(
     "/updateSourceLocationMatch",
     "POST",
     JSON.stringify({
       source_location: sourceLocation?.import_json?.id,
       location: id,
     })
-  )
-    .then(console.log("ok"))
-    .then(requestItem());
+  );
+  if (response.error) {
+    showErrorModal(
+      "Error matching location",
+      "We ran into an error trying to match the location. Please show this error message to your captain or lead on Slack.",
+      response
+    );
+  }
+  requestItem();
 };
-const createLocation = () => {
-  fetchJsonFromEndpoint(
+
+const createLocation = async () => {
+  const response = await fetchJsonFromEndpoint(
     "/createLocationFromSourceLocation",
     "POST",
     JSON.stringify({
       source_location: sourceLocation?.import_json?.id,
     })
-  )
-    .then(console.log("ok"))
-    .then(requestItem());
+  );
+  if (response.error) {
+    showErrorModal(
+      "Error creating location",
+      "We ran into an error trying to create the location. Please show this error message to your captain or lead on Slack.",
+      response
+    );
+  }
+  requestItem();
 };
+
 // This distance routine is licensed under LGPLv3.
 // source: https://www.geodatasource.com/developers/javascript
 const distance = (lat1, lon1, lat2, lon2) => {

@@ -4,7 +4,8 @@ import "regenerator-runtime/runtime";
 import * as Sentry from "@sentry/browser";
 import { Integrations } from "@sentry/tracing";
 
-import { initAuth0, getAccessToken, loginWithRedirect, logout, getUser } from "./util/auth.js";
+import { fetchJsonFromEndpoint } from "./util/api.js";
+import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
 import { validateReport } from "./util/validators.js";
 import {
   bindClick,
@@ -29,7 +30,7 @@ import callLogTemplate from "./templates/scooby/callLog.handlebars";
 import toastTemplate from "./templates/scooby/toast.handlebars";
 import affiliationNotesTemplate from "./templates/scooby/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/scooby/callScript.handlebars";
-import errorModalTemplate from "./templates/scooby/errorModal.handlebars";
+import errorModalTemplate from "./templates/errorModal.handlebars";
 import callerStatsTemplate from "./templates/scooby/callerStats.handlebars";
 import submissionWarningModalTemplate from "./templates/scooby/submissionWarningModal.handlebars";
 
@@ -84,6 +85,7 @@ const updateLogin = (user) => {
   if (user && user.email) {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
       email: user.email,
+      cta: "Done Calling - Log out",
     });
     bindClick("#logoutButton", logout);
 
@@ -92,30 +94,6 @@ const updateLogin = (user) => {
   } else {
     fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
     bindClick("#loginButton", loginWithRedirect);
-  }
-};
-
-const fetchJsonFromEndpoint = async (endpoint, method, body) => {
-  const apiTarget =
-    process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
-
-  if (!method) {
-    method = "POST";
-  }
-  const accessToken = await getAccessToken();
-  const result = await fetch(`${apiTarget}${endpoint}`, {
-    method,
-    body,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  try {
-    return await result.json();
-  } catch (e) {
-    // didnt get json back - treat as an error
-    return { error: true, error_description: result.statusText };
   }
 };
 

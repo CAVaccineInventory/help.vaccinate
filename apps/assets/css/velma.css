@@ -1,0 +1,8 @@
+.navbar {
+    height: 84px;
+}
+#left-col {
+    position: sticky;
+    top: 84px;
+    height: calc(100vh - 84px);
+}

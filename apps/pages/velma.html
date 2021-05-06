@@ -3,6 +3,8 @@ title: Velma | Help VaccinateTheStates
 layout: base.html
 ---
 
+<link href="/assets/css/velma.css" rel="stylesheet" />
+
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -27,19 +29,12 @@ layout: base.html
 
   <div class="container-fluid h-100 hidden" id="velmaUI">
     <div class="row">
-      <div class="col-sm-12 col-md-4 overflow-auto">
+      <div id="left-col" class="col-4">
         <div id="sourceLocation"></div>
       </div>
-      <div class="col-sm-12 col-md-8 overflow-auto">
-        <div id="locationMatchCandidates"> candidate location list</div>
-        <div id="locationCreate">
-          <h3>None of these look right.</h3>
-          <input type="button" class="btn btn-warning" id="createLocation" value="Create a new location" />
-        </div>
-        <div id="locationSkip">
-          <h3>Something looks weird and I don't want to deal with it</h3>
-          <input type="button" class="btn btn-danger" id="skip" value="Skip this location. Someone else can deal." />
-        </div>
+      <div class="col-8 overflow-auto">
+        <div id="locationMatchCandidates"></div>
+        <div id="locationNoMatchesOptions"></div>
       </div>
     </div>
   </div>
@@ -55,5 +50,6 @@ layout: base.html
       </div>
     </div>
   </div>
+  <div id="modalContainer"></div>
   <script src="/assets/js/velma.js"></script>
 </div>
