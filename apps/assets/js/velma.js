@@ -36,11 +36,14 @@ const initVelma = async () => {
 
   await initAuth0();
   const user = await getUser();
-  console.log(user);
   updateLogin(user);
   hideLoadingScreen();
   fillTemplateIntoDom(nextItemPromptTemplate, "#nextItemPrompt", {});
   bindClick("#requestItemButton", authOrLoadAndFillItem);
+
+  if (getForceLocation()) {
+    authOrLoadAndFillItem();
+  }
 };
 
 const updateLogin = (user) => {
@@ -67,30 +70,25 @@ const showErrorModal = (title, body, json) => {
 const authOrLoadAndFillItem = async () => {
   const user = await getUser();
   if (user && user.email) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const forceSourceLocation = urlParams.get("source_location_id");
-    requestItem(forceSourceLocation);
+    requestItem();
   } else {
     loginWithRedirect();
   }
 };
 
-const skipItem = () => {
-  requestItem();
-};
-
-const requestItem = async (id) => {
+const requestItem = async () => {
   let sourceLocationContainer;
   showLoadingScreen();
   const user = await getUser();
+  const forceLocation = getForceLocation();
 
   // we appear to have some source locations with no latlon !?
   while (!sourceLocationContainer?.results[0]?.latitude) {
     let response;
-    if (id) {
-      response = await fetchJsonFromEndpoint("/searchSourceLocations?id=" + id, "GET");
+    if (forceLocation) {
+      response = await fetchJsonFromEndpoint("/searchSourceLocations?id=" + forceLocation, "GET");
     } else {
-      response = await fetchJsonFromEndpoint("/searchSourceLocations?random=1&unmatched=1&size=1", "GET");
+      response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams()}`, "GET");
     }
 
     if (response.error) {
@@ -236,6 +234,10 @@ const fillItemTemplate = (data, candidates) => {
   });
 };
 
+const skipItem = () => {
+  completeLocation();
+};
+
 const matchLocation = async (e) => {
   const target = e.target;
   const id = target?.getAttribute("data-id");
@@ -254,7 +256,7 @@ const matchLocation = async (e) => {
       response
     );
   }
-  requestItem();
+  completeLocation();
 };
 
 const createLocation = async () => {
@@ -272,8 +274,20 @@ const createLocation = async () => {
       response
     );
   }
-  requestItem();
+  completeLocation();
 };
+
+const completeLocation = () => {
+  if (getForceLocation()) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.delete("source_location_id");
+    window.history.replaceState({}, "", `${window.location.pathname}?${urlParams.toString()}`);
+    hideElement("#velmaUI");
+    showElement("#nextItemPrompt");
+  } else {
+    requestItem();
+  }
+}
 
 // This distance routine is licensed under LGPLv3.
 // source: https://www.geodatasource.com/developers/javascript
@@ -295,3 +309,26 @@ const distance = (lat1, lon1, lat2, lon2) => {
     return dist;
   }
 };
+
+const createSearchQueryParams = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const q = urlParams.get("q");
+  const state = urlParams.get("state");
+  const params = {
+    random: 1,
+    unmatched: 1,
+    size: 1,
+  };
+  if (q) {
+    params.q = q;
+  }
+  if (state) {
+    params.state = state;
+  }
+  return new URLSearchParams(params).toString();
+}
+
+const getForceLocation = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("source_location_id");
+}
