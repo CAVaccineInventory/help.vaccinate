@@ -112,11 +112,11 @@ const requestItem = async (id) => {
   }
   sourceLocation = sourceLocationContainer.results[0];
   const candidates = await fetchJsonFromEndpoint(
-    "/searchLocations?size=20&latitude=" +
+    "/searchLocations?size=50&latitude=" +
       sourceLocation.latitude +
       "&longitude=" +
       sourceLocation.longitude +
-      "&radius=2500",
+      "&radius=2000",
     "GET"
   );
 
