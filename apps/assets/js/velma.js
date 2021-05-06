@@ -2,6 +2,7 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 
 import * as Sentry from "@sentry/browser";
+import { Integrations } from "@sentry/tracing";
 
 import { fetchJsonFromEndpoint } from "./util/api.js";
 import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
