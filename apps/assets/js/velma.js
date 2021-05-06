@@ -165,7 +165,7 @@ const fillItemTemplate = (data, candidates) => {
   console.log(data.import_json);
   candidates?.forEach((candidate) => {
     if (candidate.latitude && candidate.longitude) {
-      const mymap = L.map("map-" + candidate.id).setView([candidate.latitude, candidate.longitude], 13);
+      const mymap = L.map(`map-${candidate.id}`).setView([candidate.latitude, candidate.longitude], 13);
 
       L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution:
@@ -199,7 +199,11 @@ const fillItemTemplate = (data, candidates) => {
   bindClick("#skip", skipItem);
   bindClick("#createLocation", createLocation);
   candidates?.forEach((candidate) => {
-    bindClick("#match-" + candidate.id, matchLocation);
+    const id = candidate.id;
+    bindClick(`#match-${id}`, matchLocation);
+    bindClick(`#record-${id} .js-close`, () => {
+      hideElement(`#record-${id}`);
+    });
   });
 };
 
