@@ -1,6 +1,9 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+import * as Sentry from "@sentry/browser";
+import { Integrations } from "@sentry/tracing";
+
 import { fetchJsonFromEndpoint } from "./util/api.js";
 import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
 
@@ -26,6 +29,11 @@ import sourceLocationTemplate from "./templates/velma/sourceLocation.handlebars"
 import noMatchesTemplate from "./templates/velma/noMatches.handlebars";
 
 document.addEventListener("DOMContentLoaded", () => {
+  Sentry.init({
+    dsn: "https://f4f6dd9c4060438da4ae154183d9f7c6@o509416.ingest.sentry.io/5737071",
+    integrations: [new Integrations.BrowserTracing()],
+    tracesSampleRate: 0.2,
+  });
   initVelma();
 });
 
@@ -77,51 +85,33 @@ const authOrLoadAndFillItem = async () => {
 };
 
 const requestItem = async () => {
-  let sourceLocationContainer;
   showLoadingScreen();
   const user = await getUser();
-  const forceLocation = getForceLocation();
 
-  let haveValidSourceLocation = false;
-  while (!haveValidSourceLocation) {
-    let response;
-    if (forceLocation) {
-      response = await fetchJsonFromEndpoint("/searchSourceLocations?id=" + forceLocation, "GET");
-    } else {
-      response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams()}`, "GET");
-    }
-
-    if (response.error) {
-      showErrorModal(
-        "Error fetching source location",
-        "We ran into an error trying to fetch you a source location to match. Please show this error message to your captain or lead on Slack." +
-          " They may also need to know that you are logged in as " +
-          user?.email +
-          ".",
-        response
-      );
-      showHomeUI();
-      return;
-    }
-
-    if (response.results && response.results.length) {
-      // we appear to have some source locations with no latlon !?
-      haveValidSourceLocation = !!response.results[0].latitude;
-    } else {
-      // no results
-      showErrorModal(
-        "Error fetching source location",
-        "We were unable to find a source location to match that meets the provided query parameters.",
-        forceLocation || createSearchQueryParams()
-      );
-      showHomeUI();
-      return;
-    }
-
-    sourceLocationContainer = response;
+  const response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams()}`, "GET");
+  if (response.error) {
+    showErrorModal(
+      "Error fetching source location",
+      "We ran into an error trying to fetch you a source location to match. Please show this error message to your captain or lead on Slack." +
+        " They may also need to know that you are logged in as " +
+        user?.email +
+        ".",
+      response
+    );
+    showHomeUI();
+    return;
+  } else if (response.results && !response.results.length) {
+    // no results
+    showErrorModal(
+      "Error fetching source location",
+      "We were unable to find a source location to match that meets the provided query parameters.",
+      createSearchQueryParams()
+    );
+    showHomeUI();
+    return;
   }
 
-  sourceLocation = sourceLocationContainer.results[0];
+  sourceLocation = response.results[0];
   const candidates = await fetchJsonFromEndpoint(
     "/searchLocations?size=50&latitude=" +
       sourceLocation.latitude +
@@ -333,19 +323,26 @@ const distance = (lat1, lon1, lat2, lon2) => {
 };
 
 const createSearchQueryParams = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const q = urlParams.get("source_q");
-  const state = urlParams.get("source_state");
-  const params = {
-    random: 1,
-    unmatched: 1,
-    size: 1,
-  };
-  if (q) {
-    params.q = q;
-  }
-  if (state) {
-    params.state = state;
+  const params = {};
+  const id = getForceLocation();
+
+  if (id) {
+    params.id = id;
+    params.haspoint = 1;
+  } else {
+    const urlParams = new URLSearchParams(window.location.search);
+    const q = urlParams.get("source_q");
+    const state = urlParams.get("source_state");
+    params.random = 1;
+    params.unmatched = 1;
+    params.size = 1;
+    params.haspoint = 1;
+    if (q) {
+      params.q = q;
+    }
+    if (state) {
+      params.state = state;
+    }
   }
   return new URLSearchParams(params).toString();
 };
