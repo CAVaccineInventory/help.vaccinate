@@ -100,6 +100,7 @@ const requestItem = async () => {
           ".",
         response
       );
+      showHomeUI();
       return;
     }
 
@@ -110,9 +111,10 @@ const requestItem = async () => {
       // no results
       showErrorModal(
         "Error fetching source location",
-        "We were unable to find a source location to match that meets the provided query parameters",
+        "We were unable to find a source location to match that meets the provided query parameters.",
         forceLocation || createSearchQueryParams()
       );
+      showHomeUI();
       return;
     }
 
@@ -138,6 +140,7 @@ const requestItem = async () => {
         ".",
       response
     );
+    showHomeUI();
     return;
   }
 
@@ -268,6 +271,7 @@ const matchLocation = async (e) => {
       "We ran into an error trying to match the location. Please show this error message to your captain or lead on Slack.",
       response
     );
+    return;
   }
   completeLocation();
 };
@@ -286,6 +290,7 @@ const createLocation = async () => {
       "We ran into an error trying to create the location. Please show this error message to your captain or lead on Slack.",
       response
     );
+    return;
   }
   completeLocation();
 };
@@ -295,11 +300,15 @@ const completeLocation = () => {
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.delete("source_location_id");
     window.history.replaceState({}, "", `${window.location.pathname}?${urlParams.toString()}`);
-    hideElement("#velmaUI");
-    showElement("#nextItemPrompt");
+    showHomeUI();
   } else {
     requestItem();
   }
+};
+
+const showHomeUI = () => {
+  hideElement("#velmaUI");
+  showElement("#nextItemPrompt");
 };
 
 // This distance routine is licensed under LGPLv3.
