@@ -1,5 +1,12 @@
 <div class="container-fluid">
   {{#each candidates }}
+  <div id="record-{{this.id}}">
+  <div class="row no gutters">
+	  <div class="col-12">
+		  <input id="close-{{this.id}}" class="btn-check" type="checkbox" data-hide-on-select="record-{{this.id}}" />
+		  <label for="close-{{this.id}}">x</>
+	  </div>
+  </div>
   <div class="row no-gutters">
     <div class="col-6">
       <h3>{{ this.sourceName }} vs</h3>
@@ -27,5 +34,6 @@
     </div>
   </div>
   <hr />
+  </div>
   {{/each}}
 </div>
