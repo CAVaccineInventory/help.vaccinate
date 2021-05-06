@@ -13,8 +13,8 @@ displays a script of questions callers use to ask sites about vaccines, and then
 Velma is the web frontend for manually deduping and matching up vaccination locations in VIAL. By default,
 Velma randomly picks unmatched source locations, but can be passed query parameters to be more targeted.
 
-- `q=<name>` to search locations by name.
-- `state=<state_code>` to search locations by state code such as `CA`
+- `source_q=<name>` to search locations by name.
+- `source_state=<state_code>` to search locations by state code such as `CA`
 - `source_location_id=<id>` to specifically open Velma for a location ID.
 
 ## Report bugs and feature requests using Github [Issues](https://github.com/CAVaccineInventory/help.vaccinate/issues)
