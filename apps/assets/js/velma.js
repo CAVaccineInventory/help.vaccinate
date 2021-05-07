@@ -22,6 +22,7 @@ import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import errorModalTemplate from "./templates/errorModal.handlebars";
 
+import completionToastTemplate from "./templates/velma/completionToast.handlebars";
 import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
 import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
@@ -78,17 +79,18 @@ const showErrorModal = (title, body, json) => {
 const authOrLoadAndFillItem = async () => {
   const user = await getUser();
   if (user && user.email) {
-    requestItem();
+    const id = getForceLocation();
+    requestItem(id);
   } else {
     loginWithRedirect();
   }
 };
 
-const requestItem = async () => {
+const requestItem = async (id) => {
   showLoadingScreen();
   const user = await getUser();
 
-  const response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams()}`, "GET");
+  const response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams(id)}`, "GET");
   if (response.error) {
     showErrorModal(
       "Error fetching source location",
@@ -105,7 +107,7 @@ const requestItem = async () => {
     showErrorModal(
       "No locations to match",
       "It looks like we've matched every single source location for the provided query parameters!",
-      createSearchQueryParams()
+      createSearchQueryParams(id)
     );
     showHomeUI();
     return;
@@ -292,6 +294,7 @@ const completeLocation = () => {
     window.history.replaceState({}, "", `${window.location.pathname}?${urlParams.toString()}`);
     showHomeUI();
   } else {
+    showCompletionToast();
     requestItem();
   }
 };
@@ -299,6 +302,21 @@ const completeLocation = () => {
 const showHomeUI = () => {
   hideElement("#velmaUI");
   showElement("#nextItemPrompt");
+};
+
+const showCompletionToast = () => {
+  const previousId = sourceLocation?.id;
+  fillTemplateIntoDom(completionToastTemplate, "#toastContainer", {
+    title: sourceLocation?.name,
+  });
+
+  bindClick("#toastMakeChange", () => {
+    requestItem(previousId);
+  });
+
+  new bootstrap.Toast(document.querySelector("#completionToast"), {
+    autohide: true,
+  }).show();
 };
 
 // This distance routine is licensed under LGPLv3.
@@ -322,9 +340,8 @@ const distance = (lat1, lon1, lat2, lon2) => {
   }
 };
 
-const createSearchQueryParams = () => {
+const createSearchQueryParams = (id) => {
   const params = {};
-  const id = getForceLocation();
 
   if (id) {
     params.id = id;

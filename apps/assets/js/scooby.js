@@ -150,7 +150,6 @@ const loadAndFillPreviousCall = () => {
   hideElement("#nextCallPrompt");
   showElement("#youAreCalling");
   showElement("#callerTool");
-  hideToast(); // should do this somewhere smarter.
 
   currentLocation = previousLocation;
   if (previousId) {
@@ -632,10 +631,6 @@ const showCompletionToast = (locationName) => {
   new bootstrap.Toast(document.querySelector("#onlyToast"), {
     autohide: true,
   }).show();
-};
-
-const hideToast = () => {
-  document.querySelector("#onlyToast")?.classList.add("hide");
 };
 
 const isWebBanked = () => {
