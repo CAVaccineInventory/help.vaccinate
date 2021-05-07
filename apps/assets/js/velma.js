@@ -307,7 +307,7 @@ const showHomeUI = () => {
 const showCompletionToast = () => {
   const previousId = sourceLocation?.id;
   fillTemplateIntoDom(completionToastTemplate, "#toastContainer", {
-    title:sourceLocation?.name
+    title: sourceLocation?.name,
   });
 
   bindClick("#toastMakeChange", () => {
@@ -317,7 +317,7 @@ const showCompletionToast = () => {
   new bootstrap.Toast(document.querySelector("#completionToast"), {
     autohide: true,
   }).show();
-}
+};
 
 // This distance routine is licensed under LGPLv3.
 // source: https://www.geodatasource.com/developers/javascript
