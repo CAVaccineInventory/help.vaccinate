@@ -4,7 +4,7 @@
   aria-atomic="true"
   class="toast bg-white"
   data-bs-delay="15000"
-  id="onlyToast"
+  id="completionToast"
   data-bs-backdrop="static"
 >
   <div class="toast-header">
@@ -13,17 +13,9 @@
   </div>
   <div class="toast-body">
     <div class="d-flex flex-column">
-      <div class="text-wrap">
-        Got your report! {{#if withProgress}}You've made <strong>{{curCalls}}</strong> calls today. Can you reach
-        <strong>{{goalCalls}}</strong> calls?{{/if}}
-      </div>
-      {{#if withProgress}}
-      <div class="progress mt-2 mb-1">
-        <div class="progress-bar bg-success" role="progressbar" style="width: 0%">{{curCalls}}/{{goalCalls}}</div>
-      </div>
-      {{/if}}
+      <div class="text-wrap">Completed {{ title }}.</div>
       <div class="small align-self-end mt-2">
-        <button id="onlyToastButton" class="btn-sm small text-nowrap btn btn-outline-secondary" data-bs-dismiss="toast">
+        <button id="toastMakeChange" class="btn-sm small text-nowrap btn btn-outline-secondary" data-bs-dismiss="toast">
           Need to make a change?
         </button>
       </div>
