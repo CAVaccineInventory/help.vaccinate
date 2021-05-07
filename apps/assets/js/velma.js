@@ -103,8 +103,8 @@ const requestItem = async () => {
   } else if (response.results && !response.results.length) {
     // no results
     showErrorModal(
-      "Error fetching source location",
-      "We were unable to find a source location to match that meets the provided query parameters.",
+      "No locations to match",
+      "It looks like we've matched every single source location for the provided query parameters!",
       createSearchQueryParams()
     );
     showHomeUI();
