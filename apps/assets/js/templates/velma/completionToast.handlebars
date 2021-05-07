@@ -1,0 +1,26 @@
+<div
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  class="toast bg-white"
+  data-bs-delay="15000"
+  id="completionToast"
+  data-bs-backdrop="static"
+>
+  <div class="toast-header">
+    <strong class="me-auto text-nowrap overflow-hidden">{{ title }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+  <div class="toast-body">
+    <div class="d-flex flex-column">
+      <div class="text-wrap">
+        Completed {{ title }}.
+      </div>
+      <div class="small align-self-end mt-2">
+        <button id="toastMakeChange" class="btn-sm small text-nowrap btn btn-outline-secondary" data-bs-dismiss="toast">
+          Need to make a change?
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
