@@ -363,7 +363,7 @@ const createSearchQueryParams = (id) => {
     }
     if (source_name) {
       params.source_name = source_name;
-   }
+    }
   }
   return new URLSearchParams(params).toString();
 };
