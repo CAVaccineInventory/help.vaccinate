@@ -2,19 +2,19 @@
   {{#each candidates }}
   <div id="record-{{this.id}}" class="border-bottom border-secondary py-3">
     <div class="row no-gutters">
-      <div class="col-6">
-        <h3 class="text-danger d-inline">{{ ../sourceName }}</h3>
-        <h3 class="d-inline">vs</h3>
-        <h3 class="text-primary fw-bold">{{ this.name }}</h3>
+      <div class="col-6 text-lowercase">
+        <h4 class="text-danger d-inline">{{ ../sourceName }}</h4>
+        <h4 class="d-inline">vs</h4>
+        <h4 class="text-primary">{{ this.name }}</h4>
 
         <div class="address">
-          {{ ../sourceAddress }} vs <br />
-          <b>{{ this.full_address }}</b>
+          <span class="text-danger">{{ ../sourceAddress }}</span> vs <br />
+          <span class="text-primary">{{ this.full_address }}</span>
         </div>
 
         <div class="mt-2">{{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}})</div>
 
-        <a class="mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
+        <a class="overflow-hidden mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
         <div class="mt-4">
           <input
             type="button"
