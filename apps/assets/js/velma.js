@@ -249,6 +249,7 @@ const fillItemTemplate = (data, candidates) => {
       source_uid: data.source_uid,
       source_name: data.source_name,
       name: data.name,
+      matched_location: data.matched_location,
     };
     showModal(debugModalTemplate, {
       sourceJson: JSON.stringify(debugData, null, 2),
