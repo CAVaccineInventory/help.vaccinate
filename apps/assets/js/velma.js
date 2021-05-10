@@ -22,12 +22,14 @@ import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 import errorModalTemplate from "./templates/errorModal.handlebars";
 
+import optionsModalTemplate from "./templates/velma/optionsModal.handlebars";
 import completionToastTemplate from "./templates/velma/completionToast.handlebars";
 import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
 import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
 import sourceLocationTemplate from "./templates/velma/sourceLocation.handlebars";
 import noMatchesTemplate from "./templates/velma/noMatches.handlebars";
+import keybindingsHintTemplate from "./templates/velma/keybindingsHint.handlebars";
 
 document.addEventListener("DOMContentLoaded", () => {
   Sentry.init({
@@ -38,7 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initVelma();
 });
 
+const POWER_USER_KEY = "power_user";
+
 let sourceLocation;
+let previousLocationId;
 
 const initVelma = async () => {
   showLoadingScreen();
@@ -49,10 +54,18 @@ const initVelma = async () => {
   hideLoadingScreen();
   fillTemplateIntoDom(nextItemPromptTemplate, "#nextItemPrompt", {});
   bindClick("#requestItemButton", authOrLoadAndFillItem);
+  bindClick("#optionsButton", showPowerUserModal);
 
   if (getForceLocation()) {
     authOrLoadAndFillItem();
   }
+
+  enablePowerUserKeybindings();
+};
+
+const showHomeUI = () => {
+  hideElement("#velmaUI");
+  showElement("#nextItemPrompt");
 };
 
 const updateLogin = (user) => {
@@ -60,6 +73,7 @@ const updateLogin = (user) => {
     fillTemplateIntoDom(loggedInAsTemplate, "#loggedInAs", {
       email: user.email,
       cta: "Done Matching - Log out",
+      displayOptions: true,
     });
     bindClick("#logoutButton", logout);
   } else {
@@ -224,7 +238,7 @@ const fillItemTemplate = (data, candidates) => {
   bindClick("#createLocation", createLocation);
   candidates?.forEach((candidate) => {
     const id = candidate.id;
-    bindClick(`#match-${id}`, matchLocation);
+    bindClick(`#match-${id}`, () => matchLocation(id));
     bindClick(`#record-${id} .js-close`, () => {
       hideElement(`#record-${id}`);
     });
@@ -235,6 +249,7 @@ const fillItemTemplate = (data, candidates) => {
       source_uid: data.source_uid,
       source_name: data.source_name,
       name: data.name,
+      matched_location: data.matched_location,
     };
     showModal(debugModalTemplate, {
       sourceJson: JSON.stringify(debugData, null, 2),
@@ -243,12 +258,10 @@ const fillItemTemplate = (data, candidates) => {
 };
 
 const skipItem = () => {
-  completeLocation();
+  completeLocation("skip");
 };
 
-const matchLocation = async (e) => {
-  const target = e.target;
-  const id = target?.getAttribute("data-id");
+const matchLocation = async (id) => {
   const response = await fetchJsonFromEndpoint(
     "/updateSourceLocationMatch",
     "POST",
@@ -265,7 +278,7 @@ const matchLocation = async (e) => {
     );
     return;
   }
-  completeLocation();
+  completeLocation("match");
 };
 
 const createLocation = async () => {
@@ -284,39 +297,45 @@ const createLocation = async () => {
     );
     return;
   }
-  completeLocation();
+  completeLocation("create");
 };
 
-const completeLocation = () => {
+const completeLocation = (source) => {
   if (getForceLocation()) {
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.delete("source_location_id");
     window.history.replaceState({}, "", `${window.location.pathname}?${urlParams.toString()}`);
     showHomeUI();
   } else {
-    showCompletionToast();
+    previousLocationId = sourceLocation?.id;
+    showCompletionToast(source);
     requestItem();
   }
 };
 
-const showHomeUI = () => {
-  hideElement("#velmaUI");
-  showElement("#nextItemPrompt");
-};
-
-const showCompletionToast = () => {
-  const previousId = sourceLocation?.id;
+const showCompletionToast = (source) => {
   fillTemplateIntoDom(completionToastTemplate, "#toastContainer", {
     title: sourceLocation?.name,
+    reasonSkip: source === "skip",
+    reasonMatch: source === "match",
+    reasonCreate: source === "create",
   });
 
   bindClick("#toastMakeChange", () => {
-    requestItem(previousId);
+    redoPreviousLocation();
   });
 
   new bootstrap.Toast(document.querySelector("#completionToast"), {
     autohide: true,
   }).show();
+};
+
+const redoPreviousLocation = () => {
+  document.querySelector("#completionToast")?.classList?.add("hide");
+  if (previousLocationId) {
+    requestItem(previousLocationId);
+  }
+  previousLocationId = null;
 };
 
 // This distance routine is licensed under LGPLv3.
@@ -350,7 +369,7 @@ const createSearchQueryParams = (id) => {
     const urlParams = new URLSearchParams(window.location.search);
     const q = urlParams.get("source_q");
     const state = urlParams.get("source_state");
-    const source_name = urlParams.get("source_name");
+    const sourceName = urlParams.get("source_name");
     params.random = 1;
     params.unmatched = 1;
     params.size = 1;
@@ -361,9 +380,9 @@ const createSearchQueryParams = (id) => {
     if (state) {
       params.state = state;
     }
-    if (source_name) {
-      params.source_name = source_name;
-   }
+    if (sourceName) {
+      params.source_name = sourceName;
+    }
   }
   return new URLSearchParams(params).toString();
 };
@@ -371,4 +390,83 @@ const createSearchQueryParams = (id) => {
 const getForceLocation = () => {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get("source_location_id");
+};
+
+const updateKeybindHintsDom = () => {
+  if (isPowerUserEnabled()) {
+    fillTemplateIntoDom(keybindingsHintTemplate, "#keybindingsHint", {});
+  } else if (document.querySelector("#keybindingsHint")) {
+    document.querySelector("#keybindingsHint").innerHTML = "";
+  }
+};
+
+const isPowerUserEnabled = () => {
+  return localStorage.getItem(POWER_USER_KEY);
+};
+
+const showPowerUserModal = () => {
+  showModal(
+    optionsModalTemplate,
+    {
+      powerUserEnabled: isPowerUserEnabled(),
+    },
+    () => {
+      const check = document.querySelector("#enablePowerUserMode");
+      check?.addEventListener("change", () => {
+        localStorage.setItem(POWER_USER_KEY, check?.checked ? "enabled" : "");
+        updateKeybindHintsDom();
+      });
+    }
+  );
+};
+
+const enablePowerUserKeybindings = () => {
+  updateKeybindHintsDom();
+  let isPressed = false;
+
+  document.addEventListener("keyup", () => {
+    isPressed = false;
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!isPowerUserEnabled() || isPressed) {
+      return;
+    }
+    isPressed = true;
+
+    // top most item that is not hidden
+    const topRecord = document.querySelector(".js-record:not(.hidden)");
+    const topRecordId = topRecord?.getAttribute("data-id");
+    const topMatchButton = topRecord?.querySelector(".js-match");
+
+    switch (e.key) {
+      case "1":
+      case "m":
+        if (topRecordId) {
+          topMatchButton?.classList?.add("active");
+          matchLocation(topRecordId);
+        }
+        break;
+      case "2":
+      case "d":
+        if (topRecordId) {
+          hideElement(`#record-${topRecordId}`);
+        }
+        break;
+      case "3":
+      case "c":
+        document.querySelector("#createLocation")?.classList?.add("active");
+        createLocation();
+        break;
+      case "4":
+      case "s":
+        document.querySelector("#skip")?.classList?.add("active");
+        skipItem();
+        break;
+      case "5":
+      case "r":
+        redoPreviousLocation();
+        break;
+    }
+  });
 };
