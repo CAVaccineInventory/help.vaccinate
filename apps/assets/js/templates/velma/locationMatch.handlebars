@@ -1,6 +1,6 @@
 <div>
   {{#each candidates }}
-  <div id="record-{{this.id}}" class="border-bottom border-secondary py-3">
+  <div id="record-{{this.id}}" class="js-record border-bottom border-secondary py-3" data-id="{{this.id}}">
     <div class="row no-gutters">
       <div class="col-6 text-lowercase">
         <h4 class="text-danger d-inline">{{ ../sourceName }}</h4>
@@ -16,15 +16,11 @@
 
         <a class="overflow-hidden mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
         <div class="mt-4">
-          <input
-            type="button"
+          <button
             id="match-{{this.id}}"
-            data-id="{{this.id}}"
-            class="btn btn-success me-2 mt-2"
-            value="Matches this one!"
-          />
-
-          <input type="button" id="close-{{this.id}}" class="js-close btn btn-secondary mt-2" value="Dismiss" />
+            class="js-match btn btn-success me-2 mt-2"
+          >Matches this one!</button>
+          <button id="close-{{this.id}}" class="js-close btn btn-secondary mt-2">Dismiss</button>
         </div>
       </div>
       <div class="col-6">

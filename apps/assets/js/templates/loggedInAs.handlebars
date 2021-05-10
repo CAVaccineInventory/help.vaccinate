@@ -1,4 +1,9 @@
-<div class="text-end navbar-text me-2" id="loggedInMessage"
-  ><div class="small">{{email}}</div>
-  <input type="button" id="logoutButton" value="{{cta}}" class="btn btn-secondary btn-sm" />
+<div class="d-flex flex-column text-end navbar-text me-2" id="loggedInMessage">
+    <div class="small">{{email}}</div>
+  <div class="d-flex justify-content-end align-items-center">
+    {{#if displayOptions}}
+    <input type="button" id="optionsButton" value="Options" class="btn btn-primary btn-sm me-2" />
+    {{/if}}
+    <input type="button" id="logoutButton" value="{{cta}}" class="btn btn-secondary btn-sm" />
+  </div>
 </div>
