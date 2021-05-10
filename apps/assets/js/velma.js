@@ -330,7 +330,7 @@ const showCompletionToast = (source) => {
 };
 
 const redoPreviousLocation = () => {
-  // TODO: programmatically hide toast again for keybindings
+  document.querySelector("#completionToast")?.classList?.add("hide");
   if (previousLocationId) {
     requestItem(previousLocationId);
   }
