@@ -350,7 +350,7 @@ const createSearchQueryParams = (id) => {
     const urlParams = new URLSearchParams(window.location.search);
     const q = urlParams.get("source_q");
     const state = urlParams.get("source_state");
-    const source_name = urlParams.get("source_name");
+    const sourceName = urlParams.get("source_name");
     params.random = 1;
     params.unmatched = 1;
     params.size = 1;
@@ -361,9 +361,9 @@ const createSearchQueryParams = (id) => {
     if (state) {
       params.state = state;
     }
-    if (source_name) {
-      params.source_name = source_name;
-   }
+    if (sourceName) {
+      params.source_name = sourceName;
+    }
   }
   return new URLSearchParams(params).toString();
 };
