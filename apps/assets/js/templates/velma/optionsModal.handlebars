@@ -1,0 +1,23 @@
+<div class="modal fade" id="optionsModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Options</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex align-items-center">
+          <input class="form-check-input mb-2 me-2" type="checkbox" id="enablePowerUserMode" {{#if
+          powerUserEnabled}}checked{{/if}} />
+
+          <h4>Enable power user mode</h4>
+        </div>
+        <p class="mb-1">When enabled, turns on the following keybindings for Velma:</p>
+        {{> keybindingsHint}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

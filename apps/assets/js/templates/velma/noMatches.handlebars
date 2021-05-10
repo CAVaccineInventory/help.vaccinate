@@ -4,7 +4,7 @@
       <div class="col-6">
         <h3>{{#if hasCandidates}}None of these look right.{{else}}We couldn't find any matching candidates{{/if}}</h3>
         <div class="spacer" style="height: 170px"></div>
-        <input type="button" class="btn btn-warning" id="createLocation" value="Create a new location" />
+        <button class="btn btn-warning" id="createLocation">Create a new location</button>
       </div>
       <div class="col-6">
         <div class="map h-100"></div>
@@ -13,6 +13,6 @@
   </div>
   <div id="locationSkip" class="my-2">
     <h3>Something looks weird and I don't want to deal with it</h3>
-    <input type="button" class="btn btn-danger" id="skip" value="Skip this location. Someone else can deal." />
+    <button class="btn btn-danger" id="skip">Skip this location. Someone else can deal.</button>
   </div>
 </div>

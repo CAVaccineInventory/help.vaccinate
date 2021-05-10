@@ -1,3 +1,19 @@
+#large_logo {
+  display: none;
+}
+#small_logo {
+  display: block;
+}
+
+@media (min-width: 992px) {
+  #large_logo {
+    display: block;
+  }
+  #small_logo {
+    display: none;
+  }
+}
+
 #toastContainer {
   z-index: 9999;
 }
