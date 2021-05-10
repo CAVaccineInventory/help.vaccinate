@@ -15,15 +15,9 @@
     <div class="d-flex flex-column">
       <div class="text-wrap">
         {{#if reasonSkip}}
-          <b>Skipped</b> {{ title }}.
-        {{/if}}
-        {{#if reasonMatch}}
-          <b>Matched</b> {{ title }}.
-        {{/if}}
-        {{#if reasonCreate}}
-          <b>Created new location</b> for {{ title }}.
-        {{/if}}
-        </div>
+        <b>Skipped</b> {{ title }}. {{/if}} {{#if reasonMatch}} <b>Matched</b> {{ title }}. {{/if}} {{#if reasonCreate}}
+        <b>Created new location</b> for {{ title }}. {{/if}}
+      </div>
       <div class="small align-self-end mt-2">
         <button id="toastMakeChange" class="btn-sm small text-nowrap btn btn-outline-secondary" data-bs-dismiss="toast">
           Redo previous location?

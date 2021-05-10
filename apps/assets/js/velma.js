@@ -45,7 +45,6 @@ const POWER_USER_KEY = "power_user";
 let sourceLocation;
 let previousLocationId;
 
-
 const initVelma = async () => {
   showLoadingScreen();
 
@@ -318,7 +317,7 @@ const showCompletionToast = (source) => {
     title: sourceLocation?.name,
     reasonSkip: source === "skip",
     reasonMatch: source === "match",
-    reasonCreate: source === "create"
+    reasonCreate: source === "create",
   });
 
   bindClick("#toastMakeChange", () => {
@@ -336,7 +335,7 @@ const redoPreviousLocation = () => {
     requestItem(previousLocationId);
   }
   previousLocationId = null;
-}
+};
 
 // This distance routine is licensed under LGPLv3.
 // source: https://www.geodatasource.com/developers/javascript
@@ -398,33 +397,37 @@ const updateKeybindHintsDom = () => {
   } else if (document.querySelector("#keybindingsHint")) {
     document.querySelector("#keybindingsHint").innerHTML = "";
   }
-}
+};
 
 const isPowerUserEnabled = () => {
   return localStorage.getItem(POWER_USER_KEY);
-}
+};
 
 const showPowerUserModal = () => {
-  showModal(optionsModalTemplate, {
-    powerUserEnabled: isPowerUserEnabled()
-  }, () => {
-    const check = document.querySelector("#enablePowerUserMode");
-    check?.addEventListener('change', () => {
-      localStorage.setItem(POWER_USER_KEY, check?.checked ? "enabled" : "");
-      updateKeybindHintsDom();
-    })
-  });
-}
+  showModal(
+    optionsModalTemplate,
+    {
+      powerUserEnabled: isPowerUserEnabled(),
+    },
+    () => {
+      const check = document.querySelector("#enablePowerUserMode");
+      check?.addEventListener("change", () => {
+        localStorage.setItem(POWER_USER_KEY, check?.checked ? "enabled" : "");
+        updateKeybindHintsDom();
+      });
+    }
+  );
+};
 
 const enablePowerUserKeybindings = () => {
   updateKeybindHintsDom();
   let isPressed = false;
 
-  document.addEventListener('keyup', () => {
+  document.addEventListener("keyup", () => {
     isPressed = false;
-  })
+  });
 
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener("keydown", (e) => {
     if (!isPowerUserEnabled() || isPressed) {
       return;
     }
@@ -464,5 +467,5 @@ const enablePowerUserKeybindings = () => {
         redoPreviousLocation();
         break;
     }
-  })
-}
+  });
+};
