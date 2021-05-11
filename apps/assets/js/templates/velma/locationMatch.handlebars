@@ -2,19 +2,20 @@
   {{#each candidates }}
   <div id="record-{{this.id}}" class="js-record border-bottom border-secondary py-3" data-id="{{this.id}}">
     <div class="row no-gutters">
-      <div class="col-6 text-lowercase">
-        <h4 class="text-danger d-inline">{{ ../sourceName }}</h4>
+      <div class="col-6">
+        <h4 class="text-lowercase text-danger d-inline">{{ ../sourceName }}</h4>
         <h4 class="d-inline">vs</h4>
-        <h4 class="text-primary">{{ this.name }}</h4>
+        <h4 class="text-lowercase text-primary">{{ this.name }}</h4>
 
         <div class="address">
-          <span class="text-danger">{{ ../sourceAddress }}</span> vs <br />
-          <span class="text-primary">{{ this.full_address }}</span>
+          <span class="text-lowercase text-danger">{{ ../sourceAddress }}</span> vs <br />
+          <span class="text-lowercase text-primary">{{ this.full_address }}</span>
         </div>
 
         <div class="mt-2">{{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}})</div>
+        <a class="overflow-hidden" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
+        <div>Location public ID: {{ this.id}}</div>
 
-        <a class="overflow-hidden mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
         <div class="mt-4">
           <button id="match-{{this.id}}" class="js-match btn btn-success me-2 mt-2">Matches this one!</button>
           <button id="close-{{this.id}}" class="js-close btn btn-secondary mt-2">Dismiss</button>
