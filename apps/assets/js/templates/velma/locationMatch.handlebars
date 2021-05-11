@@ -1,29 +1,22 @@
-<div>
-  {{#each candidates }}
-  <div id="record-{{this.id}}" class="js-record border-bottom border-secondary py-3" data-id="{{this.id}}">
-    <div class="row no-gutters">
-      <div class="col-6 text-lowercase">
-        <h4 class="text-danger d-inline">{{ ../sourceName }}</h4>
-        <h4 class="d-inline">vs</h4>
-        <h4 class="text-primary">{{ this.name }}</h4>
+{{#with candidate }}
+<div id="record-{{this.id}}" class="js-record py-3" data-id="{{this.id}}">
+    Potential match {{../curNumber}} of {{../numCandidates}}
+    <div class="map" style="height:40vh;" id="map-{{this.id}}">Map goes here</div>
+    <div class="text-lowercase">
 
-        <div class="address">
-          <span class="text-danger">{{ ../sourceAddress }}</span> vs <br />
-          <span class="text-primary">{{ this.full_address }}</span>
-        </div>
+      <h4 class="text-danger d-inline">{{ ../sourceName }}</h4> vs
+      <h4 class="text-primary">{{ this.name }}</h4>
 
-        <div class="mt-2">{{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}})</div>
+      <div class="text-danger d-inline">{{ ../sourceAddress }}</div> vs
+      <div class="text-primary">{{ this.full_address }}</div>
 
-        <a class="overflow-hidden mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
-        <div class="mt-4">
-          <button id="match-{{this.id}}" class="js-match btn btn-success me-2 mt-2">Matches this one!</button>
-          <button id="close-{{this.id}}" class="js-close btn btn-secondary mt-2">Dismiss</button>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="map h-100" id="map-{{this.id}}">Map goes here</div>
+      <div class="mt-2">{{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}})</div>
+
+      <a class="overflow-hidden mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
+      <div class="mt-4">
+        <button id="match-{{this.id}}" class="js-match btn btn-success me-2 mt-2">Matches this one!</button>
+        <button id="close-{{this.id}}" class="js-close btn btn-secondary mt-2">Dismiss</button>
       </div>
     </div>
-  </div>
-  {{/each}}
 </div>
+{{/with}}

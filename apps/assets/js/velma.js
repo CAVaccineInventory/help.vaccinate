@@ -8,7 +8,6 @@ import { fetchJsonFromEndpoint } from "./util/api.js";
 import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
 
 import {
-  enableInputDataBinding,
   showElement,
   hideElement,
   showLoadingScreen,
@@ -44,6 +43,8 @@ const POWER_USER_KEY = "power_user";
 
 let sourceLocation;
 let previousLocationId;
+let currentCandidates;
+let currentCandidateIndex;
 
 const initVelma = async () => {
   showLoadingScreen();
@@ -158,33 +159,58 @@ const requestItem = async (id) => {
   });
   candidates?.results.sort((a, b) => (a.distance > b.distance ? 1 : -1));
 
+  currentCandidates = candidates?.results || [];
+  currentCandidateIndex = 0;
+
   hideLoadingScreen();
   showElement("#velmaUI");
-  fillItemTemplate(sourceLocation, candidates?.results);
   hideElement("#nextItemPrompt");
+  showCandidate();
 };
 
-const fillItemTemplate = (data, candidates) => {
+const showCandidate = () => {
+  const data = sourceLocation; // TODO: fix
+  bindClick("#debugSource", () => {
+    const debugData = {
+      id: data.id,
+      source_uid: data.source_uid,
+      source_name: data.source_name,
+      name: data.name,
+      matched_location: data.matched_location,
+    };
+    showModal(debugModalTemplate, {
+      sourceJson: JSON.stringify(debugData, null, 2),
+    });
+  });
+
+  const candidate = currentCandidates[currentCandidateIndex];
+  if (!candidate) {
+    fillTemplateIntoDom(noMatchesTemplate, "#locationMatchCandidates", {
+      hasCandidates: !!currentCandidates.length,
+    });
+    bindClick("#skip", skipItem);
+    bindClick("#createLocation", createLocation);
+    return;
+  }
+
   const sourceAddr = `${data.import_json.address.street1}, ${data.import_json.address.city}, ${data.import_json.address.state} ${data.import_json.address.zip}`;
-  candidates?.forEach((candidate) => {
-    if (candidate.latitude && candidate.longitude) {
-      candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
-      candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
-    }
-  });
 
-  fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
-    candidates: candidates,
-    sourceAddress: sourceAddr,
-    sourceName: data.name,
-  });
-
-  fillTemplateIntoDom(noMatchesTemplate, "#locationNoMatchesOptions", {
-    hasCandidates: !!candidates?.length,
-  });
+  if (candidate.latitude && candidate.longitude) {
+    candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
+    candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
+  }
 
   data.latitude = Math.round(data.latitude * 10000) / 10000;
   data.longitude = Math.round(data.longitude * 10000) / 10000;
+
+
+  fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
+    candidate: candidate,
+    numCandidates: currentCandidates.length,
+    curNumber: currentCandidateIndex + 1,
+    sourceAddress: sourceAddr,
+    sourceName: data.name,
+  });
 
   const website = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website;
   fillTemplateIntoDom(sourceLocationTemplate, "#sourceLocation", {
@@ -201,61 +227,44 @@ const fillItemTemplate = (data, candidates) => {
     website,
   });
 
-  candidates?.forEach((candidate) => {
-    if (candidate.latitude && candidate.longitude) {
-      const mymap = L.map(`map-${candidate.id}`).setView([candidate.latitude, candidate.longitude], 13);
+  if (candidate.latitude && candidate.longitude) {
+    const mymap = L.map(`map-${candidate.id}`).setView([candidate.latitude, candidate.longitude], 13);
 
-      L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution:
-          'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: "mapbox/streets-v11",
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: "pk.eyJ1IjoiY2FsbHRoZXNob3RzIiwiYSI6ImNrbzNod3B0eDB3cm4ycW1ieXJpejR4cGQifQ.oZSg34AkLAVhksJjLt7kKA",
-      }).addTo(mymap);
-      const srcLoc = L.circle([data.latitude, data.longitude], {
-        color: "red",
-        fillColor: "#f03",
-        fillOpacity: 0.5,
-        radius: 15,
-      }).addTo(mymap);
-      const candidateLoc = L.circle([candidate.latitude, candidate.longitude], {
-        color: "blue",
-        fillColor: "#30f",
-        fillOpacity: 0.5,
-        radius: 15,
-      }).addTo(mymap);
+    L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+      attribution:
+        'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      maxZoom: 18,
+      id: "mapbox/streets-v11",
+      tileSize: 512,
+      zoomOffset: -1,
+      accessToken: "pk.eyJ1IjoiY2FsbHRoZXNob3RzIiwiYSI6ImNrbzNod3B0eDB3cm4ycW1ieXJpejR4cGQifQ.oZSg34AkLAVhksJjLt7kKA",
+    }).addTo(mymap);
+    const srcLoc = L.circle([data.latitude, data.longitude], {
+      color: "red",
+      fillColor: "#f03",
+      fillOpacity: 0.5,
+      radius: 15,
+    }).addTo(mymap);
+    const candidateLoc = L.circle([candidate.latitude, candidate.longitude], {
+      color: "blue",
+      fillColor: "#30f",
+      fillOpacity: 0.5,
+      radius: 15,
+    }).addTo(mymap);
 
-      // eslint-disable-next-line
-      const group = new L.featureGroup([srcLoc, candidateLoc]);
+    // eslint-disable-next-line
+    const group = new L.featureGroup([srcLoc, candidateLoc]);
 
-      mymap.fitBounds(group.getBounds(), { padding: L.point(5, 5) });
-    }
+    mymap.fitBounds(group.getBounds(), { padding: L.point(5, 5) });
+  }
+
+  const id = candidate.id;
+  bindClick(`#match-${id}`, () => matchLocation(id));
+  bindClick(`#record-${id} .js-close`, () => {
+    currentCandidateIndex++;
+    showCandidate();
   });
-  enableInputDataBinding();
-  bindClick("#skip", skipItem);
-  bindClick("#createLocation", createLocation);
-  candidates?.forEach((candidate) => {
-    const id = candidate.id;
-    bindClick(`#match-${id}`, () => matchLocation(id));
-    bindClick(`#record-${id} .js-close`, () => {
-      hideElement(`#record-${id}`);
-    });
-  });
-  bindClick("#debugSource", () => {
-    const debugData = {
-      id: data.id,
-      source_uid: data.source_uid,
-      source_name: data.source_name,
-      name: data.name,
-      matched_location: data.matched_location,
-    };
-    showModal(debugModalTemplate, {
-      sourceJson: JSON.stringify(debugData, null, 2),
-    });
-  });
-};
+}
 
 const skipItem = () => {
   completeLocation("skip");
