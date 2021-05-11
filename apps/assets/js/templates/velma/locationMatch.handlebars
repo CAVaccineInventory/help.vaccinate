@@ -1,6 +1,10 @@
 {{#with candidate }}
 <div id="record-{{this.id}}" class="js-record py-3" data-id="{{this.id}}">
-    Potential match {{../curNumber}} of {{../numCandidates}}
+    <h5>Potential match {{../curNumber}} of {{../numCandidates}}:</h5>
+    <div class="d-flex justify-content-center">
+      <button id="match-{{this.id}}" class="js-match btn btn-success me-4 my-2">Matches this one!</button>
+      <button id="close-{{this.id}}" class="js-close btn btn-secondary my-2">Does not match</button>
+    </div>
     <div class="map" style="height:40vh;" id="map-{{this.id}}">Map goes here</div>
     <div class="text-lowercase">
 
@@ -13,10 +17,6 @@
       <div class="mt-2">{{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}})</div>
 
       <a class="overflow-hidden mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
-      <div class="mt-4">
-        <button id="match-{{this.id}}" class="js-match btn btn-success me-2 mt-2">Matches this one!</button>
-        <button id="close-{{this.id}}" class="js-close btn btn-secondary mt-2">Dismiss</button>
-      </div>
     </div>
 </div>
 {{/with}}

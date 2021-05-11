@@ -1,18 +1,9 @@
 <div>
-  <div id="locationCreate" class="mt-2">
-    <div class="row no-gutters">
-      <div class="col-6">
-        <h3>{{#if hasCandidates}}None of these look right.{{else}}We couldn't find any matching candidates{{/if}}</h3>
-        <div class="spacer" style="height: 170px"></div>
-        <button class="btn btn-warning" id="createLocation">Create a new location</button>
-      </div>
-      <div class="col-6">
-        <div class="map h-100"></div>
-      </div>
+  <div id="locationCreate" class="py-3">
+    <h5>{{#if hasCandidates}}All potential matches declined{{else}}We couldn't find any matching candidates{{/if}}</h5>
+    <div class="d-flex justify-content-center">
+      <button class="btn btn-warning my-2 me-4" id="createLocation">Create a new location</button>
+      {{#if hasCandidates}}<button class="btn btn-primary my-2" id="tryAgain">I messed up, try again</button>{{/if}}
     </div>
-  </div>
-  <div id="locationSkip" class="my-2">
-    <h3>Something looks weird and I don't want to deal with it</h3>
-    <button class="btn btn-danger" id="skip">Skip this location. Someone else can deal.</button>
   </div>
 </div>

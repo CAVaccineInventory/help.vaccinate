@@ -56,6 +56,7 @@ const initVelma = async () => {
   fillTemplateIntoDom(nextItemPromptTemplate, "#nextItemPrompt", {});
   bindClick("#requestItemButton", authOrLoadAndFillItem);
   bindClick("#optionsButton", showPowerUserModal);
+  bindClick("#skip", skipItem);
 
   if (getForceLocation()) {
     authOrLoadAndFillItem();
@@ -183,13 +184,32 @@ const showCandidate = () => {
     });
   });
 
+  const website = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website;
+  fillTemplateIntoDom(sourceLocationTemplate, "#sourceLocation", {
+    id: data.id,
+    name: data.name,
+    phone: data.phone_number,
+    city: data.import_json.address.city,
+    state: data.import_json.address.state,
+    zip: data.import_json.address.zip,
+    address: data.import_json.address.street1 || "No address information available",
+    hours: data.hours,
+    latitude: data.latitude,
+    longitude: data.longitude,
+    website,
+  });
+
+
   const candidate = currentCandidates[currentCandidateIndex];
   if (!candidate) {
     fillTemplateIntoDom(noMatchesTemplate, "#locationMatchCandidates", {
       hasCandidates: !!currentCandidates.length,
     });
-    bindClick("#skip", skipItem);
     bindClick("#createLocation", createLocation);
+    bindClick("#tryAgain", () => {
+      currentCandidateIndex = 0;
+      showCandidate();
+    });
     return;
   }
 
@@ -210,21 +230,6 @@ const showCandidate = () => {
     curNumber: currentCandidateIndex + 1,
     sourceAddress: sourceAddr,
     sourceName: data.name,
-  });
-
-  const website = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website;
-  fillTemplateIntoDom(sourceLocationTemplate, "#sourceLocation", {
-    id: data.id,
-    name: data.name,
-    phone: data.phone_number,
-    city: data.import_json.address.city,
-    state: data.import_json.address.state,
-    zip: data.import_json.address.zip,
-    address: data.import_json.address.street1 || "No address information available",
-    hours: data.hours,
-    latitude: data.latitude,
-    longitude: data.longitude,
-    website,
   });
 
   if (candidate.latitude && candidate.longitude) {
