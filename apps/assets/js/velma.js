@@ -429,16 +429,13 @@ const enablePowerUserKeybindings = () => {
     }
     isPressed = true;
 
-    // top most item that is not hidden
     const currentCandidate = document.querySelector(".candidateContainer");
     const id = currentCandidate?.getAttribute("data-id");
-    const matchButton = currentCandidate?.querySelector(".js-match");
-
     switch (e.key) {
       case "1":
       case "m":
         if (id) {
-          matchButton?.classList?.add("active");
+          document.querySelector(".js-match")?.classList?.add("active");
           matchLocation(id);
         }
         break;

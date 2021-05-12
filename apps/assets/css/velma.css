@@ -11,7 +11,7 @@
     display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 800px) {
     #keybindings-hint {
         display: block;
     }
