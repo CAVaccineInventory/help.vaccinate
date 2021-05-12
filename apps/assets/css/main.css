@@ -21,3 +21,7 @@
 .hidden {
   display: none;
 }
+
+#loadingSpinner {
+  z-index: 999;
+}

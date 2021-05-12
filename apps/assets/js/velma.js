@@ -26,7 +26,6 @@ import completionToastTemplate from "./templates/velma/completionToast.handlebar
 import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
 import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
-import sourceLocationTemplate from "./templates/velma/sourceLocation.handlebars";
 import noMatchesTemplate from "./templates/velma/noMatches.handlebars";
 import keybindingsHintTemplate from "./templates/velma/keybindingsHint.handlebars";
 
