@@ -1,5 +1,6 @@
-<h3 class="p-2 text-center">Matching {{sourceName }} against candidate: {{curNumber}} of {{numCandidates}}</h3>
-<div id="record-{{candidate.id}}" class="row m-4" data-id="{{candidate.id}}">
+<h3 class="m-4 text-center">Matching <span class="text-danger">{{sourceName }}</span> against <span class="text-primary">candidate</span>: {{curNumber}} of {{numCandidates}}</h3>
+
+<div id="record-{{candidate.id}}" class="candidateContainer row border-start" data-id="{{candidate.id}}">
   <div class="col-6">
     <h4 class="text-lowercase text-danger d-inline">{{ sourceName }}</h4> vs
     <h4 class="text-lowercase text-primary">{{ candidate.name }}</h4>
@@ -8,7 +9,7 @@
     <div class="mb-2 text-lowercase text-primary">{{ candidate.full_address }}</div>
 
     <div class="text-danger d-inline">{{#if phone}}{{phone}}{{else}}No phone number{{/if}}</div> vs
-    <div class="mb-2 text-primary">{{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number}}{{/if}}</div>
+    <div class="mb-2 text-primary">{{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number{{/if}}</div>
 
     <div class="text-break d-inline"> <a class="text-danger" href="{{website}}" target="_new">
       {{#if website}}{{website}}{{else}}No website{{/if}}
@@ -19,13 +20,14 @@
 
     <div class="mt-2">Distance: {{ candidate.distance }} miles away</div>
 
-    <div class="d-flex">
-      <button id="match-{{candidate.id}}" class="js-match btn btn-success me-4 my-2">Matches this one!</button>
-      <button id="close-{{candidate.id}}" class="js-close btn btn-secondary my-2">Does not match</button>
-    </div>
-
-    <div>Location public ID: {{ candidate.id}}</div>
+    <!--<div>Location public ID: {{ candidate.id}}</div>-->
     <button type="button" id="debugSource" class="mt-2 text-white btn btn-sm btn-info">Debug Info</button>
   </div>
   <div class="map col-6" id="map-{{candidate.id}}">Map goes here</div>
 </div>
+
+    <div class="d-flex justify-content-center mt-2">
+      <button id="match-{{candidate.id}}" class="js-match btn btn-success me-4 my-2">Matches this one!</button>
+      <button id="close-{{candidate.id}}" class="js-close btn btn-secondary me-4 my-2">Does not match</button>
+      <button class="btn btn-danger my-2" id="skip">Skip this location. Someone else can deal.</button>
+    </div>
