@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const POWER_USER_KEY = "power_user";
 
+let originalSourceLocationJson;
 let sourceLocation;
 let previousLocationId;
 let currentCandidates;
@@ -127,6 +128,7 @@ const requestItem = async (id) => {
   }
 
   sourceLocation = response.results[0];
+  originalSourceLocationJson = JSON.stringify(sourceLocation, null, 2);
 
   // some "fun" modifications to sourceLocation to make it more usable
   sourceLocation.latitude = Math.round(sourceLocation.latitude * 10000) / 10000;
@@ -231,7 +233,7 @@ const showCandidate = () => {
 
   bindClick(".js-debug", () => {
     showModal(debugModalTemplate, {
-      sourceJson: sourceLocation ? JSON.stringify(sourceLocation, null, 2) : null,
+      sourceJson: originalSourceLocationJson,
       candidateJson: candidate ? JSON.stringify(candidate, null, 2) : null,
     });
   });
