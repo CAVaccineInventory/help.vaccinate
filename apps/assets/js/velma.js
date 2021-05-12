@@ -15,11 +15,12 @@ import {
   fillTemplateIntoDom,
   bindClick,
   showModal,
+  showErrorModal
 } from "./util/fauxFramework.js";
+import { MatchLogic } from "./velma/match.js";
 
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
-import errorModalTemplate from "./templates/errorModal.handlebars";
 
 import optionsModalTemplate from "./templates/velma/optionsModal.handlebars";
 import completionToastTemplate from "./templates/velma/completionToast.handlebars";
@@ -44,6 +45,7 @@ let sourceLocation;
 let previousLocationId;
 let currentCandidates;
 let currentCandidateIndex;
+let logic = MatchLogic();
 
 const initVelma = async () => {
   showLoadingScreen();
@@ -55,11 +57,6 @@ const initVelma = async () => {
   fillTemplateIntoDom(nextItemPromptTemplate, "#nextItemPrompt", {});
   bindClick("#requestItemButton", authOrLoadAndFillItem);
   bindClick("#optionsButton", showPowerUserModal);
-
-  if (getForceLocation()) {
-    authOrLoadAndFillItem();
-  }
-
   enablePowerUserKeybindings();
 };
 
@@ -82,95 +79,22 @@ const updateLogin = (user) => {
   }
 };
 
-const showErrorModal = (title, body, json) => {
-  showModal(errorModalTemplate, {
-    title,
-    body,
-    json: JSON.stringify(json, null, 2),
-  });
-};
-
 const authOrLoadAndFillItem = async () => {
   const user = await getUser();
   if (user && user.email) {
-    const id = getForceLocation();
-    requestItem(id);
+    requestItem();
   } else {
     loginWithRedirect();
   }
 };
 
-const requestItem = async (id) => {
+const requestItem = async () => {
   showLoadingScreen();
-  const user = await getUser();
 
-  const response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams(id)}`, "GET");
-  if (response.error) {
-    showErrorModal(
-      "Error fetching source location",
-      "We ran into an error trying to fetch you a source location to match. Please show this error message to your captain or lead on Slack." +
-        " They may also need to know that you are logged in as " +
-        user?.email +
-        ".",
-      response
-    );
-    showHomeUI();
-    return;
-  } else if (response.results && !response.results.length) {
-    // no results
-    showErrorModal(
-      "No locations to match",
-      "It looks like we've matched every single source location for the provided query parameters!",
-      createSearchQueryParams(id)
-    );
-    showHomeUI();
-    return;
-  }
-
-  sourceLocation = response.results[0];
-  originalSourceLocationJson = JSON.stringify(sourceLocation, null, 2);
-
-  // some "fun" modifications to sourceLocation to make it more usable
-  sourceLocation.latitude = Math.round(sourceLocation.latitude * 10000) / 10000;
-  sourceLocation.longitude = Math.round(sourceLocation.longitude * 10000) / 10000;
-
-  const websites = sourceLocation?.import_json?.contact?.filter((method) => !!method.website);
-  sourceLocation.website =
-    websites?.find((method) => method.contact_type === "general")?.website || websites?.[0]?.website;
-  sourceLocation.phone = sourceLocation?.import_json?.contact?.find((method) => !!method.phone)?.phone;
-  sourceLocation.addr = `${sourceLocation.import_json.address.street1}, ${sourceLocation.import_json.address.city}, ${sourceLocation.import_json.address.state} ${sourceLocation.import_json.address.zip}`;
-
-  const candidates = await fetchJsonFromEndpoint(
-    "/searchLocations?size=50&latitude=" +
-      sourceLocation.latitude +
-      "&longitude=" +
-      sourceLocation.longitude +
-      "&radius=2000",
-    "GET"
-  );
-
-  if (candidates.error) {
-    showErrorModal(
-      "Error fetching locations to match against",
-      "We ran into an error trying to fetch you a locations to match against. Please show this error message to your captain or lead on Slack." +
-        " They may also need to know that you are logged in as " +
-        user?.email +
-        ".",
-      response
-    );
-    showHomeUI();
-    return;
-  }
-
-  // record the distance. then sort the results by it
-  candidates?.results.forEach((item) => {
-    item.distance =
-      Math.round(100 * distance(item.latitude, item.longitude, sourceLocation.latitude, sourceLocation.longitude)) /
-      100;
-  });
-  candidates?.results.sort((a, b) => (a.distance > b.distance ? 1 : -1));
-
-  currentCandidates = candidates?.results || [];
+  const data = await logic.getData(() => showHomeUI());
+  sourceLocation = data.sourceLocation;
+  originalSourceLocationJson = data.originalSourceLocationJson;
+  currentCandidates = data.candidates;
   currentCandidateIndex = 0;
 
   hideLoadingScreen();
@@ -182,17 +106,9 @@ const requestItem = async (id) => {
 const showCandidate = () => {
   const candidate = currentCandidates[currentCandidateIndex];
 
-  if (candidate && candidate.latitude && candidate.longitude) {
-    candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
-    candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
-  }
-
   fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
     name: sourceLocation.name,
     address: sourceLocation.addr,
-    city: sourceLocation.import_json.address.city,
-    state: sourceLocation.import_json.address.state,
-    zip: sourceLocation.import_json.address.zip,
     website: sourceLocation.website,
     phone: sourceLocation.phone,
 
@@ -298,16 +214,9 @@ const createLocation = async () => {
 };
 
 const completeLocation = (source) => {
-  if (getForceLocation()) {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.delete("source_location_id");
-    window.history.replaceState({}, "", `${window.location.pathname}?${urlParams.toString()}`);
-    showHomeUI();
-  } else {
     previousLocationId = sourceLocation?.id;
     showCompletionToast(source);
     requestItem();
-  }
 };
 
 const showCompletionToast = (source) => {
@@ -333,60 +242,6 @@ const redoPreviousLocation = () => {
     requestItem(previousLocationId);
   }
   previousLocationId = null;
-};
-
-// This distance routine is licensed under LGPLv3.
-// source: https://www.geodatasource.com/developers/javascript
-const distance = (lat1, lon1, lat2, lon2) => {
-  if (lat1 == lat2 && lon1 == lon2) {
-    return 0;
-  } else {
-    const radlat1 = (Math.PI * lat1) / 180;
-    const radlat2 = (Math.PI * lat2) / 180;
-    const theta = lon1 - lon2;
-    const radtheta = (Math.PI * theta) / 180;
-    let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-    if (dist > 1) {
-      dist = 1;
-    }
-    dist = Math.acos(dist);
-    dist = (dist * 180) / Math.PI;
-    dist = dist * 60 * 1.1515;
-    return dist;
-  }
-};
-
-const createSearchQueryParams = (id) => {
-  const params = {};
-
-  if (id) {
-    params.id = id;
-    params.haspoint = 1;
-  } else {
-    const urlParams = new URLSearchParams(window.location.search);
-    const q = urlParams.get("source_q");
-    const state = urlParams.get("source_state");
-    const sourceName = urlParams.get("source_name");
-    params.random = 1;
-    params.unmatched = 1;
-    params.size = 1;
-    params.haspoint = 1;
-    if (q) {
-      params.q = q;
-    }
-    if (state) {
-      params.state = state;
-    }
-    if (sourceName) {
-      params.source_name = sourceName;
-    }
-  }
-  return new URLSearchParams(params).toString();
-};
-
-const getForceLocation = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("source_location_id");
 };
 
 const updateKeybindHintsDom = () => {

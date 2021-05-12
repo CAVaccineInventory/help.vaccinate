@@ -1,6 +1,8 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+import errorModalTemplate from "../templates/errorModal.handlebars";
+
 const bindClick = (selector, handler) => {
   const el = document.querySelector(selector);
   if (el !== null) {
@@ -152,6 +154,14 @@ const showModal = (template, templateVars, onShownCallback = null) => {
   modal.show();
 };
 
+const showErrorModal = (title, body, json) => {
+  showModal(errorModalTemplate, {
+    title,
+    body,
+    json: JSON.stringify(json, null, 2),
+  });
+};
+
 export {
   bindClick,
   fillTemplateIntoDom,
@@ -163,4 +173,5 @@ export {
   hideLoadingScreen,
   uncheckRadio,
   showModal,
+  showErrorModal,
 };
