@@ -1,24 +1,31 @@
-{{#with candidate }}
-<div id="record-{{this.id}}" class="js-record py-3" data-id="{{this.id}}">
-    <h5>Potential match {{../curNumber}} of {{../numCandidates}}:</h5>
-    <div class="d-flex justify-content-center">
-      <button id="match-{{this.id}}" class="js-match btn btn-success me-4 my-2">Matches this one!</button>
-      <button id="close-{{this.id}}" class="js-close btn btn-secondary my-2">Does not match</button>
+<h3 class="p-2 text-center">Matching {{sourceName }} against candidate: {{curNumber}} of {{numCandidates}}</h3>
+<div id="record-{{candidate.id}}" class="row m-4" data-id="{{candidate.id}}">
+  <div class="col-6">
+    <h4 class="text-lowercase text-danger d-inline">{{ sourceName }}</h4> vs
+    <h4 class="text-lowercase text-primary">{{ candidate.name }}</h4>
+
+    <div class="text-lowercase text-danger d-inline">{{ sourceAddress }}</div> vs
+    <div class="mb-2 text-lowercase text-primary">{{ candidate.full_address }}</div>
+
+    <div class="text-danger d-inline">{{#if phone}}{{phone}}{{else}}No phone number{{/if}}</div> vs
+    <div class="mb-2 text-primary">{{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number}}{{/if}}</div>
+
+    <div class="text-break d-inline"> <a class="text-danger" href="{{website}}" target="_new">
+      {{#if website}}{{website}}{{else}}No website{{/if}}
+    </a> </div> vs
+    <div class="text-break"> <a class="text-primary" href="{{candidate.website}}" target="_new">
+      {{#if candidate.website}}{{candidate.website}}{{else}}No website{{/if}}
+    </a> </div>
+
+    <div class="mt-2">Distance: {{ candidate.distance }} miles away</div>
+
+    <div class="d-flex">
+      <button id="match-{{candidate.id}}" class="js-match btn btn-success me-4 my-2">Matches this one!</button>
+      <button id="close-{{candidate.id}}" class="js-close btn btn-secondary my-2">Does not match</button>
     </div>
-    <div class="map" style="height:40vh;" id="map-{{this.id}}">Map goes here</div>
-    <div class="text-lowercase">
 
-      <h4 class="text-danger d-inline">{{ ../sourceName }}</h4> vs
-      <h4 class="text-primary">{{ this.name }}</h4>
-
-      <div class="text-danger d-inline">{{ ../sourceAddress }}</div> vs
-      <div class="text-primary">{{ this.full_address }}</div>
-
-      <div class="mt-2">{{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}})</div>
-
-      <a class="overflow-hidden mt-2" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
-      <div>Location public ID: {{ this.id}}</div>
-
-    </div>
+    <div>Location public ID: {{ candidate.id}}</div>
+    <button type="button" id="debugSource" class="mt-2 text-white btn btn-sm btn-info">Debug Info</button>
+  </div>
+  <div class="map col-6" id="map-{{candidate.id}}">Map goes here</div>
 </div>
-{{/with}}

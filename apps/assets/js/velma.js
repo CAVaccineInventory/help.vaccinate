@@ -130,6 +130,15 @@ const requestItem = async (id) => {
   }
 
   sourceLocation = response.results[0];
+
+  // some "fun" modifications to sourceLocation to make it more usable
+  sourceLocation.latitude = Math.round(sourceLocation.latitude * 10000) / 10000;
+  sourceLocation.longitude = Math.round(sourceLocation.longitude * 10000) / 10000;
+
+  // TODO: i want non booking contact types if possible.
+  sourceLocation.website = sourceLocation?.import_json?.contact?.find(method => !!method.website)?.website;
+  sourceLocation.phone = sourceLocation?.import_json?.contact?.find(method => !!method.phone)?.phone;
+
   const candidates = await fetchJsonFromEndpoint(
     "/searchLocations?size=50&latitude=" +
       sourceLocation.latitude +
@@ -170,35 +179,18 @@ const requestItem = async (id) => {
 };
 
 const showCandidate = () => {
-  const data = sourceLocation; // TODO: fix
   bindClick("#debugSource", () => {
     const debugData = {
-      id: data.id,
-      source_uid: data.source_uid,
-      source_name: data.source_name,
-      name: data.name,
-      matched_location: data.matched_location,
+      id: sourceLocation.id,
+      source_uid: sourceLocation.source_uid,
+      source_name: sourceLocation.source_name,
+      name: sourceLocation.name,
+      matched_location: sourceLocation.matched_location,
     };
     showModal(debugModalTemplate, {
       sourceJson: JSON.stringify(debugData, null, 2),
     });
   });
-
-  const website = data.import_json?.contact?.[0]?.website || data.import_json?.contact?.[1]?.website;
-  fillTemplateIntoDom(sourceLocationTemplate, "#sourceLocation", {
-    id: data.id,
-    name: data.name,
-    phone: data.phone_number,
-    city: data.import_json.address.city,
-    state: data.import_json.address.state,
-    zip: data.import_json.address.zip,
-    address: data.import_json.address.street1 || "No address information available",
-    hours: data.hours,
-    latitude: data.latitude,
-    longitude: data.longitude,
-    website,
-  });
-
 
   const candidate = currentCandidates[currentCandidateIndex];
   if (!candidate) {
@@ -213,23 +205,27 @@ const showCandidate = () => {
     return;
   }
 
-  const sourceAddr = `${data.import_json.address.street1}, ${data.import_json.address.city}, ${data.import_json.address.state} ${data.import_json.address.zip}`;
+  const sourceAddr = `${sourceLocation.import_json.address.street1}, ${sourceLocation.import_json.address.city}, ${sourceLocation.import_json.address.state} ${sourceLocation.import_json.address.zip}`;
 
   if (candidate.latitude && candidate.longitude) {
     candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
     candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
   }
 
-  data.latitude = Math.round(data.latitude * 10000) / 10000;
-  data.longitude = Math.round(data.longitude * 10000) / 10000;
-
-
   fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
+    name: sourceLocation.name,
+    address: sourceLocation.import_json.address.street1 || "No address information available",
+    city: sourceLocation.import_json.address.city,
+    state: sourceLocation.import_json.address.state,
+    zip: sourceLocation.import_json.address.zip,
+    website: sourceLocation.website,
+    phone: sourceLocation.phone,
+
     candidate: candidate,
     numCandidates: currentCandidates.length,
     curNumber: currentCandidateIndex + 1,
     sourceAddress: sourceAddr,
-    sourceName: data.name,
+    sourceName: sourceLocation.name,
   });
 
   if (candidate.latitude && candidate.longitude) {
@@ -244,7 +240,7 @@ const showCandidate = () => {
       zoomOffset: -1,
       accessToken: "pk.eyJ1IjoiY2FsbHRoZXNob3RzIiwiYSI6ImNrbzNod3B0eDB3cm4ycW1ieXJpejR4cGQifQ.oZSg34AkLAVhksJjLt7kKA",
     }).addTo(mymap);
-    const srcLoc = L.circle([data.latitude, data.longitude], {
+    const srcLoc = L.circle([sourceLocation.latitude, sourceLocation.longitude], {
       color: "red",
       fillColor: "#f03",
       fillOpacity: 0.5,
