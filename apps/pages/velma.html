@@ -30,19 +30,15 @@ layout: base.html
 
   <div class="container-fluid h-100 hidden" id="velmaUI">
     <div class="row">
-      <div id="left-col" class="col-4">
-        <div id="sourceLocation"></div>
-      </div>
-      <div class="col-8 overflow-auto">
+      <div>
         <div id="locationMatchCandidates"></div>
-        <div id="locationNoMatchesOptions"></div>
       </div>
     </div>
   </div>
 
   <div id="loadingScreen">
     <div class="container-fluid h-100" id="loading">
-      <div class="position-absolute top-50 start-50">
+      <div class="position-absolute top-50 start-50" id="loadingSpinner">
         <div class="row bg-light p-5 borer">
           <div class="spinner-border" role="status">
             <span class="visually-hidden p-5 m-5 bg-light">Loading...</span>
