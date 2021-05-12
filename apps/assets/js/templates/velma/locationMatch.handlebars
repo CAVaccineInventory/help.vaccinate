@@ -1,30 +1,69 @@
-<div>
-  {{#each candidates }}
-  <div id="record-{{this.id}}" class="js-record border-bottom border-secondary py-3" data-id="{{this.id}}">
-    <div class="row no-gutters">
-      <div class="col-6">
-        <h4 class="text-lowercase text-danger d-inline">{{ ../sourceName }}</h4>
-        <h4 class="d-inline">vs</h4>
-        <h4 class="text-lowercase text-primary">{{ this.name }}</h4>
+<h3 class="mt-4 text-center">
+  Matching <span class="text-danger">{{name}}</span>{{#if candidate}} against
+  <span class="text-primary">{{candidate.name}}</span>{{/if}}
+</h3>
 
-        <div class="address">
-          <span class="text-lowercase text-danger">{{ ../sourceAddress }}</span> vs <br />
-          <span class="text-lowercase text-primary">{{ this.full_address }}</span>
-        </div>
+{{#if candidate}}
+<h5 class="mb-4 text-center">Candidate {{curNumber}} of {{numCandidates}}</h5>
+{{else}}
+<h5 class="mb-4 text-center">
+  {{#if numCandidates}}All potential matches declined{{else}}We couldn't find any matching candidates{{/if}}
+</h5>
+{{/if}} {{#if candidate}}
+<div id="record-{{candidate.id}}" class="candidateContainer row border-start" data-id="{{candidate.id}}">
+  <div class="col-6">
+    <h4 class="text-lowercase text-danger d-inline">{{name}}</h4>
+    vs
+    <h4 class="text-lowercase text-primary">{{ candidate.name }}</h4>
 
-        <div class="mt-2">{{ this.distance }} miles away. ({{ this.latitude }} , {{ this.longitude}})</div>
-        <a class="overflow-hidden" href="{{ this.website }}" target="_blank">{{ this.website }}</a>
-        <div>Location public ID: {{ this.id}}</div>
+    <div class="text-lowercase text-danger d-inline">{{ address }}</div>
+    vs
+    <div class="mb-2 text-lowercase text-primary">{{ candidate.full_address }}</div>
 
-        <div class="mt-4">
-          <button id="match-{{this.id}}" class="js-match btn btn-success me-2 mt-2">Matches this one!</button>
-          <button id="close-{{this.id}}" class="js-close btn btn-secondary mt-2">Dismiss</button>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="map h-100" id="map-{{this.id}}">Map goes here</div>
-      </div>
+    <div class="text-danger d-inline">{{#if phone}}{{phone}}{{else}}No phone number{{/if}}</div>
+    vs
+    <div class="mb-2 text-primary">
+      {{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number{{/if}}
     </div>
+
+    <div class="text-break d-inline">
+      <a class="text-danger" href="{{website}}" target="_new"> {{#if website}}{{website}}{{else}}No website{{/if}} </a>
+    </div>
+    vs
+    <div class="text-break">
+      <a class="text-primary" href="{{candidate.website}}" target="_new">
+        {{#if candidate.website}}{{candidate.website}}{{else}}No website{{/if}}
+      </a>
+    </div>
+
+    <div class="mt-2">Distance: {{ candidate.distance }} miles away</div>
+    <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
   </div>
-  {{/each}}
+  <div class="map col-6" id="map-{{candidate.id}}">Map goes here</div>
+</div>
+{{else}}
+<div class="candidateContainer row border-start">
+  <div class="col-6">
+    <h4 class="text-lowercase text-danger">{{ name }}</h4>
+    <div class="text-lowercase text-danger">{{ address }}</div>
+    <div class="text-danger">{{#if phone}}{{phone}}{{else}}No phone number{{/if}}</div>
+    <div class="text-break">
+      <a class="text-danger" href="{{website}}" target="_new"> {{#if website}}{{website}}{{else}}No website{{/if}} </a>
+    </div>
+
+    <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
+  </div>
+</div>
+{{/if}}
+
+<div class="d-flex flex-column align-items-center">
+  <div class="d-flex justify-content-center mt-2">
+    {{#if candidate}}
+    <button class="js-match btn btn-success me-4 my-2">Matches this one!</button>
+    <button class="js-close btn btn-secondary my-2">Does not match</button>
+    {{else}}
+    <button class="js-create btn btn-success me-4 my-2">Create a new location</button>
+    {{#if numCandidates}}<button class="js-tryagain btn btn-primary my-2">Try again, I think I messed up</button>{{/if}} {{/if}}
+  </div>
+  <button class="js-skip btn btn-warning my-2">Skip this location. Someone else can deal.</button>
 </div>
