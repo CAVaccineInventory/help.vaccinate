@@ -17,6 +17,7 @@
     }
 }
 .candidateContainer {
+    min-height: 300px;
     max-width: 1280px;
     margin: auto;
 }

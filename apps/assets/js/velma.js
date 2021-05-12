@@ -26,7 +26,6 @@ import completionToastTemplate from "./templates/velma/completionToast.handlebar
 import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
 import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
-import noMatchesTemplate from "./templates/velma/noMatches.handlebars";
 import keybindingsHintTemplate from "./templates/velma/keybindingsHint.handlebars";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -55,7 +54,6 @@ const initVelma = async () => {
   fillTemplateIntoDom(nextItemPromptTemplate, "#nextItemPrompt", {});
   bindClick("#requestItemButton", authOrLoadAndFillItem);
   bindClick("#optionsButton", showPowerUserModal);
-  bindClick("#skip", skipItem);
 
   if (getForceLocation()) {
     authOrLoadAndFillItem();
@@ -134,9 +132,11 @@ const requestItem = async (id) => {
   sourceLocation.latitude = Math.round(sourceLocation.latitude * 10000) / 10000;
   sourceLocation.longitude = Math.round(sourceLocation.longitude * 10000) / 10000;
 
-  // TODO: i want non booking contact types if possible.
-  sourceLocation.website = sourceLocation?.import_json?.contact?.find(method => !!method.website)?.website;
-  sourceLocation.phone = sourceLocation?.import_json?.contact?.find(method => !!method.phone)?.phone;
+  const websites = sourceLocation?.import_json?.contact?.filter((method) => !!method.website);
+  sourceLocation.website =
+    websites?.find((method) => method.contact_type === "general")?.website || websites?.[0]?.website;
+  sourceLocation.phone = sourceLocation?.import_json?.contact?.find((method) => !!method.phone)?.phone;
+  sourceLocation.addr = `${sourceLocation.import_json.address.street1}, ${sourceLocation.import_json.address.city}, ${sourceLocation.import_json.address.state} ${sourceLocation.import_json.address.zip}`;
 
   const candidates = await fetchJsonFromEndpoint(
     "/searchLocations?size=50&latitude=" +
@@ -178,42 +178,16 @@ const requestItem = async (id) => {
 };
 
 const showCandidate = () => {
-  bindClick("#debugSource", () => {
-    const debugData = {
-      id: sourceLocation.id,
-      source_uid: sourceLocation.source_uid,
-      source_name: sourceLocation.source_name,
-      name: sourceLocation.name,
-      matched_location: sourceLocation.matched_location,
-    };
-    showModal(debugModalTemplate, {
-      sourceJson: JSON.stringify(debugData, null, 2),
-    });
-  });
-
   const candidate = currentCandidates[currentCandidateIndex];
-  if (!candidate) {
-    fillTemplateIntoDom(noMatchesTemplate, "#locationMatchCandidates", {
-      hasCandidates: !!currentCandidates.length,
-    });
-    bindClick("#createLocation", createLocation);
-    bindClick("#tryAgain", () => {
-      currentCandidateIndex = 0;
-      showCandidate();
-    });
-    return;
-  }
 
-  const sourceAddr = `${sourceLocation.import_json.address.street1}, ${sourceLocation.import_json.address.city}, ${sourceLocation.import_json.address.state} ${sourceLocation.import_json.address.zip}`;
-
-  if (candidate.latitude && candidate.longitude) {
+  if (candidate && candidate.latitude && candidate.longitude) {
     candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
     candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
   }
 
   fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
     name: sourceLocation.name,
-    address: sourceLocation.import_json.address.street1 || "No address information available",
+    address: sourceLocation.addr,
     city: sourceLocation.import_json.address.city,
     state: sourceLocation.import_json.address.state,
     zip: sourceLocation.import_json.address.zip,
@@ -223,11 +197,9 @@ const showCandidate = () => {
     candidate: candidate,
     numCandidates: currentCandidates.length,
     curNumber: currentCandidateIndex + 1,
-    sourceAddress: sourceAddr,
-    sourceName: sourceLocation.name,
   });
 
-  if (candidate.latitude && candidate.longitude) {
+  if (candidate && candidate.latitude && candidate.longitude) {
     const mymap = L.map(`map-${candidate.id}`).setView([candidate.latitude, candidate.longitude], 13);
 
     L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -254,19 +226,33 @@ const showCandidate = () => {
 
     // eslint-disable-next-line
     const group = new L.featureGroup([srcLoc, candidateLoc]);
-
     mymap.fitBounds(group.getBounds(), { padding: L.point(5, 5) });
   }
 
-  const id = candidate.id;
-  bindClick(`#match-${id}`, () => matchLocation(id));
-  bindClick(`#record-${id} .js-close`, () => {
-    currentCandidateIndex++;
-    showCandidate();
+  bindClick(".js-debug", () => {
+    showModal(debugModalTemplate, {
+      sourceJson: sourceLocation ? JSON.stringify(sourceLocation, null, 2) : null,
+      candidateJson: candidate ? JSON.stringify(candidate, null, 2) : null,
+    });
   });
-}
+  bindClick(".js-skip", skipLocation);
+  bindClick(".js-match", () => !!candidate && matchLocation(candidate.id));
+  bindClick(".js-close", dismissItem);
+  bindClick(".js-create", createLocation);
+  bindClick(".js-tryagain", tryAgain);
+};
 
-const skipItem = () => {
+const tryAgain = () => {
+  currentCandidateIndex = 0;
+  showCandidate();
+};
+
+const dismissItem = () => {
+  currentCandidateIndex++;
+  showCandidate();
+};
+
+const skipLocation = () => {
   completeLocation("skip");
 };
 
@@ -444,33 +430,35 @@ const enablePowerUserKeybindings = () => {
     isPressed = true;
 
     // top most item that is not hidden
-    const topRecord = document.querySelector(".js-record:not(.hidden)");
-    const topRecordId = topRecord?.getAttribute("data-id");
-    const topMatchButton = topRecord?.querySelector(".js-match");
+    const currentCandidate = document.querySelector(".candidateContainer");
+    const id = currentCandidate?.getAttribute("data-id");
+    const matchButton = currentCandidate?.querySelector(".js-match");
 
     switch (e.key) {
       case "1":
       case "m":
-        if (topRecordId) {
-          topMatchButton?.classList?.add("active");
-          matchLocation(topRecordId);
+        if (id) {
+          matchButton?.classList?.add("active");
+          matchLocation(id);
         }
         break;
       case "2":
       case "d":
-        if (topRecordId) {
-          hideElement(`#record-${topRecordId}`);
+        if (id) {
+          dismissItem();
+        } else {
+          tryAgain();
         }
         break;
       case "3":
       case "c":
-        document.querySelector("#createLocation")?.classList?.add("active");
+        document.querySelector(".js-create")?.classList?.add("active");
         createLocation();
         break;
       case "4":
       case "s":
-        document.querySelector("#skip")?.classList?.add("active");
-        skipItem();
+        document.querySelector(".js-skip")?.classList?.add("active");
+        skipLocation();
         break;
       case "5":
       case "r":
