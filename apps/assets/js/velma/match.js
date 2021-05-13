@@ -1,15 +1,17 @@
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
 import { distance } from "./distance.js";
-import { showErrorModal } from "../util/fauxFramework.js";
+import { fillTemplateIntoDom, showErrorModal, bindClick } from "../util/fauxFramework.js";
+
+import matchActionsTemplate from "../templates/velma/matchActions.handlebars";
+import keybindingsHintTemplate from "../templates/velma/keybindingsHint.handlebars";
 
 export const MatchLogic = () => {
-  const getData = async (onError) => {
-    const user = await getUser();
 
-    const response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams()}`, "GET");
+  const getData = async (id, onError) => {
+    const user = await getUser();
+    const response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams(id)}`, "GET");
     if (response.error) {
-      // TODO: import
       showErrorModal(
         "Error fetching source location",
         "We ran into an error trying to fetch you a source location to match. Please show this error message to your captain or lead on Slack." +
@@ -32,7 +34,7 @@ export const MatchLogic = () => {
     }
 
     const sourceLocation = response.results[0];
-    const originalSourceLocationJson = JSON.stringify(sourceLocation, null, 2);
+    const currentLocationDebugJson = JSON.stringify(sourceLocation, null, 2);
 
     // some "fun" modifications to sourceLocation to make it more usable
     sourceLocation.latitude = Math.round(sourceLocation.latitude * 10000) / 10000;
@@ -82,35 +84,132 @@ export const MatchLogic = () => {
     })
 
     return {
-      sourceLocation,
-      originalSourceLocationJson,
+      currentLocation: sourceLocation,
+      currentLocationDebugJson,
       candidates,
+      supportsRedo: true,
     };
   };
 
+  const initActions = (currentLocation, candidate, skipLocation, dismissItem, tryAgain, completeLocation) => {
+    fillTemplateIntoDom(matchActionsTemplate, "#matchActionsContainer", {
+      candidate,
+    });
+
+    bindClick(".js-skip", skipLocation);
+    bindClick(".js-tryagain", tryAgain);
+    bindClick(".js-close", dismissItem);
+    bindClick(".js-match", () => !!candidate && matchLocation(currentLocation?.import_json?.id, candidate.id, completeLocation));
+    bindClick(".js-create", () => createLocation(currentLocation?.import_json?.id, completeLocation));
+
+    return (key) => {
+      switch (key) {
+        case "1":
+        case "m":
+          if (candidate?.id) {
+            document.querySelector(".js-match")?.classList?.add("active");
+            matchLocation(currentLocation?.import_json?.id, candidate.id, completeLocation);
+          }
+          break;
+        case "2":
+        case "d":
+          if (candidate?.id) {
+            dismissItem();
+          } else {
+            tryAgain();
+          }
+          break;
+        case "3":
+        case "c":
+          document.querySelector(".js-create")?.classList?.add("active");
+          createLocation(currentLocation?.import_json?.id, completeLocation);
+          break;
+        case "4":
+        case "s":
+          document.querySelector(".js-skip")?.classList?.add("active");
+          skipLocation();
+          break;
+        case "5":
+        case "r":
+          // redoPreviousLocation(); TODO
+          break;
+      }
+    }
+  }
+
+  const getKeybindsHintTemplate = () => {
+    return keybindingsHintTemplate;
+  }
+
   return {
-      getData: getData,
+      getData,
+      initActions,
+      getKeybindsHintTemplate
   }
 };
 
-const createSearchQueryParams = () => {
+const matchLocation = async (currentLocationId, candidateId, completeLocation) => {
+  const response = await fetchJsonFromEndpoint(
+    "/updateSourceLocationMatch",
+    "POST",
+    JSON.stringify({
+      source_location: currentLocationId,
+      location: candidateId,
+    })
+  );
+  if (response.error) {
+    showErrorModal(
+      "Error matching location",
+      "We ran into an error trying to match the location. Please show this error message to your captain or lead on Slack.",
+      response
+    );
+    return;
+  }
+  completeLocation("match");
+};
+
+const createLocation = async (id, completeLocation) => {
+  const response = await fetchJsonFromEndpoint(
+    "/createLocationFromSourceLocation",
+    "POST",
+    JSON.stringify({
+      source_location: id,
+    })
+  );
+  if (response.error) {
+    showErrorModal(
+      "Error creating location",
+      "We ran into an error trying to create the location. Please show this error message to your captain or lead on Slack.",
+      response
+    );
+    return;
+  }
+  completeLocation("create");
+};
+
+const createSearchQueryParams = (id) => {
   const params = {};
-  const urlParams = new URLSearchParams(window.location.search);
-  const q = urlParams.get("source_q");
-  const state = urlParams.get("source_state");
-  const sourceName = urlParams.get("source_name");
-  params.random = 1;
-  params.unmatched = 1;
-  params.size = 1;
-  params.haspoint = 1;
-  if (q) {
-    params.q = q;
-  }
-  if (state) {
-    params.state = state;
-  }
-  if (sourceName) {
-    params.source_name = sourceName;
+  if (id) {
+    params.id = id;
+    params.haspoint = 1;
+  } else {
+    const urlParams = new URLSearchParams(window.location.search);
+    const q = urlParams.get("source_q");
+    const state = urlParams.get("source_state");
+    const sourceName = urlParams.get("source_name");
+    params.random = 1;
+    params.unmatched = 1;
+    params.size = 1;
+    params.haspoint = 1;
+    if (q) {
+      params.q = q;
+    }
+    if (state) {
+      params.state = state;
+    }
+    if (sourceName) {
+      params.source_name = sourceName;
+    }
   }
   return new URLSearchParams(params).toString();
 };

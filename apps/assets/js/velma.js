@@ -4,7 +4,6 @@ import "regenerator-runtime/runtime";
 import * as Sentry from "@sentry/browser";
 import { Integrations } from "@sentry/tracing";
 
-import { fetchJsonFromEndpoint } from "./util/api.js";
 import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
 
 import {
@@ -15,7 +14,6 @@ import {
   fillTemplateIntoDom,
   bindClick,
   showModal,
-  showErrorModal
 } from "./util/fauxFramework.js";
 import { MatchLogic } from "./velma/match.js";
 
@@ -27,7 +25,6 @@ import completionToastTemplate from "./templates/velma/completionToast.handlebar
 import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
 import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
-import keybindingsHintTemplate from "./templates/velma/keybindingsHint.handlebars";
 
 document.addEventListener("DOMContentLoaded", () => {
   Sentry.init({
@@ -40,12 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const POWER_USER_KEY = "power_user";
 
-let originalSourceLocationJson;
-let sourceLocation;
+let currentLocationDebugJson;
+let currentLocation;
 let previousLocationId;
 let currentCandidates;
 let currentCandidateIndex;
-let logic = MatchLogic();
+let keybindHandler;
+let logic;
 
 const initVelma = async () => {
   showLoadingScreen();
@@ -82,18 +80,20 @@ const updateLogin = (user) => {
 const authOrLoadAndFillItem = async () => {
   const user = await getUser();
   if (user && user.email) {
+    logic = MatchLogic();
+    updateKeybindHintsDom();
     requestItem();
   } else {
     loginWithRedirect();
   }
 };
 
-const requestItem = async () => {
+const requestItem = async (id) => {
   showLoadingScreen();
 
-  const data = await logic.getData(() => showHomeUI());
-  sourceLocation = data.sourceLocation;
-  originalSourceLocationJson = data.originalSourceLocationJson;
+  const data = await logic.getData(id, () => showHomeUI());
+  currentLocation = data.currentLocation;
+  currentLocationDebugJson = data.currentLocationDebugJson;
   currentCandidates = data.candidates;
   currentCandidateIndex = 0;
 
@@ -107,11 +107,7 @@ const showCandidate = () => {
   const candidate = currentCandidates[currentCandidateIndex];
 
   fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
-    name: sourceLocation.name,
-    address: sourceLocation.addr,
-    website: sourceLocation.website,
-    phone: sourceLocation.phone,
-
+    currentLocation: currentLocation,
     candidate: candidate,
     numCandidates: currentCandidates.length,
     curNumber: currentCandidateIndex + 1,
@@ -129,7 +125,7 @@ const showCandidate = () => {
       zoomOffset: -1,
       accessToken: "pk.eyJ1IjoiY2FsbHRoZXNob3RzIiwiYSI6ImNrbzNod3B0eDB3cm4ycW1ieXJpejR4cGQifQ.oZSg34AkLAVhksJjLt7kKA",
     }).addTo(mymap);
-    const srcLoc = L.circle([sourceLocation.latitude, sourceLocation.longitude], {
+    const srcLoc = L.circle([currentLocation.latitude, currentLocation.longitude], {
       color: "red",
       fillColor: "#f03",
       fillOpacity: 0.5,
@@ -149,15 +145,12 @@ const showCandidate = () => {
 
   bindClick(".js-debug", () => {
     showModal(debugModalTemplate, {
-      sourceJson: originalSourceLocationJson,
+      sourceJson: currentLocationDebugJson,
       candidateJson: candidate ? JSON.stringify(candidate, null, 2) : null,
     });
   });
-  bindClick(".js-skip", skipLocation);
-  bindClick(".js-match", () => !!candidate && matchLocation(candidate.id));
-  bindClick(".js-close", dismissItem);
-  bindClick(".js-create", createLocation);
-  bindClick(".js-tryagain", tryAgain);
+
+  keybindHandler = logic.initActions(currentLocation, candidate, skipLocation, dismissItem, tryAgain, completeLocation);
 };
 
 const tryAgain = () => {
@@ -174,57 +167,19 @@ const skipLocation = () => {
   completeLocation("skip");
 };
 
-const matchLocation = async (id) => {
-  const response = await fetchJsonFromEndpoint(
-    "/updateSourceLocationMatch",
-    "POST",
-    JSON.stringify({
-      source_location: sourceLocation?.import_json?.id,
-      location: id,
-    })
-  );
-  if (response.error) {
-    showErrorModal(
-      "Error matching location",
-      "We ran into an error trying to match the location. Please show this error message to your captain or lead on Slack.",
-      response
-    );
-    return;
-  }
-  completeLocation("match");
-};
-
-const createLocation = async () => {
-  const response = await fetchJsonFromEndpoint(
-    "/createLocationFromSourceLocation",
-    "POST",
-    JSON.stringify({
-      source_location: sourceLocation?.import_json?.id,
-    })
-  );
-  if (response.error) {
-    showErrorModal(
-      "Error creating location",
-      "We ran into an error trying to create the location. Please show this error message to your captain or lead on Slack.",
-      response
-    );
-    return;
-  }
-  completeLocation("create");
-};
-
 const completeLocation = (source) => {
-    previousLocationId = sourceLocation?.id;
+    previousLocationId = currentLocation?.id;
     showCompletionToast(source);
     requestItem();
 };
 
 const showCompletionToast = (source) => {
   fillTemplateIntoDom(completionToastTemplate, "#toastContainer", {
-    title: sourceLocation?.name,
+    title: currentLocation?.name,
     reasonSkip: source === "skip",
     reasonMatch: source === "match",
     reasonCreate: source === "create",
+    supportsRedo: logic.supportsRedo,
   });
 
   bindClick("#toastMakeChange", () => {
@@ -246,7 +201,7 @@ const redoPreviousLocation = () => {
 
 const updateKeybindHintsDom = () => {
   if (isPowerUserEnabled()) {
-    fillTemplateIntoDom(keybindingsHintTemplate, "#keybindingsHint", {});
+    fillTemplateIntoDom(logic.getKeybindsHintTemplate(), "#keybindingsHint", {});
   } else if (document.querySelector("#keybindingsHint")) {
     document.querySelector("#keybindingsHint").innerHTML = "";
   }
@@ -273,7 +228,6 @@ const showPowerUserModal = () => {
 };
 
 const enablePowerUserKeybindings = () => {
-  updateKeybindHintsDom();
   let isPressed = false;
 
   document.addEventListener("keyup", () => {
@@ -285,39 +239,8 @@ const enablePowerUserKeybindings = () => {
       return;
     }
     isPressed = true;
-
-    const currentCandidate = document.querySelector(".candidateContainer");
-    const id = currentCandidate?.getAttribute("data-id");
-    switch (e.key) {
-      case "1":
-      case "m":
-        if (id) {
-          document.querySelector(".js-match")?.classList?.add("active");
-          matchLocation(id);
-        }
-        break;
-      case "2":
-      case "d":
-        if (id) {
-          dismissItem();
-        } else {
-          tryAgain();
-        }
-        break;
-      case "3":
-      case "c":
-        document.querySelector(".js-create")?.classList?.add("active");
-        createLocation();
-        break;
-      case "4":
-      case "s":
-        document.querySelector(".js-skip")?.classList?.add("active");
-        skipLocation();
-        break;
-      case "5":
-      case "r":
-        redoPreviousLocation();
-        break;
+    if (keybindHandler) {
+      keybindHandler(e.key);
     }
   });
 };
