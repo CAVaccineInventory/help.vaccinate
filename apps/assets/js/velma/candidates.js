@@ -15,14 +15,12 @@ export const createCandidates = async (location, seedCandidate, onError) => {
     return;
   }
 
-  const candidates = response?.results || [];
+  let candidates = response?.results || [];
+  candidates = candidates.filter(candidate => candidate.id !== seedCandidate?.id && candidate.id !== location.id);
 
-  // TODO: dedupe
   if (seedCandidate) {
     candidates.push(seedCandidate);
   }
-
-  // TODO: remove location from candidates
 
   // record the distance. then sort the results by it
   candidates.forEach((item) => {
