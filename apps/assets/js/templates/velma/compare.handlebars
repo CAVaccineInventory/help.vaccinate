@@ -69,7 +69,11 @@
     {{/unless}}
 
     <div>Distance: {{ candidate.distance }} miles away</div>
-    {{> inlineButtons}}
+    {{#unless matching}}
+    <div>
+      IDs: <span class="text-danger">{{currentLocation.id}}</span>, <span class="text-primary">{{candidate.id}}</span>
+    </div>
+    {{/unless}} {{> inlineButtons}}
   </div>
   <div class="map col-6" id="map-{{candidate.id}}">Map goes here</div>
 </div>
@@ -92,6 +96,7 @@
     <div class="text-danger">
       {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
     </div>
+    <div>ID: <span class="text-danger">{{currentLocation.id}}</span></div>
     {{/unless}} {{> inlineButtons}}
   </div>
 </div>
