@@ -36,17 +36,7 @@ layout: base.html
     </div>
   </div>
 
-  <div id="loadingScreen">
-    <div class="container-fluid h-100" id="loading">
-      <div class="position-absolute top-50 start-50" id="loadingSpinner">
-        <div class="row bg-light p-5 borer">
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden p-5 m-5 bg-light">Loading...</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  {% include loading_spinner.html %}
 
   <div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
   <div id="modalContainer"></div>
