@@ -117,10 +117,10 @@ const showCandidate = () => {
   let locationUrl;
   let candidateUrl;
   if (logic.role === "merge") {
-    locationUrl = `https://vaccinatethestates.com?lat=${currentLocation.latitude}&lng=${currentLocation.longitude}#${currentLocation.id}`
+    locationUrl = `https://vaccinatethestates.com?lat=${currentLocation.latitude}&lng=${currentLocation.longitude}#${currentLocation.id}`;
   }
   if (candidate) {
-    candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`
+    candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`;
   }
 
   fillTemplateIntoDom(compareTemplate, "#compareCandidate", {

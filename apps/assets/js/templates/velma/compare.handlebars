@@ -1,12 +1,10 @@
 {{#*inline "inlineButtons"}}
-    <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
-    {{#if locationUrl}}
-      <a href="{{locationUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-danger">Red on VTS</a>
-    {{/if}}
-    {{#if candidateUrl}}
-      <a href="{{candidateUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-primary">Blue on VTS</a>
-    {{/if}}
-{{/inline}}
+<button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
+{{#if locationUrl}}
+<a href="{{locationUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-danger">Red on VTS</a>
+{{/if}} {{#if candidateUrl}}
+<a href="{{candidateUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-primary">Blue on VTS</a>
+{{/if}} {{/inline}}
 
 <h3 class="mt-4 text-center">
   {{#if matching}}Matching{{else}}Merging{{/if}} <span class="text-danger">{{currentLocation.name}}</span>
@@ -53,7 +51,8 @@
       </a>
     </div>
 
-    {{#unless matching}} <!-- merging -->
+    {{#unless matching}}
+    <!-- merging -->
     <div class="text-danger d-inline">
       {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
     </div>
@@ -64,7 +63,9 @@
       {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
     </div>
     vs
-    <div class="mb-2 text-primary">{{#if candidate.provider.name}}Provider: {{candidate.provider.name}}{{else}}No provider{{/if}}</div>
+    <div class="mb-2 text-primary">
+      {{#if candidate.provider.name}}Provider: {{candidate.provider.name}}{{else}}No provider{{/if}}
+    </div>
     {{/unless}}
 
     <div>Distance: {{ candidate.distance }} miles away</div>
@@ -85,15 +86,13 @@
         {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
       </a>
     </div>
-    {{#unless matching}} <!-- merging -->
-    <div class="text-danger">
-      {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
-    </div>
+    {{#unless matching}}
+    <!-- merging -->
+    <div class="text-danger">{{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}</div>
     <div class="text-danger">
       {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
     </div>
-    {{/unless}}
-    {{> inlineButtons}}
+    {{/unless}} {{> inlineButtons}}
   </div>
 </div>
 {{/if}}
