@@ -16,6 +16,7 @@ import {
   showModal,
 } from "./util/fauxFramework.js";
 import { matchLogic } from "./velma/match.js";
+import { mergeLogic } from "./velma/merge.js";
 
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
@@ -52,7 +53,14 @@ const initVelma = async () => {
   updateLogin(user);
   hideLoadingScreen();
   fillTemplateIntoDom(nextItemPromptTemplate, "#nextItemPrompt", {});
-  bindClick("#requestItemButton", authOrLoadAndFillItem);
+  bindClick(".js-start-matching", () => {
+    logic = matchLogic();
+    authOrLoadAndFillItem();
+  });
+  bindClick(".js-start-merging", () => {
+    logic = mergeLogic();
+    authOrLoadAndFillItem();
+  });
   bindClick("#optionsButton", showPowerUserModal);
   enablePowerUserKeybindings();
 };
@@ -79,7 +87,6 @@ const updateLogin = (user) => {
 const authOrLoadAndFillItem = async () => {
   const user = await getUser();
   if (user && user.email) {
-    logic = matchLogic();
     updateKeybindHintsDom();
     requestItem();
   } else {
@@ -175,7 +182,7 @@ const showCompletionToast = (source) => {
 };
 
 const updateKeybindHintsDom = () => {
-  if (isPowerUserEnabled()) {
+  if (isPowerUserEnabled() && logic.getKeybindsHintTemplate()) {
     fillTemplateIntoDom(logic.getKeybindsHintTemplate(), "#keybindingsHint", {});
   } else if (document.querySelector("#keybindingsHint")) {
     document.querySelector("#keybindingsHint").innerHTML = "";
