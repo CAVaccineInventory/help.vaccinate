@@ -114,18 +114,14 @@ export const matchLogic = () => {
     }
   };
 
-  const getKeybindsHintTemplate = () => {
-    return matchKeybindsTemplate;
-  };
-
   return {
     getData,
     initActions,
-    getKeybindsHintTemplate,
     handleKeybind,
     role: "match",
     extensions: {},
     supportsRedo: true,
+    keybindTemplate: matchKeybindsTemplate,
   };
 };
 

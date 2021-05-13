@@ -184,8 +184,8 @@ const showCompletionToast = (source) => {
 };
 
 const updateKeybindHintsDom = () => {
-  if (isPowerUserEnabled() && logic.getKeybindsHintTemplate()) {
-    fillTemplateIntoDom(logic.getKeybindsHintTemplate(), "#keybindingsHint", {});
+  if (isPowerUserEnabled()) {
+    fillTemplateIntoDom(logic.keybindTemplate, "#keybindingsHint", {});
   } else if (document.querySelector("#keybindingsHint")) {
     document.querySelector("#keybindingsHint").innerHTML = "";
   }

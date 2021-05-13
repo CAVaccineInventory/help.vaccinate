@@ -114,20 +114,16 @@ export const mergeLogic = () => {
     }
   };
 
-  const getKeybindsHintTemplate = () => {
-    return mergeKeybindsTemplate;
-  };
-
   return {
     getData,
     initActions,
-    getKeybindsHintTemplate,
     handleKeybind,
     role: "merge",
     extensions: {
       compareHours: true,
     },
     supportsRedo: false,
+    keybindTemplate: mergeKeybindsTemplate,
   };
 };
 
