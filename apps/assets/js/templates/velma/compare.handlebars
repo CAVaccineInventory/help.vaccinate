@@ -79,16 +79,20 @@
         {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
       </a>
     </div>
+    {{#unless matching}} <!-- merging -->
     <div class="text-danger">
       {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
     </div>
     <div class="text-danger">
       {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
     </div>
+    {{/unless}}
 
     <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
+    {{#unless matching}} <!-- merging -->
     <button type="button" class="js-debug mt-2 btn btn-sm btn-primary">Blue on VTS</button>
     <button type="button" class="js-debug mt-2 btn btn-sm btn-danger">Red on VTS</button>
+    {{/unless}}
   </div>
 </div>
 {{/if}}
