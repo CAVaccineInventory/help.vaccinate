@@ -16,7 +16,7 @@ export const createCandidates = async (location, seedCandidate, onError) => {
   }
 
   let candidates = response?.results || [];
-  candidates = candidates.filter(candidate => candidate.id !== seedCandidate?.id && candidate.id !== location.id);
+  candidates = candidates.filter((candidate) => candidate.id !== seedCandidate?.id && candidate.id !== location.id);
 
   if (seedCandidate) {
     candidates.push(seedCandidate);

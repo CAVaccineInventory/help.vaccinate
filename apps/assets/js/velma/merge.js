@@ -4,6 +4,7 @@ import { fetchJsonFromEndpoint } from "../util/api.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick } from "../util/fauxFramework.js";
 
 import mergeActionsTemplate from "../templates/velma/mergeActions.handlebars";
+import mergeKeybindsTemplate from "../templates/velma/mergeKeybinds.handlebars";
 
 export const mergeLogic = () => {
   const getData = async (id, onError) => {
@@ -99,22 +100,22 @@ export const mergeLogic = () => {
         }
         break;
       case "4":
+      case "s":
+        document.querySelector(".js-skip")?.classList?.add("active");
+        actions.skipLocation();
+        break;
+      case "5":
       case "n":
         if (currentLocation.task_id) {
           document.querySelector(".js-no-merges")?.classList?.add("active");
           resolveTask(currentLocation.task_id, actions.completeLocation);
         }
         break;
-      case "5":
-      case "s":
-        document.querySelector(".js-skip")?.classList?.add("active");
-        actions.skipLocation();
-        break;
     }
   };
 
   const getKeybindsHintTemplate = () => {
-    return null;
+    return mergeKeybindsTemplate;
   };
 
   return {
@@ -131,11 +132,11 @@ export const mergeLogic = () => {
 };
 
 const mergeLocations = async (winner, loser, taskId, completeLocation) => {
-    const response = await fetchJsonFromEndpoint("/mergeLocations", "POST", JSON.stringify({
-        winner,
-        loser,
-        task_id: taskId
-    }));
+  const response = await fetchJsonFromEndpoint("/mergeLocations", "POST", JSON.stringify({
+    winner,
+    loser,
+    task_id: taskId,
+  }));
 
   if (response.error) {
     showErrorModal(
@@ -146,14 +147,14 @@ const mergeLocations = async (winner, loser, taskId, completeLocation) => {
     return;
   }
   completeLocation("merged");
-}
+};
 
 const resolveTask = async (taskId, completeLocation) => {
-    const user = await getUser();
-    const response = await fetchJsonFromEndpoint("/resolveTask", "POST", JSON.stringify({
-        task_id: taskId,
-        resolution: {"resolver": user?.email}
-    }));
+  const user = await getUser();
+  const response = await fetchJsonFromEndpoint("/resolveTask", "POST", JSON.stringify({
+    task_id: taskId,
+    resolution: { "resolver": user?.email },
+  }));
 
   if (response.error) {
     showErrorModal(
@@ -164,4 +165,4 @@ const resolveTask = async (taskId, completeLocation) => {
     return;
   }
   completeLocation("nomerge");
-}
+};

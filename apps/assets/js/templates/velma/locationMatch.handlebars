@@ -1,30 +1,26 @@
-{{#if matching}}
-<h3 class="mt-4 text-center">Matching <span class="text-danger">{{currentLocation.name}}</span></h3>
-{{else}}
-<h3 class="mt-4 text-center">Merging <span class="text-danger">{{currentLocation.name}}</span></h3>
-{{/if}}
+<h3 class="mt-4 text-center">
+  {{#if matching}}Matching{{else}}Merging{{/if}} <span class="text-danger">{{currentLocation.name}}</span>
+</h3>
 
 {{#if candidate}}
 <h5 class="mb-4 text-center">Candidate {{curNumber}} of {{numCandidates}}</h5>
 {{else}}
 <h5 class="mb-4 text-center">
-  {{#if matching}}
-    {{#if numCandidates}}All potential matches declined{{else}}We couldn't find any matching candidates{{/if}}
-  {{else}}
-    {{#if numCandidates}}All potential merges declined{{else}}We couldn't find any merge candidates{{/if}}
-  {{/if}}
+  {{#if matching}} {{#if numCandidates}}All potential matches declined{{else}}We couldn't find any matching
+  candidates{{/if}} {{else}} {{#if numCandidates}}All potential merges declined{{else}}We couldn't find any merge
+  candidates{{/if}} {{/if}}
 </h5>
 {{/if}} {{#if candidate}}
-<div id="record-{{candidate.id}}" class="candidateContainer row border-start" data-id="{{candidate.id}}">
+<div class="candidateContainer row border-start">
   <div class="col-6">
-    <div {{#if matching}}class="text-lowercase"{{/if}}>
-    <h4 class="text-danger d-inline">{{currentLocation.name}}</h4>
-    vs
-    <h4 class="text-primary">{{ candidate.name }}</h4>
+    <div class="{{#if matching}}text-lowercase{{/if}}">
+      <h4 class="text-danger d-inline">{{currentLocation.name}}</h4>
+      vs
+      <h4 class="text-primary">{{ candidate.name }}</h4>
 
-    <div class="text-danger d-inline">{{currentLocation.full_address}}</div>
-    vs
-    <div class="mb-2 text-primary">{{ candidate.full_address }}</div>
+      <div class="text-danger d-inline">{{currentLocation.full_address}}</div>
+      vs
+      <div class="mb-2 text-primary">{{ candidate.full_address }}</div>
     </div>
 
     <div class="text-danger d-inline">
@@ -52,9 +48,7 @@
       {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
     </div>
     vs
-    <div class="mb-2 text-primary">
-      {{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}
-    </div>
+    <div class="mb-2 text-primary">{{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}</div>
     {{/if}}
 
     <div>Distance: {{ candidate.distance }} miles away</div>

@@ -4,7 +4,7 @@ import { createCandidates } from "./candidates.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick } from "../util/fauxFramework.js";
 
 import matchActionsTemplate from "../templates/velma/matchActions.handlebars";
-import keybindingsHintTemplate from "../templates/velma/keybindingsHint.handlebars";
+import matchKeybindsTemplate from "../templates/velma/matchKeybinds.handlebars";
 
 export const matchLogic = () => {
   const getData = async (id, onError) => {
@@ -115,7 +115,7 @@ export const matchLogic = () => {
   };
 
   const getKeybindsHintTemplate = () => {
-    return keybindingsHintTemplate;
+    return matchKeybindsTemplate;
   };
 
   return {
