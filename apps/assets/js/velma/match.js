@@ -6,7 +6,7 @@ import { fillTemplateIntoDom, showErrorModal, bindClick } from "../util/fauxFram
 import matchActionsTemplate from "../templates/velma/matchActions.handlebars";
 import keybindingsHintTemplate from "../templates/velma/keybindingsHint.handlebars";
 
-export const MatchLogic = () => {
+export const matchLogic = () => {
   const getData = async (id, onError) => {
     const user = await getUser();
     const response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams(id)}`, "GET");
@@ -92,51 +92,51 @@ export const MatchLogic = () => {
     };
   };
 
-  const initActions = (currentLocation, candidate, skipLocation, dismissItem, tryAgain, completeLocation, redoPreviousLocation) => {
+  const initActions = (currentLocation, candidate, actions) => {
     fillTemplateIntoDom(matchActionsTemplate, "#matchActionsContainer", {
       candidate,
     });
 
-    bindClick(".js-skip", skipLocation);
-    bindClick(".js-tryagain", tryAgain);
-    bindClick(".js-close", dismissItem);
-    bindClick(".js-match", () => !!candidate && matchLocation(currentLocation?.id, candidate.id, completeLocation));
-    bindClick(".js-create", () => createLocation(currentLocation?.id, completeLocation));
-
-    return (key) => {
-      switch (key) {
-        case "1":
-        case "m":
-          if (candidate?.id) {
-            document.querySelector(".js-match")?.classList?.add("active");
-            matchLocation(currentLocation?.id, candidate.id, completeLocation);
-          }
-          break;
-        case "2":
-        case "d":
-          if (candidate?.id) {
-            dismissItem();
-          } else {
-            tryAgain();
-          }
-          break;
-        case "3":
-        case "c":
-          document.querySelector(".js-create")?.classList?.add("active");
-          createLocation(currentLocation?.id, completeLocation);
-          break;
-        case "4":
-        case "s":
-          document.querySelector(".js-skip")?.classList?.add("active");
-          skipLocation();
-          break;
-        case "5":
-        case "r":
-          redoPreviousLocation();
-          break;
-      }
-    };
+    bindClick(".js-skip", actions.skipLocation);
+    bindClick(".js-tryagain", actions.tryAgain);
+    bindClick(".js-close", actions.dismissItem);
+    bindClick(".js-match", () => !!candidate && matchLocation(currentLocation?.id, candidate.id, actions.completeLocation));
+    bindClick(".js-create", () => createLocation(currentLocation?.id, actions.completeLocation));
   };
+
+  const handleKeybind = (key, currentLocation, candidate, actions) => {
+    switch (key) {
+      case "1":
+      case "m":
+        if (candidate?.id) {
+          document.querySelector(".js-match")?.classList?.add("active");
+          matchLocation(currentLocation?.id, candidate.id, actions.completeLocation);
+        }
+        break;
+      case "2":
+      case "d":
+        if (candidate?.id) {
+          actions.dismissItem();
+        } else {
+          actions.tryAgain();
+        }
+        break;
+      case "3":
+      case "c":
+        document.querySelector(".js-create")?.classList?.add("active");
+        createLocation(currentLocation?.id, actions.completeLocation);
+        break;
+      case "4":
+      case "s":
+        document.querySelector(".js-skip")?.classList?.add("active");
+        actions.skipLocation();
+        break;
+      case "5":
+      case "r":
+        actions.redoPreviousLocation();
+        break;
+    }
+  }
 
   const getKeybindsHintTemplate = () => {
     return keybindingsHintTemplate;
@@ -146,6 +146,7 @@ export const MatchLogic = () => {
     getData,
     initActions,
     getKeybindsHintTemplate,
+    handleKeybind,
     supportsRedo: true,
   };
 };

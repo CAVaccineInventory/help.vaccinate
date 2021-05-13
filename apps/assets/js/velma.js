@@ -15,7 +15,7 @@ import {
   bindClick,
   showModal,
 } from "./util/fauxFramework.js";
-import { MatchLogic } from "./velma/match.js";
+import { matchLogic } from "./velma/match.js";
 
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
@@ -40,9 +40,8 @@ const POWER_USER_KEY = "power_user";
 let currentLocationDebugJson;
 let currentLocation;
 let previousLocationId;
-let currentCandidates;
-let currentCandidateIndex;
-let keybindHandler;
+let currentCandidates = [];
+let currentCandidateIndex = 0;
 let logic;
 
 const initVelma = async () => {
@@ -80,7 +79,7 @@ const updateLogin = (user) => {
 const authOrLoadAndFillItem = async () => {
   const user = await getUser();
   if (user && user.email) {
-    logic = MatchLogic();
+    logic = matchLogic();
     updateKeybindHintsDom();
     requestItem();
   } else {
@@ -94,7 +93,7 @@ const requestItem = async (id) => {
   const data = await logic.getData(id, () => showHomeUI());
   currentLocation = data.currentLocation;
   currentLocationDebugJson = data.currentLocationDebugJson;
-  currentCandidates = data.candidates;
+  currentCandidates = data.candidates || [];
   currentCandidateIndex = 0;
 
   hideLoadingScreen();
@@ -150,35 +149,11 @@ const showCandidate = () => {
     });
   });
 
-  keybindHandler = logic.initActions(
+  logic.initActions(
     currentLocation,
     candidate,
-    skipLocation,
-    dismissItem,
-    tryAgain,
-    completeLocation,
-    redoPreviousLocation
+    actions
   );
-};
-
-const tryAgain = () => {
-  currentCandidateIndex = 0;
-  showCandidate();
-};
-
-const dismissItem = () => {
-  currentCandidateIndex++;
-  showCandidate();
-};
-
-const skipLocation = () => {
-  completeLocation("skip");
-};
-
-const completeLocation = (source) => {
-  previousLocationId = currentLocation?.id;
-  showCompletionToast(source);
-  requestItem();
 };
 
 const showCompletionToast = (source) => {
@@ -191,20 +166,12 @@ const showCompletionToast = (source) => {
   });
 
   bindClick("#toastMakeChange", () => {
-    redoPreviousLocation();
+    actions.redoPreviousLocation();
   });
 
   new bootstrap.Toast(document.querySelector("#completionToast"), {
     autohide: true,
   }).show();
-};
-
-const redoPreviousLocation = () => {
-  document.querySelector("#completionToast")?.classList?.add("hide");
-  if (previousLocationId) {
-    requestItem(previousLocationId);
-  }
-  previousLocationId = null;
 };
 
 const updateKeybindHintsDom = () => {
@@ -247,8 +214,34 @@ const enablePowerUserKeybindings = () => {
       return;
     }
     isPressed = true;
-    if (keybindHandler) {
-      keybindHandler(e.key);
-    }
+    logic.handleKeybind(e.key, currentLocation, currentCandidates[currentCandidateIndex], actions);
   });
 };
+
+const actions = {
+  tryAgain: () => {
+    currentCandidateIndex = 0;
+    showCandidate();
+  },
+
+  dismissItem: () => {
+    currentCandidateIndex++;
+    showCandidate();
+  },
+
+  skipLocation: () => {
+    actions.completeLocation("skip");
+  },
+  completeLocation: (source) => {
+    previousLocationId = currentLocation?.id;
+    showCompletionToast(source);
+    requestItem();
+  },
+  redoPreviousLocation: () => {
+    document.querySelector("#completionToast")?.classList?.add("hide");
+    if (previousLocationId) {
+      requestItem(previousLocationId);
+    }
+    previousLocationId = null;
+  }
+}
