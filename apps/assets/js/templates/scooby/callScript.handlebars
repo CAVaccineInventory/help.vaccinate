@@ -130,58 +130,18 @@
 
   <div id="vaccinatingPublicScript">
     <div class="surveyQuestion">
-      <div class="yousay">Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits?</div>
-      <div class="small text-muted mb-2">
-        If they're vaccinating everyone 16/18+, select "No restrictions". Also, if they’re silent for a few seconds or
-        seem confused, provide examples: “For example, are you only vaccinating county residents or current patients, or
-        anything like that?"
-      </div>
-      <div>
-        <input class="btn-check" type="checkbox" id="noRestrictions" data-hide-on-select="restrictionsList" />
-        <label
-          class="btn btn-outline-success mb-2"
-          title="If they are vaccinating everyone 16+/18+, select this."
-          for="noRestrictions"
-          >No restrictions</label
-        >
+      <div class="yousay">Which types of COVID vaccine do you offer?</div>
+      <input class="btn-check" type="checkbox" id="modernaProvided" />
+      <label class="btn btn-outline-primary" for="modernaProvided">Moderna</label>
 
-        <div id="restrictionsList">
-          <input class="btn-check" type="checkbox" id="veteransOnly" />
-          <label
-            id="veteransOnlyLabel"
-            class="btn btn-outline-primary"
-            title="Ask if veterans' family members can get doses too"
-            for="veteransOnly"
-            >Veterans only</label
-          >
-          <input class="btn-check" type="checkbox" id="patientsOnly" />
-          <label
-            class="btn btn-outline-primary"
-            title="This is a good question to ask clinics/hospitals"
-            for="patientsOnly"
-            >Current patients only</label
-          >
-          <input class="btn-check" type="checkbox" id="countyOnly" />
-          <label
-            class="btn btn-outline-primary"
-            title="If county workers are not included, please note that in the public notes"
-            for="countyOnly"
-            >County residents/workers only</label
-          >
-          <input class="btn-check" type="checkbox" id="other" data-show-also="otherRestriction" />
-          <label
-            class="btn btn-outline-primary"
-            title="Specify the restriction in the box that pops up below."
-            for="other"
-            >Other</label
-          >
+      <input class="btn-check" type="checkbox" id="pfizerProvided" />
+      <label class="btn btn-outline-primary" for="pfizerProvided">Pfizer</label>
 
-          <div id="otherRestriction" class="alert alert-warning mt-2 w-75 hidden" role="alert">
-            Please add extra restrictions not covered above (such as Berkeley students only or 2nd doses only) to the
-            Public Notes
-          </div>
-        </div>
-      </div>
+      <input class="btn-check" type="checkbox" id="jjProvided" />
+      <label class="btn btn-outline-primary" for="jjProvided">Johnson &amp; Johnson</label>
+
+      <input class="btn-check" type="checkbox" id="otherProvided" />
+      <label class="btn btn-outline-primary" for="otherProvided">Other</label>
     </div>
 
     <div class="surveyQuestion">
@@ -339,18 +299,58 @@
     </div>
 
     <div class="surveyQuestion">
-      <div class="yousay">Which vaccines do you offer?</div>
-      <input class="btn-check" type="checkbox" id="modernaProvided" />
-      <label class="btn btn-outline-primary" for="modernaProvided">Moderna</label>
+      <div class="yousay">Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits?</div>
+      <div class="small text-muted mb-2">
+        If they're vaccinating everyone 16/18+, select "No restrictions". Also, if they’re silent for a few seconds or
+        seem confused, provide examples: “For example, are you only vaccinating county residents or current patients, or
+        anything like that?"
+      </div>
+      <div>
+        <input class="btn-check" type="checkbox" id="noRestrictions" data-hide-on-select="restrictionsList" />
+        <label
+          class="btn btn-outline-success mb-2"
+          title="If they are vaccinating everyone 16+/18+, select this."
+          for="noRestrictions"
+          >No restrictions</label
+        >
 
-      <input class="btn-check" type="checkbox" id="pfizerProvided" />
-      <label class="btn btn-outline-primary" for="pfizerProvided">Pfizer</label>
+        <div id="restrictionsList">
+          <input class="btn-check" type="checkbox" id="veteransOnly" />
+          <label
+            id="veteransOnlyLabel"
+            class="btn btn-outline-primary"
+            title="Ask if veterans' family members can get doses too"
+            for="veteransOnly"
+            >Veterans only</label
+          >
+          <input class="btn-check" type="checkbox" id="patientsOnly" />
+          <label
+            class="btn btn-outline-primary"
+            title="This is a good question to ask clinics/hospitals"
+            for="patientsOnly"
+            >Current patients only</label
+          >
+          <input class="btn-check" type="checkbox" id="countyOnly" />
+          <label
+            class="btn btn-outline-primary"
+            title="If county workers are not included, please note that in the public notes"
+            for="countyOnly"
+            >County residents/workers only</label
+          >
+          <input class="btn-check" type="checkbox" id="other" data-show-also="otherRestriction" />
+          <label
+            class="btn btn-outline-primary"
+            title="Specify the restriction in the box that pops up below."
+            for="other"
+            >Other</label
+          >
 
-      <input class="btn-check" type="checkbox" id="jjProvided" />
-      <label class="btn btn-outline-primary" for="jjProvided">Johnson &amp; Johnson</label>
-
-      <input class="btn-check" type="checkbox" id="otherProvided" />
-      <label class="btn btn-outline-primary" for="otherProvided">Other</label>
+          <div id="otherRestriction" class="alert alert-warning mt-2 w-75 hidden" role="alert">
+            Please add extra restrictions not covered above (such as Berkeley students only or 2nd doses only) to the
+            Public Notes
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
