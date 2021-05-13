@@ -14,14 +14,11 @@ This document maps answers in Scooby to (expected) outcomes in VIAL for Reports.
 - No - Adds availability tag `No: may be a vaccination site in the future`
 - No, Never - Adds availability tag `No: will never be a vaccination site`
 
-## Can anyone sign up to be vaccinated, or are there any restrictions or limits?
+## Which types of COVID vaccine do you offer?
 
-- Veterans Only - Adds availability tag `Yes: must be a veteran`
-- Current patients only - Adds availability tag `Yes: must be a current patient`
-- County residents/workers only - Adds availability tag `Yes: restricted to county residents`
-- Other - Sets `Restriction notes` based on input
+Sets `Vaccines offered` as an array of values: `["Moderna", "Pfizer", "Johnson & Johnson", "Other"]`
 
-## do you require appointments, or are walk-ins accepted?
+## Do you require appointments, or are walk-ins accepted?
 
 - Appointment Required - Adds availability tag `Yes: appointment required`
 - Accept appointments and walk-ins - Adds availability tag `Yes: appointments or walk-ins accepted`
@@ -29,7 +26,7 @@ This document maps answers in Scooby to (expected) outcomes in VIAL for Reports.
 
 ***If nothing is selected, defaults to `Yes: appointment required`***
 
-## How do you make an appointment
+## How do you make an appointment?
 
 Sets `Appointment details` to the value of the input. VIAL determines the `Appointment tag` based on the value of `Appointment details`.
 
@@ -39,9 +36,13 @@ Sets `Appointment details` to the value of the input. VIAL determines the `Appoi
 - No - Adds avaialbility tag `Yes: appointment calendar currently full`
 - Not sure - Does nothing
 
-## Which vaccines do you offer?
+## Can anyone sign up to be vaccinated, or are there any restrictions or limits?
 
-Sets `Vaccines offered` as an array of values: `["Moderna", "Pfizer", "Johnson & Johnson", "Other"]`
+- Veterans Only - Adds availability tag `Yes: must be a veteran`
+- Current patients only - Adds availability tag `Yes: must be a current patient`
+- County residents/workers only - Adds availability tag `Yes: restricted to county residents`
+- Other - Does nothing
+
 
 ## When will the the pharmacy stop offering COVID-19 vaccines?
 
