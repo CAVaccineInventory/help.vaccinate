@@ -167,6 +167,8 @@ const showCompletionToast = (source) => {
     reasonSkip: source === "skip",
     reasonMatch: source === "match",
     reasonCreate: source === "create",
+    reasonMerged: source === "merged",
+    reasonNoMerge: source === "nomerge",
     supportsRedo: logic.supportsRedo,
   });
 
@@ -228,12 +230,10 @@ const actions = {
     currentCandidateIndex = 0;
     showCandidate();
   },
-
   dismissItem: () => {
     currentCandidateIndex++;
     showCandidate();
   },
-
   skipLocation: () => {
     actions.completeLocation("skip");
   },

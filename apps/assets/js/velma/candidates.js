@@ -22,6 +22,8 @@ export const createCandidates = async (location, seedCandidate, onError) => {
     candidates.push(seedCandidate);
   }
 
+  // TODO: remove location from candidates
+
   // record the distance. then sort the results by it
   candidates.forEach((item) => {
     item.distance =

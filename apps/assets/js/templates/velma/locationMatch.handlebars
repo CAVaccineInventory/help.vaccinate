@@ -17,13 +17,15 @@
 {{/if}} {{#if candidate}}
 <div id="record-{{candidate.id}}" class="candidateContainer row border-start" data-id="{{candidate.id}}">
   <div class="col-6">
-    <h4 class="text-lowercase text-danger d-inline">{{currentLocation.name}}</h4>
+    <div {{#if matching}}class="text-lowercase"{{/if}}>
+    <h4 class="text-danger d-inline">{{currentLocation.name}}</h4>
     vs
-    <h4 class="text-lowercase text-primary">{{ candidate.name }}</h4>
+    <h4 class="text-primary">{{ candidate.name }}</h4>
 
-    <div class="text-lowercase text-danger d-inline">{{currentLocation.full_address}}</div>
+    <div class="text-danger d-inline">{{currentLocation.full_address}}</div>
     vs
-    <div class="mb-2 text-lowercase text-primary">{{ candidate.full_address }}</div>
+    <div class="mb-2 text-primary">{{ candidate.full_address }}</div>
+    </div>
 
     <div class="text-danger d-inline">
       {{#if currentLocation.phone_number}}{{currentLocation.phone_number}}{{else}}No phone number{{/if}}

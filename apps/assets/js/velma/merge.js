@@ -1,6 +1,9 @@
 import { createCandidates } from "./candidates.js";
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
+import { fillTemplateIntoDom, showErrorModal, bindClick } from "../util/fauxFramework.js";
+
+import mergeActionsTemplate from "../templates/velma/mergeActions.handlebars";
 
 export const mergeLogic = () => {
   const getData = async (id, onError) => {
@@ -59,7 +62,18 @@ export const mergeLogic = () => {
   };
 
   const initActions = (currentLocation, candidate, actions) => {
+    fillTemplateIntoDom(mergeActionsTemplate, "#matchActionsContainer", {
+      candidate,
+    });
+
+    bindClick(".js-skip", actions.skipLocation);
+    bindClick(".js-tryagain", actions.tryAgain);
+    bindClick(".js-close", actions.dismissItem);
+    bindClick(".js-current-wins", () => mergeLocations(currentLocation.id, candidate.id, currentLocation.task_id, actions.completeLocation));
+    bindClick(".js-candidate-wins", () => mergeLocations(candidate.id, currentLocation.id, currentLocation.task_id, actions.completeLocation));
+    bindClick(".js-no-merges", () => resolveTask(currentLocation.task_id, actions.completeLocation));
   };
+
   const handleKeybind = (key, currentLocation, candidate, actions) => {
     return null;
   };
@@ -80,3 +94,39 @@ export const mergeLogic = () => {
     supportsRedo: false,
   };
 };
+
+const mergeLocations = async (winner, loser, taskId, completeLocation) => {
+    const response = await fetchJsonFromEndpoint("/mergeLocations", "POST", JSON.stringify({
+        winner,
+        loser,
+        task_id: taskId
+    }));
+
+  if (response.error) {
+    showErrorModal(
+      "Error merging locations",
+      "We ran into an error trying to merge these locations. Please show this error message to your captain or lead on Slack.",
+      response
+    );
+    return;
+  }
+  completeLocation("merged");
+}
+
+const resolveTask = async (taskId, completeLocation) => {
+    const user = await getUser();
+    const response = await fetchJsonFromEndpoint("/resolveTask", "POST", JSON.stringify({
+        task_id: taskId,
+        resolution: {"resolver": user?.email}
+    }));
+
+  if (response.error) {
+    showErrorModal(
+      "Error resolving task",
+      "We ran into an error trying to resolve this merge task. Please show this error message to your captain or lead on Slack.",
+      response
+    );
+    return;
+  }
+  completeLocation("nomerge");
+}
