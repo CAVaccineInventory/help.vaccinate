@@ -1,3 +1,13 @@
+{{#*inline "inlineButtons"}}
+    <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
+    {{#if locationUrl}}
+      <a href="{{locationUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-danger">Red on VTS</a>
+    {{/if}}
+    {{#if candidateUrl}}
+      <a href="{{candidateUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-primary">Blue on VTS</a>
+    {{/if}}
+{{/inline}}
+
 <h3 class="mt-4 text-center">
   {{#if matching}}Matching{{else}}Merging{{/if}} <span class="text-danger">{{currentLocation.name}}</span>
 </h3>
@@ -58,11 +68,7 @@
     {{/unless}}
 
     <div>Distance: {{ candidate.distance }} miles away</div>
-    <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
-    {{#unless matching}} <!-- merging -->
-    <a href="{{locationUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-primary">Blue on VTS</a>
-    <a href="{{candidateUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-danger">Red on VTS</a>
-    {{/unless}}
+    {{> inlineButtons}}
   </div>
   <div class="map col-6" id="map-{{candidate.id}}">Map goes here</div>
 </div>
@@ -87,12 +93,7 @@
       {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
     </div>
     {{/unless}}
-
-    <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
-    {{#unless matching}} <!-- merging -->
-    <button type="button" class="js-debug mt-2 btn btn-sm btn-primary">Blue on VTS</button>
-    <button type="button" class="js-debug mt-2 btn btn-sm btn-danger">Red on VTS</button>
-    {{/unless}}
+    {{> inlineButtons}}
   </div>
 </div>
 {{/if}}
