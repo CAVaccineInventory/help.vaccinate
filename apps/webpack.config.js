@@ -35,5 +35,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [new webpack.EnvironmentPlugin({ DEPLOY: "testing" })],
+  plugins: [new webpack.EnvironmentPlugin({ DEPLOY: "testing", CUSTOM_API_TARGET: null})],
 };

@@ -37,6 +37,9 @@ You can build and run the app locally via `./script/server`. Local
 development works against staging VIAL, so it's safe to try out new
 things without worrying about writing to production.
 
+If you want to test the app against a local API instance, you can set
+the CUSTOM_API_TARGET environment variable: `export CUSTOM_API_TARGET=http://0.0.0.0:3000/api && script/server`
+
 ### Using Docker
 
 Alternatively, you can run the app via docker, which ensures a clean
