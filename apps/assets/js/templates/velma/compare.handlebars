@@ -43,16 +43,26 @@
       </a>
     </div>
 
-    {{#if compareHours}}
+    {{#unless matching}} <!-- merging -->
     <div class="text-danger d-inline">
       {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
     </div>
     vs
     <div class="mb-2 text-primary">{{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}</div>
-    {{/if}}
+
+    <div class="text-danger d-inline">
+      {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
+    </div>
+    vs
+    <div class="mb-2 text-primary">{{#if candidate.provider.name}}Provider: {{candidate.provider.name}}{{else}}No provider{{/if}}</div>
+    {{/unless}}
 
     <div>Distance: {{ candidate.distance }} miles away</div>
     <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
+    {{#unless matching}} <!-- merging -->
+    <a href="{{locationUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-primary">Blue on VTS</a>
+    <a href="{{candidateUrl}}" target="_blank" class="js-debug mt-2 btn btn-sm btn-danger">Red on VTS</a>
+    {{/unless}}
   </div>
   <div class="map col-6" id="map-{{candidate.id}}">Map goes here</div>
 </div>
@@ -72,8 +82,13 @@
     <div class="text-danger">
       {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
     </div>
+    <div class="text-danger">
+      {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
+    </div>
 
     <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
+    <button type="button" class="js-debug mt-2 btn btn-sm btn-primary">Blue on VTS</button>
+    <button type="button" class="js-debug mt-2 btn btn-sm btn-danger">Red on VTS</button>
   </div>
 </div>
 {{/if}}

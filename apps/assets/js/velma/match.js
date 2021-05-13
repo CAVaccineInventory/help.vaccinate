@@ -119,7 +119,6 @@ export const matchLogic = () => {
     initActions,
     handleKeybind,
     role: "match",
-    extensions: {},
     supportsRedo: true,
     keybindTemplate: matchKeybindsTemplate,
   };

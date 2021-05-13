@@ -28,3 +28,7 @@
     max-width: 1280px;
     margin: auto;
 }
+
+.map {
+    max-height: 60vh;
+}

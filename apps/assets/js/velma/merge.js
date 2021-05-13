@@ -119,9 +119,6 @@ export const mergeLogic = () => {
     initActions,
     handleKeybind,
     role: "merge",
-    extensions: {
-      compareHours: true,
-    },
     supportsRedo: false,
     keybindTemplate: mergeKeybindsTemplate,
   };

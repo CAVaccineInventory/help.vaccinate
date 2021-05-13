@@ -114,13 +114,19 @@ const requestItem = async (id) => {
 const showCandidate = () => {
   const candidate = currentCandidates[currentCandidateIndex];
 
+  let locationUrl;
+  let candidateUrl;
+  locationUrl = `https://vaccinatethestates.com?lat=${currentLocation.latitude}&lng=${currentLocation.longitude}#${currentLocation.id}`
+  candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`
+
   fillTemplateIntoDom(compareTemplate, "#compareCandidate", {
     currentLocation: currentLocation,
     candidate: candidate,
     numCandidates: currentCandidates.length,
     curNumber: currentCandidateIndex + 1,
     matching: logic.role === "match",
-    ...logic.extensions,
+    locationUrl,
+    candidateUrl,
   });
 
   if (candidate && candidate.latitude && candidate.longitude) {
