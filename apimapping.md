@@ -41,7 +41,7 @@ Sets `Appointment details` to the value of the input. VIAL determines the `Appoi
 - Veterans Only - Adds availability tag `Yes: must be a veteran`
 - Current patients only - Adds availability tag `Yes: must be a current patient`
 - County residents/workers only - Adds availability tag `Yes: restricted to county residents`
-- Other - Sets `Restriction notes` based on input
+- Other - Does nothing
 
 
 ## When will the the pharmacy stop offering COVID-19 vaccines?
