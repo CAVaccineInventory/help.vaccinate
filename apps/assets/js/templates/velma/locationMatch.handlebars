@@ -13,18 +13,22 @@
     vs
     <h4 class="text-lowercase text-primary">{{ candidate.name }}</h4>
 
-    <div class="text-lowercase text-danger d-inline">{{currentLocation.address}}</div>
+    <div class="text-lowercase text-danger d-inline">{{currentLocation.full_address}}</div>
     vs
     <div class="mb-2 text-lowercase text-primary">{{ candidate.full_address }}</div>
 
-    <div class="text-danger d-inline">{{#if currentLocation.phone}}{{currentLocation.phone}}{{else}}No phone number{{/if}}</div>
+    <div class="text-danger d-inline">
+      {{#if currentLocation.phone_number}}{{currentLocation.phone_number}}{{else}}No phone number{{/if}}
+    </div>
     vs
     <div class="mb-2 text-primary">
       {{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number{{/if}}
     </div>
 
     <div class="text-break d-inline">
-      <a class="text-danger" href="{{currentLocation.website}}" target="_new"> {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}} </a>
+      <a class="text-danger" href="{{currentLocation.website}}" target="_new">
+        {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
+      </a>
     </div>
     vs
     <div class="text-break">
@@ -42,10 +46,14 @@
 <div class="candidateContainer row border-start">
   <div class="col-6">
     <h4 class="text-lowercase text-danger">{{ currentLocation.name }}</h4>
-    <div class="text-lowercase text-danger">{{ currentLocation.address }}</div>
-    <div class="text-danger">{{#if currentLocation.phone}}{{currentLocation.phone}}{{else}}No phone number{{/if}}</div>
+    <div class="text-lowercase text-danger">{{ currentLocation.full_address }}</div>
+    <div class="text-danger">
+      {{#if currentLocation.phone_number}}{{currentLocation.phone_number}}{{else}}No phone number{{/if}}
+    </div>
     <div class="text-break">
-      <a class="text-danger" href="{{currentLocation.website}}" target="_new"> {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}} </a>
+      <a class="text-danger" href="{{currentLocation.website}}" target="_new">
+        {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
+      </a>
     </div>
 
     <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>

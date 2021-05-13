@@ -150,7 +150,15 @@ const showCandidate = () => {
     });
   });
 
-  keybindHandler = logic.initActions(currentLocation, candidate, skipLocation, dismissItem, tryAgain, completeLocation);
+  keybindHandler = logic.initActions(
+    currentLocation,
+    candidate,
+    skipLocation,
+    dismissItem,
+    tryAgain,
+    completeLocation,
+    redoPreviousLocation
+  );
 };
 
 const tryAgain = () => {
@@ -168,9 +176,9 @@ const skipLocation = () => {
 };
 
 const completeLocation = (source) => {
-    previousLocationId = currentLocation?.id;
-    showCompletionToast(source);
-    requestItem();
+  previousLocationId = currentLocation?.id;
+  showCompletionToast(source);
+  requestItem();
 };
 
 const showCompletionToast = (source) => {
