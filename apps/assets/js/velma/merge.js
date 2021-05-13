@@ -79,16 +79,16 @@ export const mergeLogic = () => {
     switch (key) {
       case "1":
       case "r":
-        if (currentLocation.id && candidate.id) {
+        if (currentLocation.id && candidate.id && currentLocation.task_id) {
           document.querySelector(".js-current-wins")?.classList?.add("active");
-          mergeLocations(currentLocation.id, candidate.id, actions.completeLocation);
+          mergeLocations(currentLocation.id, candidate.id, currentLocation.task_id, actions.completeLocation);
         }
         break;
       case "2":
       case "b":
-        if (currentLocation.id && candidate.id) {
+        if (currentLocation.id && candidate.id && currentLocation.task_id) {
           document.querySelector(".js-candidate-wins")?.classList?.add("active");
-          mergeLocations(candidate.id, currentLocation.id, actions.completeLocation);
+          mergeLocations(candidate.id, currentLocation.id, currentLocation.task_id, actions.completeLocation);
         }
         break;
       case "3":
