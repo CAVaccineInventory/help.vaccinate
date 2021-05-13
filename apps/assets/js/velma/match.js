@@ -74,7 +74,7 @@ export const matchLogic = () => {
     });
 
     bindClick(".js-skip", actions.skipLocation);
-    bindClick(".js-tryagain", actions.tryAgain);
+    bindClick(".js-tryagain", actions.restart);
     bindClick(".js-close", actions.dismissItem);
     bindClick(".js-match", () => !!candidate && matchLocation(currentLocation?.id, candidate.id, actions.completeLocation));
     bindClick(".js-create", () => createLocation(currentLocation?.id, actions.completeLocation));
@@ -94,7 +94,7 @@ export const matchLogic = () => {
         if (candidate?.id) {
           actions.dismissItem();
         } else {
-          actions.tryAgain();
+          actions.restart();
         }
         break;
       case "3":
@@ -108,8 +108,8 @@ export const matchLogic = () => {
         actions.skipLocation();
         break;
       case "5":
-      case "r":
-        actions.redoPreviousLocation();
+      case "u":
+        actions.undoPreviousLocation();
         break;
     }
   };

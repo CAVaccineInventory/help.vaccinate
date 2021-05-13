@@ -67,7 +67,7 @@ export const mergeLogic = () => {
     });
 
     bindClick(".js-skip", actions.skipLocation);
-    bindClick(".js-tryagain", actions.tryAgain);
+    bindClick(".js-tryagain", actions.restart);
     bindClick(".js-close", actions.dismissItem);
     bindClick(".js-current-wins", () => mergeLocations(currentLocation.id, candidate.id, currentLocation.task_id, actions.completeLocation));
     bindClick(".js-candidate-wins", () => mergeLocations(candidate.id, currentLocation.id, currentLocation.task_id, actions.completeLocation));
@@ -75,7 +75,42 @@ export const mergeLogic = () => {
   };
 
   const handleKeybind = (key, currentLocation, candidate, actions) => {
-    return null;
+    switch (key) {
+      case "1":
+      case "r":
+        if (currentLocation.id && candidate.id) {
+          document.querySelector(".js-current-wins")?.classList?.add("active");
+          mergeLocations(currentLocation.id, candidate.id, actions.completeLocation);
+        }
+        break;
+      case "2":
+      case "b":
+        if (currentLocation.id && candidate.id) {
+          document.querySelector(".js-candidate-wins")?.classList?.add("active");
+          mergeLocations(candidate.id, currentLocation.id, actions.completeLocation);
+        }
+        break;
+      case "3":
+      case "d":
+        if (candidate?.id) {
+          actions.dismissItem();
+        } else {
+          actions.restart();
+        }
+        break;
+      case "4":
+      case "n":
+        if (currentLocation.task_id) {
+          document.querySelector(".js-no-merges")?.classList?.add("active");
+          resolveTask(currentLocation.task_id, actions.completeLocation);
+        }
+        break;
+      case "5":
+      case "s":
+        document.querySelector(".js-skip")?.classList?.add("active");
+        actions.skipLocation();
+        break;
+    }
   };
 
   const getKeybindsHintTemplate = () => {

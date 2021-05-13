@@ -16,8 +16,8 @@
       <div class="text-wrap">
         {{#if reasonSkip}}
         <b>Skipped</b> {{ title }}. {{/if}} {{#if reasonMatch}} <b>Matched</b> {{ title }}. {{/if}} {{#if reasonCreate}}
-        <b>Created new location</b> for {{ title }}. {{/if}} {{#if reasonMerged}}<b>Merged</b> {{title}}{{/if}}
-        {{#if reasonNoMerge}}<b>Did not merge</b> {{title}}{{/if}}
+        <b>Created new location</b> for {{ title }}. {{/if}} {{#if reasonMerged}}<b>Merged</b> {{title}}{{/if}} {{#if
+        reasonNoMerge}}<b>Did not merge</b> {{title}}{{/if}}
       </div>
       {{#if supportsRedo}}
       <div class="small align-self-end mt-2">

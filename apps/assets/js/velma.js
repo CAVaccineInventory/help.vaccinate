@@ -175,7 +175,7 @@ const showCompletionToast = (source) => {
   });
 
   bindClick("#toastMakeChange", () => {
-    actions.redoPreviousLocation();
+    actions.undoPreviousLocation();
   });
 
   new bootstrap.Toast(document.querySelector("#completionToast"), {
@@ -228,7 +228,7 @@ const enablePowerUserKeybindings = () => {
 };
 
 const actions = {
-  tryAgain: () => {
+  restart: () => {
     currentCandidateIndex = 0;
     showCandidate();
   },
@@ -244,7 +244,7 @@ const actions = {
     showCompletionToast(source);
     requestItem();
   },
-  redoPreviousLocation: () => {
+  undoPreviousLocation: () => {
     document.querySelector("#completionToast")?.classList?.add("hide");
     if (previousLocationId) {
       requestItem(previousLocationId);
