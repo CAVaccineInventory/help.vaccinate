@@ -1,7 +1,7 @@
 import { createCandidates } from "./candidates.js";
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
-import { fillTemplateIntoDom, showErrorModal, bindClick } from "../util/fauxFramework.js";
+import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
 
 import mergeActionsTemplate from "../templates/velma/mergeActions.handlebars";
 import mergeKeybindsTemplate from "../templates/velma/mergeKeybinds.handlebars";
@@ -125,11 +125,13 @@ export const mergeLogic = () => {
 };
 
 const mergeLocations = async (winner, loser, taskId, completeLocation) => {
+  showLoadingScreen();
   const response = await fetchJsonFromEndpoint("/mergeLocations", "POST", JSON.stringify({
     winner,
     loser,
     task_id: taskId,
   }));
+  hideLoadingScreen();
 
   if (response.error) {
     showErrorModal(
@@ -143,11 +145,13 @@ const mergeLocations = async (winner, loser, taskId, completeLocation) => {
 };
 
 const resolveTask = async (taskId, completeLocation) => {
+  showLoadingScreen();
   const user = await getUser();
   const response = await fetchJsonFromEndpoint("/resolveTask", "POST", JSON.stringify({
     task_id: taskId,
     resolution: { "resolver": user?.email },
   }));
+  hideLoadingScreen();
 
   if (response.error) {
     showErrorModal(

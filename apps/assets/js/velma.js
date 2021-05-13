@@ -117,7 +117,9 @@ const showCandidate = () => {
   let locationUrl;
   let candidateUrl;
   locationUrl = `https://vaccinatethestates.com?lat=${currentLocation.latitude}&lng=${currentLocation.longitude}#${currentLocation.id}`
-  candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`
+  if (candidate) {
+    candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`
+  }
 
   fillTemplateIntoDom(compareTemplate, "#compareCandidate", {
     currentLocation: currentLocation,

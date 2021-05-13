@@ -1,7 +1,7 @@
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
 import { createCandidates } from "./candidates.js";
-import { fillTemplateIntoDom, showErrorModal, bindClick } from "../util/fauxFramework.js";
+import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
 
 import matchActionsTemplate from "../templates/velma/matchActions.handlebars";
 import matchKeybindsTemplate from "../templates/velma/matchKeybinds.handlebars";
@@ -125,6 +125,7 @@ export const matchLogic = () => {
 };
 
 const matchLocation = async (currentLocationId, candidateId, completeLocation) => {
+  showLoadingScreen();
   const response = await fetchJsonFromEndpoint(
     "/updateSourceLocationMatch",
     "POST",
@@ -133,6 +134,7 @@ const matchLocation = async (currentLocationId, candidateId, completeLocation) =
       location: candidateId,
     })
   );
+  hideLoadingScreen();
   if (response.error) {
     showErrorModal(
       "Error matching location",
@@ -145,6 +147,7 @@ const matchLocation = async (currentLocationId, candidateId, completeLocation) =
 };
 
 const createLocation = async (id, completeLocation) => {
+  showLoadingScreen();
   const response = await fetchJsonFromEndpoint(
     "/createLocationFromSourceLocation",
     "POST",
@@ -152,6 +155,7 @@ const createLocation = async (id, completeLocation) => {
       source_location: id,
     })
   );
+  hideLoadingScreen();
   if (response.error) {
     showErrorModal(
       "Error creating location",
