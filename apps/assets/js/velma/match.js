@@ -1,6 +1,6 @@
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
-import { distance } from "./distance.js";
+import { createCandidates } from "./candidates.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick } from "../util/fauxFramework.js";
 
 import matchActionsTemplate from "../templates/velma/matchActions.handlebars";
@@ -48,42 +48,18 @@ export const matchLogic = () => {
     currentLocation.phone_number = sourceLocation?.import_json?.contact?.find((method) => !!method.phone)?.phone;
     currentLocation.full_address = `${sourceLocation.import_json.address.street1}, ${sourceLocation.import_json.address.city}, ${sourceLocation.import_json.address.state} ${sourceLocation.import_json.address.zip}`;
 
-    let candidates = await fetchJsonFromEndpoint(
-      "/searchLocations?size=50&latitude=" +
-        currentLocation.latitude +
-        "&longitude=" +
-        currentLocation.longitude +
-        "&radius=2000",
-      "GET"
-    );
-
-    if (candidates.error) {
+    const candidates = await createCandidates(sourceLocation, null, (error) => {
       showErrorModal(
         "Error fetching locations to match against",
-        "We ran into an error trying to fetch you a locations to match against. Please show this error message to your captain or lead on Slack." +
+        "We ran into an error trying to fetch you locations to match against. Please show this error message to your captain or lead on Slack." +
             " They may also need to know that you are logged in as " +
             user?.email +
             ".",
-        response
+            error 
       );
       onError();
       return;
-    }
-
-    // record the distance. then sort the results by it
-    candidates?.results.forEach((item) => {
-      item.distance =
-        Math.round(100 * distance(item.latitude, item.longitude, currentLocation.latitude, currentLocation.longitude)) /
-        100;
-    });
-    candidates?.results.sort((a, b) => (a.distance > b.distance ? 1 : -1));
-    candidates = candidates?.results || [];
-    candidates.forEach((candidate) => {
-      if (candidate && candidate.latitude && candidate.longitude) {
-        candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
-        candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
-      }
-    });
+    })
 
     return {
       currentLocation,
