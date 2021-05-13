@@ -25,7 +25,7 @@ import optionsModalTemplate from "./templates/velma/optionsModal.handlebars";
 import completionToastTemplate from "./templates/velma/completionToast.handlebars";
 import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
-import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
+import compareTemplate from "./templates/velma/compare.handlebars";
 
 document.addEventListener("DOMContentLoaded", () => {
   Sentry.init({
@@ -114,7 +114,7 @@ const requestItem = async (id) => {
 const showCandidate = () => {
   const candidate = currentCandidates[currentCandidateIndex];
 
-  fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
+  fillTemplateIntoDom(compareTemplate, "#compareCandidate", {
     currentLocation: currentLocation,
     candidate: candidate,
     numCandidates: currentCandidates.length,
