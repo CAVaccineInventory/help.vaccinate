@@ -62,7 +62,7 @@ export const mergeLogic = () => {
   };
 
   const initActions = (currentLocation, candidate, actions) => {
-    fillTemplateIntoDom(mergeActionsTemplate, "#matchActionsContainer", {
+    fillTemplateIntoDom(mergeActionsTemplate, "#actionsContainer", {
       candidate,
     });
 

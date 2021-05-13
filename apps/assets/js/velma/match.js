@@ -69,7 +69,7 @@ export const matchLogic = () => {
   };
 
   const initActions = (currentLocation, candidate, actions) => {
-    fillTemplateIntoDom(matchActionsTemplate, "#matchActionsContainer", {
+    fillTemplateIntoDom(matchActionsTemplate, "#actionsContainer", {
       candidate,
     });
 
