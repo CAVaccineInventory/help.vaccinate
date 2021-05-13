@@ -1,0 +1,9 @@
+{{#if candidate}}
+<button class="js-match btn btn-success me-4 my-2">Matches this one!</button>
+<button class="js-close btn btn-secondary me-4 my-2">Does not match</button>
+<button class="js-skip btn btn-warning my-2">Skip this location. Someone else can deal.</button>
+{{else}}
+<button class="js-create btn btn-success me-4 my-2">Create a new location</button>
+<button class="js-tryagain btn btn-secondary me-4 my-2">Try again, I think I messed up</button>
+<button class="js-skip btn btn-warning my-2">Skip this location. Someone else can deal.</button>
+{{/if}}

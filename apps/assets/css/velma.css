@@ -7,17 +7,28 @@
     height: calc(100vh - 84px);
 }
 
-#keybindings-hint {
+#keybindingsHint {
     display: none;
 }
 
 @media (min-width: 800px) {
-    #keybindings-hint {
+    #keybindingsHint {
         display: block;
     }
 }
+
+#actions {
+    z-index: 1000;
+}
+
+#compareCandidate {
+    margin-bottom: 100px;
+}
 .candidateContainer {
-    min-height: 50vh;
     max-width: 1280px;
     margin: auto;
+}
+
+.map {
+    max-height: 60vh;
 }
