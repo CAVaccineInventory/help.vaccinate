@@ -62,10 +62,12 @@ const initVelma = async () => {
     authOrLoadAndFillItem();
   });
   bindClick("#optionsButton", showPowerUserModal);
+  bindClick(".navbar-brand", showHomeUI);
   enablePowerUserKeybindings();
 };
 
 const showHomeUI = () => {
+  document.querySelector("#keybindingsHint").innerHTML = "";
   hideElement("#velmaUI");
   showElement("#nextItemPrompt");
 };
