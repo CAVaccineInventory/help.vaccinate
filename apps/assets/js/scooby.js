@@ -230,7 +230,6 @@ const constructReportFromDom = () => {
   }
 
   if (!isHidden("#vaccinatingPublicScript")) {
-
     // Which vaccines do you offer
     const vaccinesOffered = [];
     if (document.querySelector("#modernaProvided")?.checked) {
