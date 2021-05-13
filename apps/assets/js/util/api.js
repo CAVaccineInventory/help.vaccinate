@@ -1,8 +1,14 @@
 import { getAccessToken } from "./auth.js";
 
 export const fetchJsonFromEndpoint = async (endpoint, method, body) => {
-  const apiTarget =
-    process.env.DEPLOY === "prod" ? "https://vial.calltheshots.us/api" : "https://vial-staging.calltheshots.us/api";
+  let apiTarget;
+  if (process.env.DEPLOY === "prod") {
+    apiTarget = "https://vial.calltheshots.us/api";
+  } else if (process.env.CUSTOM_API_TARGET) {
+    apiTarget = process.env.CUSTOM_API_TARGET;
+  } else {
+    apiTarget = "https://vial-staging.calltheshots.us/api";
+  }
 
   if (!method) {
     method = "POST";

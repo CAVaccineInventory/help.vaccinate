@@ -230,20 +230,22 @@ const constructReportFromDom = () => {
   }
 
   if (!isHidden("#vaccinatingPublicScript")) {
-    if (!isHidden("#restrictionsList")) {
-      // Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits
-      if (document.querySelector("#veteransOnly")?.checked) {
-        availability.push("Yes: must be a veteran");
-      }
-      if (document.querySelector("#patientsOnly")?.checked) {
-        availability.push("Yes: must be a current patient");
-      }
-      if (document.querySelector("#countyOnly")?.checked) {
-        availability.push("Yes: restricted to county residents");
-      }
-      if (!isHidden("#otherRestriction")) {
-        currentReport.restriction_notes = document.querySelector("#restrictionsReasonForm")?.innerText;
-      }
+    // Which vaccines do you offer
+    const vaccinesOffered = [];
+    if (document.querySelector("#modernaProvided")?.checked) {
+      vaccinesOffered.push("Moderna");
+    }
+    if (document.querySelector("#pfizerProvided")?.checked) {
+      vaccinesOffered.push("Pfizer");
+    }
+    if (document.querySelector("#jjProvided")?.checked) {
+      vaccinesOffered.push("Johnson & Johnson");
+    }
+    if (document.querySelector("#otherProvided")?.checked) {
+      vaccinesOffered.push("Other");
+    }
+    if (vaccinesOffered.length > 0) {
+      currentReport.vaccines_offered = vaccinesOffered;
     }
 
     // And do you require appointments, or are walk-ins accepted?
@@ -303,23 +305,17 @@ const constructReportFromDom = () => {
         // do nothing
       }
     }
-
-    // Which vaccines do you offer
-    const vaccinesOffered = [];
-    if (document.querySelector("#modernaProvided")?.checked) {
-      vaccinesOffered.push("Moderna");
-    }
-    if (document.querySelector("#pfizerProvided")?.checked) {
-      vaccinesOffered.push("Pfizer");
-    }
-    if (document.querySelector("#jjProvided")?.checked) {
-      vaccinesOffered.push("Johnson & Johnson");
-    }
-    if (document.querySelector("#otherProvided")?.checked) {
-      vaccinesOffered.push("Other");
-    }
-    if (vaccinesOffered.length > 0) {
-      currentReport.vaccines_offered = vaccinesOffered;
+    if (!isHidden("#restrictionsList")) {
+      // Thanks! Can anyone sign up to be vaccinated, or are there any restrictions or limits
+      if (document.querySelector("#veteransOnly")?.checked) {
+        availability.push("Yes: must be a veteran");
+      }
+      if (document.querySelector("#patientsOnly")?.checked) {
+        availability.push("Yes: must be a current patient");
+      }
+      if (document.querySelector("#countyOnly")?.checked) {
+        availability.push("Yes: restricted to county residents");
+      }
     }
   }
 
