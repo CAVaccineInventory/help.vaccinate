@@ -5,12 +5,12 @@ import { fetchJsonFromEndpoint } from "../util/api.js";
 export const mergeLogic = () => {
   const getData = async (id, onError) => {
     if (id) {
-        console.error("merge logic doesn't support forced IDs");
-        return;
+      console.error("merge logic doesn't support forced IDs");
+      return;
     }
     const user = await getUser();
     const response = await fetchJsonFromEndpoint("/requestTask", "POST", JSON.stringify({
-        task_type: "Potential duplicate"
+      task_type: "Potential duplicate",
     }));
     if (response.error) {
       showErrorModal(
@@ -45,34 +45,38 @@ export const mergeLogic = () => {
             " They may also need to know that you are logged in as " +
             user?.email +
             ".",
-            error 
+        error
       );
       onError();
       return;
-    })
+    });
 
     return {
       currentLocation,
       currentLocationDebugJson,
       candidates,
     };
-  }
+  };
 
   const initActions = (currentLocation, candidate, actions) => {
-  }
+  };
   const handleKeybind = (key, currentLocation, candidate, actions) => {
-      return null;
-  }
+    return null;
+  };
 
   const getKeybindsHintTemplate = () => {
-      return null;
-  }
+    return null;
+  };
 
   return {
     getData,
     initActions,
     getKeybindsHintTemplate,
     handleKeybind,
+    role: "merge",
+    extensions: {
+      compareHours: true,
+    },
     supportsRedo: false,
   };
-}
+};

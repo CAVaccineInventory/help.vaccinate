@@ -55,11 +55,11 @@ export const matchLogic = () => {
             " They may also need to know that you are logged in as " +
             user?.email +
             ".",
-            error 
+        error
       );
       onError();
       return;
-    })
+    });
 
     return {
       currentLocation,
@@ -112,7 +112,7 @@ export const matchLogic = () => {
         actions.redoPreviousLocation();
         break;
     }
-  }
+  };
 
   const getKeybindsHintTemplate = () => {
     return keybindingsHintTemplate;
@@ -123,6 +123,8 @@ export const matchLogic = () => {
     initActions,
     getKeybindsHintTemplate,
     handleKeybind,
+    role: "match",
+    extensions: {},
     supportsRedo: true,
   };
 };

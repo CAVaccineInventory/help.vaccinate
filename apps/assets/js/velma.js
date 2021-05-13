@@ -117,6 +117,8 @@ const showCandidate = () => {
     candidate: candidate,
     numCandidates: currentCandidates.length,
     curNumber: currentCandidateIndex + 1,
+    matching: logic.role === "match",
+    ...logic.extensions,
   });
 
   if (candidate && candidate.latitude && candidate.longitude) {
@@ -151,16 +153,12 @@ const showCandidate = () => {
 
   bindClick(".js-debug", () => {
     showModal(debugModalTemplate, {
-      sourceJson: currentLocationDebugJson,
+      currentJson: currentLocationDebugJson,
       candidateJson: candidate ? JSON.stringify(candidate, null, 2) : null,
     });
   });
 
-  logic.initActions(
-    currentLocation,
-    candidate,
-    actions
-  );
+  logic.initActions(currentLocation, candidate, actions);
 };
 
 const showCompletionToast = (source) => {
@@ -250,5 +248,5 @@ const actions = {
       requestItem(previousLocationId);
     }
     previousLocationId = null;
-  }
-}
+  },
+};

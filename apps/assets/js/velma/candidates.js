@@ -15,7 +15,7 @@ export const createCandidates = async (location, seedCandidate, onError) => {
     return;
   }
 
-  const candidates = response?.results || []
+  const candidates = response?.results || [];
 
   // TODO: dedupe
   if (seedCandidate) {
@@ -37,7 +37,7 @@ export const createCandidates = async (location, seedCandidate, onError) => {
   });
 
   return candidates;
-}
+};
 
 
 // This distance routine is licensed under LGPLv3.

@@ -1,10 +1,18 @@
+{{#if matching}}
 <h3 class="mt-4 text-center">Matching <span class="text-danger">{{currentLocation.name}}</span></h3>
+{{else}}
+<h3 class="mt-4 text-center">Merging <span class="text-danger">{{currentLocation.name}}</span></h3>
+{{/if}}
 
 {{#if candidate}}
 <h5 class="mb-4 text-center">Candidate {{curNumber}} of {{numCandidates}}</h5>
 {{else}}
 <h5 class="mb-4 text-center">
-  {{#if numCandidates}}All potential matches declined{{else}}We couldn't find any matching candidates{{/if}}
+  {{#if matching}}
+    {{#if numCandidates}}All potential matches declined{{else}}We couldn't find any matching candidates{{/if}}
+  {{else}}
+    {{#if numCandidates}}All potential merges declined{{else}}We couldn't find any merge candidates{{/if}}
+  {{/if}}
 </h5>
 {{/if}} {{#if candidate}}
 <div id="record-{{candidate.id}}" class="candidateContainer row border-start" data-id="{{candidate.id}}">
@@ -31,13 +39,23 @@
       </a>
     </div>
     vs
-    <div class="text-break">
+    <div class="text-break mb-2">
       <a class="text-primary" href="{{candidate.website}}" target="_new">
         {{#if candidate.website}}{{candidate.website}}{{else}}No website{{/if}}
       </a>
     </div>
 
-    <div class="mt-2">Distance: {{ candidate.distance }} miles away</div>
+    {{#if compareHours}}
+    <div class="text-danger d-inline">
+      {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
+    </div>
+    vs
+    <div class="mb-2 text-primary">
+      {{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}
+    </div>
+    {{/if}}
+
+    <div>Distance: {{ candidate.distance }} miles away</div>
     <button type="button" class="js-debug mt-2 text-white btn btn-sm btn-info">Debug Info</button>
   </div>
   <div class="map col-6" id="map-{{candidate.id}}">Map goes here</div>
