@@ -6,7 +6,7 @@ import { Integrations } from "@sentry/tracing";
 
 import { fetchJsonFromEndpoint } from "./util/api.js";
 import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
-import { validateReport } from "./util/validators.js";
+import { validateReport } from "./scooby/validators.js";
 import {
   bindClick,
   fillTemplateIntoDom,
