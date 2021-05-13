@@ -6,7 +6,7 @@ import { Integrations } from "@sentry/tracing";
 
 import { fetchJsonFromEndpoint } from "./util/api.js";
 import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
-import { validateReport } from "./util/validators.js";
+import { validateReport } from "./scooby/validators.js";
 import {
   bindClick,
   fillTemplateIntoDom,
@@ -17,6 +17,7 @@ import {
   showLoadingScreen,
   hideLoadingScreen,
   showModal,
+  showErrorModal,
 } from "./util/fauxFramework.js";
 
 import locationTemplate from "./templates/scooby/location.handlebars";
@@ -30,7 +31,6 @@ import callLogTemplate from "./templates/scooby/callLog.handlebars";
 import toastTemplate from "./templates/scooby/toast.handlebars";
 import affiliationNotesTemplate from "./templates/scooby/affiliationNotes.handlebars";
 import callScriptTemplate from "./templates/scooby/callScript.handlebars";
-import errorModalTemplate from "./templates/errorModal.handlebars";
 import callerStatsTemplate from "./templates/scooby/callerStats.handlebars";
 import submissionWarningModalTemplate from "./templates/scooby/submissionWarningModal.handlebars";
 
@@ -95,14 +95,6 @@ const updateLogin = (user) => {
     fillTemplateIntoDom(notLoggedInTemplate, "#loggedInAs", {});
     bindClick("#loginButton", loginWithRedirect);
   }
-};
-
-const showErrorModal = (title, body, json) => {
-  showModal(errorModalTemplate, {
-    title,
-    body,
-    json: JSON.stringify(json, null, 2),
-  });
 };
 
 const authOrLoadAndFillCall = async () => {

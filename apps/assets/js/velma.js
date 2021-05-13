@@ -4,7 +4,6 @@ import "regenerator-runtime/runtime";
 import * as Sentry from "@sentry/browser";
 import { Integrations } from "@sentry/tracing";
 
-import { fetchJsonFromEndpoint } from "./util/api.js";
 import { initAuth0, loginWithRedirect, logout, getUser } from "./util/auth.js";
 
 import {
@@ -16,17 +15,17 @@ import {
   bindClick,
   showModal,
 } from "./util/fauxFramework.js";
+import { matchLogic } from "./velma/match.js";
+import { mergeLogic } from "./velma/merge.js";
 
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
-import errorModalTemplate from "./templates/errorModal.handlebars";
 
 import optionsModalTemplate from "./templates/velma/optionsModal.handlebars";
 import completionToastTemplate from "./templates/velma/completionToast.handlebars";
 import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
-import locationMatchTemplate from "./templates/velma/locationMatch.handlebars";
-import keybindingsHintTemplate from "./templates/velma/keybindingsHint.handlebars";
+import compareTemplate from "./templates/velma/compare.handlebars";
 
 document.addEventListener("DOMContentLoaded", () => {
   Sentry.init({
@@ -39,11 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const POWER_USER_KEY = "power_user";
 
-let originalSourceLocationJson;
-let sourceLocation;
+let currentLocationDebugJson;
+let currentLocation;
 let previousLocationId;
-let currentCandidates;
-let currentCandidateIndex;
+let currentCandidates = [];
+let currentCandidateIndex = 0;
+let logic;
 
 const initVelma = async () => {
   showLoadingScreen();
@@ -53,17 +53,21 @@ const initVelma = async () => {
   updateLogin(user);
   hideLoadingScreen();
   fillTemplateIntoDom(nextItemPromptTemplate, "#nextItemPrompt", {});
-  bindClick("#requestItemButton", authOrLoadAndFillItem);
-  bindClick("#optionsButton", showPowerUserModal);
-
-  if (getForceLocation()) {
+  bindClick(".js-start-matching", () => {
+    logic = matchLogic();
     authOrLoadAndFillItem();
-  }
-
+  });
+  bindClick(".js-start-merging", () => {
+    logic = mergeLogic();
+    authOrLoadAndFillItem();
+  });
+  bindClick("#optionsButton", showPowerUserModal);
+  bindClick(".navbar-brand", showHomeUI);
   enablePowerUserKeybindings();
 };
 
 const showHomeUI = () => {
+  document.querySelector("#keybindingsHint").innerHTML = "";
   hideElement("#velmaUI");
   showElement("#nextItemPrompt");
 };
@@ -82,19 +86,11 @@ const updateLogin = (user) => {
   }
 };
 
-const showErrorModal = (title, body, json) => {
-  showModal(errorModalTemplate, {
-    title,
-    body,
-    json: JSON.stringify(json, null, 2),
-  });
-};
-
 const authOrLoadAndFillItem = async () => {
   const user = await getUser();
   if (user && user.email) {
-    const id = getForceLocation();
-    requestItem(id);
+    updateKeybindHintsDom();
+    requestItem();
   } else {
     loginWithRedirect();
   }
@@ -102,75 +98,11 @@ const authOrLoadAndFillItem = async () => {
 
 const requestItem = async (id) => {
   showLoadingScreen();
-  const user = await getUser();
 
-  const response = await fetchJsonFromEndpoint(`/searchSourceLocations?${createSearchQueryParams(id)}`, "GET");
-  if (response.error) {
-    showErrorModal(
-      "Error fetching source location",
-      "We ran into an error trying to fetch you a source location to match. Please show this error message to your captain or lead on Slack." +
-        " They may also need to know that you are logged in as " +
-        user?.email +
-        ".",
-      response
-    );
-    showHomeUI();
-    return;
-  } else if (response.results && !response.results.length) {
-    // no results
-    showErrorModal(
-      "No locations to match",
-      "It looks like we've matched every single source location for the provided query parameters!",
-      createSearchQueryParams(id)
-    );
-    showHomeUI();
-    return;
-  }
-
-  sourceLocation = response.results[0];
-  originalSourceLocationJson = JSON.stringify(sourceLocation, null, 2);
-
-  // some "fun" modifications to sourceLocation to make it more usable
-  sourceLocation.latitude = Math.round(sourceLocation.latitude * 10000) / 10000;
-  sourceLocation.longitude = Math.round(sourceLocation.longitude * 10000) / 10000;
-
-  const websites = sourceLocation?.import_json?.contact?.filter((method) => !!method.website);
-  sourceLocation.website =
-    websites?.find((method) => method.contact_type === "general")?.website || websites?.[0]?.website;
-  sourceLocation.phone = sourceLocation?.import_json?.contact?.find((method) => !!method.phone)?.phone;
-  sourceLocation.addr = `${sourceLocation.import_json.address.street1}, ${sourceLocation.import_json.address.city}, ${sourceLocation.import_json.address.state} ${sourceLocation.import_json.address.zip}`;
-
-  const candidates = await fetchJsonFromEndpoint(
-    "/searchLocations?size=50&latitude=" +
-      sourceLocation.latitude +
-      "&longitude=" +
-      sourceLocation.longitude +
-      "&radius=2000",
-    "GET"
-  );
-
-  if (candidates.error) {
-    showErrorModal(
-      "Error fetching locations to match against",
-      "We ran into an error trying to fetch you a locations to match against. Please show this error message to your captain or lead on Slack." +
-        " They may also need to know that you are logged in as " +
-        user?.email +
-        ".",
-      response
-    );
-    showHomeUI();
-    return;
-  }
-
-  // record the distance. then sort the results by it
-  candidates?.results.forEach((item) => {
-    item.distance =
-      Math.round(100 * distance(item.latitude, item.longitude, sourceLocation.latitude, sourceLocation.longitude)) /
-      100;
-  });
-  candidates?.results.sort((a, b) => (a.distance > b.distance ? 1 : -1));
-
-  currentCandidates = candidates?.results || [];
+  const data = await logic.getData(id, () => showHomeUI());
+  currentLocation = data.currentLocation;
+  currentLocationDebugJson = data.currentLocationDebugJson;
+  currentCandidates = data.candidates || [];
   currentCandidateIndex = 0;
 
   hideLoadingScreen();
@@ -182,23 +114,23 @@ const requestItem = async (id) => {
 const showCandidate = () => {
   const candidate = currentCandidates[currentCandidateIndex];
 
-  if (candidate && candidate.latitude && candidate.longitude) {
-    candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
-    candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
+  let locationUrl;
+  let candidateUrl;
+  if (logic.role === "merge") {
+    locationUrl = `https://vaccinatethestates.com?lat=${currentLocation.latitude}&lng=${currentLocation.longitude}#${currentLocation.id}`;
+  }
+  if (candidate) {
+    candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`;
   }
 
-  fillTemplateIntoDom(locationMatchTemplate, "#locationMatchCandidates", {
-    name: sourceLocation.name,
-    address: sourceLocation.addr,
-    city: sourceLocation.import_json.address.city,
-    state: sourceLocation.import_json.address.state,
-    zip: sourceLocation.import_json.address.zip,
-    website: sourceLocation.website,
-    phone: sourceLocation.phone,
-
+  fillTemplateIntoDom(compareTemplate, "#compareCandidate", {
+    currentLocation: currentLocation,
     candidate: candidate,
     numCandidates: currentCandidates.length,
     curNumber: currentCandidateIndex + 1,
+    matching: logic.role === "match",
+    locationUrl,
+    candidateUrl,
   });
 
   if (candidate && candidate.latitude && candidate.longitude) {
@@ -213,7 +145,7 @@ const showCandidate = () => {
       zoomOffset: -1,
       accessToken: "pk.eyJ1IjoiY2FsbHRoZXNob3RzIiwiYSI6ImNrbzNod3B0eDB3cm4ycW1ieXJpejR4cGQifQ.oZSg34AkLAVhksJjLt7kKA",
     }).addTo(mymap);
-    const srcLoc = L.circle([sourceLocation.latitude, sourceLocation.longitude], {
+    const srcLoc = L.circle([currentLocation.latitude, currentLocation.longitude], {
       color: "red",
       fillColor: "#f03",
       fillOpacity: 0.5,
@@ -233,93 +165,27 @@ const showCandidate = () => {
 
   bindClick(".js-debug", () => {
     showModal(debugModalTemplate, {
-      sourceJson: originalSourceLocationJson,
+      currentJson: currentLocationDebugJson,
       candidateJson: candidate ? JSON.stringify(candidate, null, 2) : null,
     });
   });
-  bindClick(".js-skip", skipLocation);
-  bindClick(".js-match", () => !!candidate && matchLocation(candidate.id));
-  bindClick(".js-close", dismissItem);
-  bindClick(".js-create", createLocation);
-  bindClick(".js-tryagain", tryAgain);
-};
 
-const tryAgain = () => {
-  currentCandidateIndex = 0;
-  showCandidate();
-};
-
-const dismissItem = () => {
-  currentCandidateIndex++;
-  showCandidate();
-};
-
-const skipLocation = () => {
-  completeLocation("skip");
-};
-
-const matchLocation = async (id) => {
-  const response = await fetchJsonFromEndpoint(
-    "/updateSourceLocationMatch",
-    "POST",
-    JSON.stringify({
-      source_location: sourceLocation?.import_json?.id,
-      location: id,
-    })
-  );
-  if (response.error) {
-    showErrorModal(
-      "Error matching location",
-      "We ran into an error trying to match the location. Please show this error message to your captain or lead on Slack.",
-      response
-    );
-    return;
-  }
-  completeLocation("match");
-};
-
-const createLocation = async () => {
-  const response = await fetchJsonFromEndpoint(
-    "/createLocationFromSourceLocation",
-    "POST",
-    JSON.stringify({
-      source_location: sourceLocation?.import_json?.id,
-    })
-  );
-  if (response.error) {
-    showErrorModal(
-      "Error creating location",
-      "We ran into an error trying to create the location. Please show this error message to your captain or lead on Slack.",
-      response
-    );
-    return;
-  }
-  completeLocation("create");
-};
-
-const completeLocation = (source) => {
-  if (getForceLocation()) {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.delete("source_location_id");
-    window.history.replaceState({}, "", `${window.location.pathname}?${urlParams.toString()}`);
-    showHomeUI();
-  } else {
-    previousLocationId = sourceLocation?.id;
-    showCompletionToast(source);
-    requestItem();
-  }
+  logic.initActions(currentLocation, candidate, actions);
 };
 
 const showCompletionToast = (source) => {
   fillTemplateIntoDom(completionToastTemplate, "#toastContainer", {
-    title: sourceLocation?.name,
+    title: currentLocation?.name,
     reasonSkip: source === "skip",
     reasonMatch: source === "match",
     reasonCreate: source === "create",
+    reasonMerged: source === "merged",
+    reasonNoMerge: source === "nomerge",
+    supportsRedo: logic.supportsRedo,
   });
 
   bindClick("#toastMakeChange", () => {
-    redoPreviousLocation();
+    actions.undoPreviousLocation();
   });
 
   new bootstrap.Toast(document.querySelector("#completionToast"), {
@@ -327,71 +193,9 @@ const showCompletionToast = (source) => {
   }).show();
 };
 
-const redoPreviousLocation = () => {
-  document.querySelector("#completionToast")?.classList?.add("hide");
-  if (previousLocationId) {
-    requestItem(previousLocationId);
-  }
-  previousLocationId = null;
-};
-
-// This distance routine is licensed under LGPLv3.
-// source: https://www.geodatasource.com/developers/javascript
-const distance = (lat1, lon1, lat2, lon2) => {
-  if (lat1 == lat2 && lon1 == lon2) {
-    return 0;
-  } else {
-    const radlat1 = (Math.PI * lat1) / 180;
-    const radlat2 = (Math.PI * lat2) / 180;
-    const theta = lon1 - lon2;
-    const radtheta = (Math.PI * theta) / 180;
-    let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-    if (dist > 1) {
-      dist = 1;
-    }
-    dist = Math.acos(dist);
-    dist = (dist * 180) / Math.PI;
-    dist = dist * 60 * 1.1515;
-    return dist;
-  }
-};
-
-const createSearchQueryParams = (id) => {
-  const params = {};
-
-  if (id) {
-    params.id = id;
-    params.haspoint = 1;
-  } else {
-    const urlParams = new URLSearchParams(window.location.search);
-    const q = urlParams.get("source_q");
-    const state = urlParams.get("source_state");
-    const sourceName = urlParams.get("source_name");
-    params.random = 1;
-    params.unmatched = 1;
-    params.size = 1;
-    params.haspoint = 1;
-    if (q) {
-      params.q = q;
-    }
-    if (state) {
-      params.state = state;
-    }
-    if (sourceName) {
-      params.source_name = sourceName;
-    }
-  }
-  return new URLSearchParams(params).toString();
-};
-
-const getForceLocation = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("source_location_id");
-};
-
 const updateKeybindHintsDom = () => {
   if (isPowerUserEnabled()) {
-    fillTemplateIntoDom(keybindingsHintTemplate, "#keybindingsHint", {});
+    fillTemplateIntoDom(logic.keybindTemplate, "#keybindingsHint", {});
   } else if (document.querySelector("#keybindingsHint")) {
     document.querySelector("#keybindingsHint").innerHTML = "";
   }
@@ -418,7 +222,6 @@ const showPowerUserModal = () => {
 };
 
 const enablePowerUserKeybindings = () => {
-  updateKeybindHintsDom();
   let isPressed = false;
 
   document.addEventListener("keyup", () => {
@@ -430,39 +233,32 @@ const enablePowerUserKeybindings = () => {
       return;
     }
     isPressed = true;
-
-    const currentCandidate = document.querySelector(".candidateContainer");
-    const id = currentCandidate?.getAttribute("data-id");
-    switch (e.key) {
-      case "1":
-      case "m":
-        if (id) {
-          document.querySelector(".js-match")?.classList?.add("active");
-          matchLocation(id);
-        }
-        break;
-      case "2":
-      case "d":
-        if (id) {
-          dismissItem();
-        } else {
-          tryAgain();
-        }
-        break;
-      case "3":
-      case "c":
-        document.querySelector(".js-create")?.classList?.add("active");
-        createLocation();
-        break;
-      case "4":
-      case "s":
-        document.querySelector(".js-skip")?.classList?.add("active");
-        skipLocation();
-        break;
-      case "5":
-      case "r":
-        redoPreviousLocation();
-        break;
-    }
+    logic.handleKeybind(e.key, currentLocation, currentCandidates[currentCandidateIndex], actions);
   });
+};
+
+const actions = {
+  restart: () => {
+    currentCandidateIndex = 0;
+    showCandidate();
+  },
+  dismissItem: () => {
+    currentCandidateIndex++;
+    showCandidate();
+  },
+  skipLocation: () => {
+    actions.completeLocation("skip");
+  },
+  completeLocation: (source) => {
+    previousLocationId = currentLocation?.id;
+    showCompletionToast(source);
+    requestItem();
+  },
+  undoPreviousLocation: () => {
+    document.querySelector("#completionToast")?.classList?.add("hide");
+    if (previousLocationId) {
+      requestItem(previousLocationId);
+    }
+    previousLocationId = null;
+  },
 };
