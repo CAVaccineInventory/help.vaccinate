@@ -1,4 +1,3 @@
-import { createCandidates } from "./candidates.js";
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
@@ -51,19 +50,7 @@ const getData = async (id, onError) => {
   const currentLocationDebugJson = JSON.stringify(currentLocation, null, 2);
   // add taskId to current location to later resolve
   currentLocation.task_id = response.task.id;
-
-  const candidates = await createCandidates(currentLocation, response.task.other_location, (error) => {
-    showErrorModal(
-      "Error fetching locations to merge against",
-      "We ran into an error trying to fetch you locations to merge against. Please show this error message to your captain or lead on Slack." +
-            " They may also need to know that you are logged in as " +
-            user?.email +
-            ".",
-      error
-    );
-    onError();
-    return;
-  });
+  const candidates = [response.task.other_location];
 
   return {
     currentLocation,
