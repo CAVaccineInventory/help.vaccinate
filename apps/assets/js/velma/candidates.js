@@ -39,10 +39,9 @@ export const createCandidates = async (location, seedCandidate, onError) => {
   return candidates;
 };
 
-
 // This distance routine is licensed under LGPLv3.
 // source: https://www.geodatasource.com/developers/javascript
-const distance = (lat1, lon1, lat2, lon2) => {
+export const distance = (lat1, lon1, lat2, lon2) => {
   if (lat1 == lat2 && lon1 == lon2) {
     return 0;
   } else {

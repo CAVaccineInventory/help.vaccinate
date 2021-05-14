@@ -1,7 +1,7 @@
-import { createCandidates } from "./candidates.js";
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
+import { distance } from "./candidates.js";
 
 import mergeActionsTemplate from "../templates/velma/mergeActions.handlebars";
 import mergeKeybindsTemplate from "../templates/velma/mergeKeybinds.handlebars";
@@ -51,19 +51,9 @@ const getData = async (id, onError) => {
   const currentLocationDebugJson = JSON.stringify(currentLocation, null, 2);
   // add taskId to current location to later resolve
   currentLocation.task_id = response.task.id;
-
-  const candidates = await createCandidates(currentLocation, response.task.other_location, (error) => {
-    showErrorModal(
-      "Error fetching locations to merge against",
-      "We ran into an error trying to fetch you locations to merge against. Please show this error message to your captain or lead on Slack." +
-            " They may also need to know that you are logged in as " +
-            user?.email +
-            ".",
-      error
-    );
-    onError();
-    return;
-  });
+  const otherLocation = response.task.other_location;
+  otherLocation.distance = Math.round(100 * distance(otherLocation.latitude, otherLocation.longitude, currentLocation.latitude, currentLocation.longitude)) / 100;
+  const candidates = [otherLocation];
 
   return {
     currentLocation,
