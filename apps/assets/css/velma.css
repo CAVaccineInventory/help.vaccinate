@@ -32,3 +32,7 @@
 .map {
     max-height: 60vh;
 }
+
+.versus-same {
+    opacity: 50%;
+}

@@ -22,49 +22,59 @@
 <div class="candidateContainer row border-start">
   <div class="col-6">
     <div class="{{#if matching}}text-lowercase{{/if}}">
-      <h4 class="text-danger d-inline">{{currentLocation.name}}</h4>
+      <div class="versus-box {{#if equality.name}}versus-same{{/if}}">
+        <h4 class="text-danger d-inline">{{currentLocation.name}}</h4>
+        vs
+        <h4 class="text-primary">{{ candidate.name }}</h4>
+      </div>
+      <div class="versus-box {{#if equality.full_address}}versus-same{{/if}}">
+        <div class="text-danger d-inline">{{currentLocation.full_address}}</div>
+        vs
+        <div class="mb-2 text-primary">{{ candidate.full_address }}</div>
+      </div>
+    </div>
+
+    <div class="versus-box {{#if equality.phone_number}}versus-same{{/if}}">
+      <div class="text-danger d-inline">
+        {{#if currentLocation.phone_number}}{{currentLocation.phone_number}}{{else}}No phone number{{/if}}
+      </div>
       vs
-      <h4 class="text-primary">{{ candidate.name }}</h4>
+      <div class="mb-2 text-primary">
+        {{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number{{/if}}
+      </div>
+    </div>
 
-      <div class="text-danger d-inline">{{currentLocation.full_address}}</div>
+    <div class="versus-box {{#if equality.website}}versus-same{{/if}}">
+      <div class="text-break d-inline">
+        <a class="text-danger" href="{{currentLocation.website}}" target="_new">
+          {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
+        </a>
+      </div>
       vs
-      <div class="mb-2 text-primary">{{ candidate.full_address }}</div>
-    </div>
-
-    <div class="text-danger d-inline">
-      {{#if currentLocation.phone_number}}{{currentLocation.phone_number}}{{else}}No phone number{{/if}}
-    </div>
-    vs
-    <div class="mb-2 text-primary">
-      {{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number{{/if}}
-    </div>
-
-    <div class="text-break d-inline">
-      <a class="text-danger" href="{{currentLocation.website}}" target="_new">
-        {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
-      </a>
-    </div>
-    vs
-    <div class="text-break mb-2">
-      <a class="text-primary" href="{{candidate.website}}" target="_new">
-        {{#if candidate.website}}{{candidate.website}}{{else}}No website{{/if}}
-      </a>
+      <div class="text-break mb-2">
+        <a class="text-primary" href="{{candidate.website}}" target="_new">
+          {{#if candidate.website}}{{candidate.website}}{{else}}No website{{/if}}
+        </a>
+      </div>
     </div>
 
     {{#unless matching}}
     <!-- merging -->
-    <div class="text-danger d-inline">
-      {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
+    <div class="versus-box {{#if equality.hours}}versus-same{{/if}}">
+      <div class="text-danger d-inline">
+        {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
+      </div>
+      vs
+      <div class="mb-2 text-primary">{{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}</div>
     </div>
-    vs
-    <div class="mb-2 text-primary">{{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}</div>
-
-    <div class="text-danger d-inline">
-      {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
-    </div>
-    vs
-    <div class="mb-2 text-primary">
-      {{#if candidate.provider.name}}Provider: {{candidate.provider.name}}{{else}}No provider{{/if}}
+    <div class="versus-box {{#if equality.provider}}versus-same{{/if}}">
+      <div class="text-danger d-inline">
+        {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
+      </div>
+      vs
+      <div class="mb-2 text-primary">
+        {{#if candidate.provider.name}}Provider: {{candidate.provider.name}}{{else}}No provider{{/if}}
+      </div>
     </div>
     {{/unless}}
 

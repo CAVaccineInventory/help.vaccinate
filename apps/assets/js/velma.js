@@ -123,9 +123,20 @@ const showCandidate = () => {
     candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`;
   }
 
+  // For greying out comparisons which are equal
+  const equality = {};
+  const keys = ["name", "full_address", "phone_number", "website", "hours"];
+  if (candidate) {
+    for (const key of keys) {
+      equality[key] = currentLocation[key] == candidate[key];
+    }
+    equality["provider"] = currentLocation.provider.name == candidate.provider.name;
+  }
+
   fillTemplateIntoDom(compareTemplate, "#compareCandidate", {
     currentLocation: currentLocation,
     candidate: candidate,
+    equality: equality,
     numCandidates: currentCandidates.length,
     curNumber: currentCandidateIndex + 1,
     matching: logic.role === "match",
