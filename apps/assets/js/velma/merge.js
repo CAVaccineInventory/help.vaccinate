@@ -1,6 +1,7 @@
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
+import { distance } from "./candidates.js";
 
 import mergeActionsTemplate from "../templates/velma/mergeActions.handlebars";
 import mergeKeybindsTemplate from "../templates/velma/mergeKeybinds.handlebars";
@@ -50,7 +51,9 @@ const getData = async (id, onError) => {
   const currentLocationDebugJson = JSON.stringify(currentLocation, null, 2);
   // add taskId to current location to later resolve
   currentLocation.task_id = response.task.id;
-  const candidates = [response.task.other_location];
+  const otherLocation = response.task.other_location;
+  otherLocation.distance = Math.round(100 * distance(otherLocation.latitude, otherLocation.longitude, currentLocation.latitude, currentLocation.longitude)) / 100;
+  const candidates = [otherLocation];
 
   return {
     currentLocation,
