@@ -6,7 +6,6 @@ This document maps answers in Scooby to (expected) outcomes in VIAL for Reports.
 
 - Yes - Does nothing
 - Sort of
-  - J&J Paused - Adds availability tag `Vaccinations may be on hold due to CDC/FDA guidance regarding the Johnson & Johnson vaccine`
   - Expect to offer within 2 weeks - Adds availability tag`Yes: coming soon`
   - Want to, don't know when - Adds availability tag `No: may be a vaccination site in the future`
   - Private site - Adds availability  tag `No: not open to the public`
