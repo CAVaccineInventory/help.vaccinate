@@ -24,11 +24,11 @@ const getData = async (id, onError) => {
   const user = await getUser();
   const urlParams = new URLSearchParams(window.location.search);
   const requestBody = { task_type: "Potential duplicate" };
-  if (urlParams.get("source_q")) {
-    requestBody.q = urlParams.get("source_q");
+  if (urlParams.get("task_q")) {
+    requestBody.q = urlParams.get("task_q");
   }
-  if (urlParams.get("source_state")) {
-    requestBody.state = urlParams.get("source_state");
+  if (urlParams.get("task_state")) {
+    requestBody.state = urlParams.get("task_state");
   }
 
   const response = await fetchJsonFromEndpoint("/requestTask", "POST", JSON.stringify(requestBody));
