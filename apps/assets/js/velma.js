@@ -188,7 +188,12 @@ const enablePowerUserKeybindings = () => {
       return;
     }
     isPressed = true;
-    logic.handleKeybind(e.key, currentLocation, currentCandidates[currentCandidateIndex], actions);
+    logic.handleKeybind({
+      key: e.key,
+      candidate: currentCandidates[currentCandidateIndex],
+      currentLocation,
+      actions,
+    });
   });
 };
 

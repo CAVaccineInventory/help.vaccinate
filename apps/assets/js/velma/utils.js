@@ -49,5 +49,4 @@ export const setupMap = (currentLocation, candidate) => {
     const group = new L.featureGroup([srcLoc, candidateLoc]);
     mymap.fitBounds(group.getBounds(), { padding: L.point(5, 5) });
   }
-
-}
+};

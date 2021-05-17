@@ -11,7 +11,6 @@ export const matchLogic = () => {
     getData,
     compareCandidates,
     handleKeybind,
-    role: "match",
     supportsRedo: true,
     keybindTemplate: matchKeybindsTemplate,
   };
@@ -79,7 +78,7 @@ const getData = async (id, onError) => {
     return;
   }
 
-  let candidates = candidatesResponse?.results || [];
+  const candidates = candidatesResponse?.results || [];
 
   // record the distance. then sort the results by it
   candidates.forEach((item) => {
@@ -102,7 +101,7 @@ const getData = async (id, onError) => {
   };
 };
 
-const compareCandidates = ({currentLocation, candidate, actions, selector, currentCandidateIndex, numCandidates}) => {
+const compareCandidates = ({ currentLocation, candidate, actions, selector, currentCandidateIndex, numCandidates }) => {
   let candidateUrl;
   if (candidate) {
     candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`;
@@ -125,7 +124,7 @@ const compareCandidates = ({currentLocation, candidate, actions, selector, curre
   bindClick(".js-create", () => createLocation(currentLocation?.id, actions.completeLocation));
 };
 
-const handleKeybind = (key, currentLocation, candidate, actions) => {
+const handleKeybind = ({ key, currentLocation, candidate, actions }) => {
   switch (key) {
     case "1":
     case "m":

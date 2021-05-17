@@ -11,7 +11,6 @@ export const mergeLogic = () => {
     getData,
     compareCandidates,
     handleKeybind,
-    role: "merge",
     supportsRedo: false,
     keybindTemplate: mergeKeybindsTemplate,
   };
@@ -24,7 +23,7 @@ const getData = async (id, onError) => {
   }
   const user = await getUser();
   const urlParams = new URLSearchParams(window.location.search);
-  let requestBody = {task_type: "Potential duplicate"};
+  const requestBody = { task_type: "Potential duplicate" };
   if (urlParams.get("source_q")) {
     requestBody.q = urlParams.get("source_q");
   }
@@ -51,7 +50,7 @@ const getData = async (id, onError) => {
       "We could not find a location that needed to be merged:",
       {
         requestBody,
-        response
+        response,
       }
     );
     onError();
@@ -82,7 +81,7 @@ const getData = async (id, onError) => {
   };
 };
 
-const compareCandidates = ({currentLocation, candidate, actions, selector }) => {
+const compareCandidates = ({ currentLocation, candidate, actions, selector }) => {
   const locationUrl = `https://vaccinatethestates.com?lat=${currentLocation.latitude}&lng=${currentLocation.longitude}#${currentLocation.id}`;
   let candidateUrl;
   if (candidate) {
@@ -104,7 +103,7 @@ const compareCandidates = ({currentLocation, candidate, actions, selector }) => 
   bindClick(".js-skip", actions.skipLocation);
 };
 
-const handleKeybind = (key, currentLocation, candidate, actions) => {
+const handleKeybind = ({ key, currentLocation, candidate, actions }) => {
   switch (key) {
     case "1":
     case "r":
