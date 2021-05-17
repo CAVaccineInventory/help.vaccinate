@@ -130,6 +130,7 @@ const showCandidate = () => {
 };
 
 const showCompletionToast = (source) => {
+  // TODO: this would be better abstracted to logic files 
   fillTemplateIntoDom(completionToastTemplate, "#toastContainer", {
     title: currentLocation?.name,
     reasonSkip: source === "skip",
