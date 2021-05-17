@@ -1,7 +1,7 @@
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
-import { distance } from "./candidates.js";
+import { distance } from "./distance.js";
 
 import mergeActionsTemplate from "../templates/velma/mergeActions.handlebars";
 import mergeKeybindsTemplate from "../templates/velma/mergeKeybinds.handlebars";
@@ -47,6 +47,16 @@ const getData = async (id, onError) => {
     onError();
     return;
   }
+  if (!response.task.location || !response.task.other_location) {
+    showErrorModal(
+      "Missing location in task",
+      "We did not get a location in the task:",
+      response
+    );
+    onError();
+    return;
+  }
+
   const currentLocation = response.task.location;
   const currentLocationDebugJson = JSON.stringify(currentLocation, null, 2);
   // add taskId to current location to later resolve
@@ -63,16 +73,12 @@ const getData = async (id, onError) => {
 };
 
 const initActions = (currentLocation, candidate, actions) => {
-  fillTemplateIntoDom(mergeActionsTemplate, "#actionsContainer", {
-    candidate,
-  });
+  fillTemplateIntoDom(mergeActionsTemplate, "#actionsContainer");
 
-  bindClick(".js-skip", actions.skipLocation);
-  bindClick(".js-tryagain", actions.restart);
-  bindClick(".js-close", actions.dismissItem);
   bindClick(".js-current-wins", () => mergeLocations(currentLocation.id, candidate.id, currentLocation.task_id, actions.completeLocation));
   bindClick(".js-candidate-wins", () => mergeLocations(candidate.id, currentLocation.id, currentLocation.task_id, actions.completeLocation));
-  bindClick(".js-no-merges", () => resolveTask(currentLocation.task_id, actions.completeLocation));
+  bindClick(".js-close", () => resolveTask(currentLocation.task_id, actions.completeLocation));
+  bindClick(".js-skip", actions.skipLocation);
 };
 
 const handleKeybind = (key, currentLocation, candidate, actions) => {
@@ -93,23 +99,15 @@ const handleKeybind = (key, currentLocation, candidate, actions) => {
       break;
     case "3":
     case "d":
-      if (candidate?.id) {
-        actions.dismissItem();
-      } else {
-        actions.restart();
+      if (currentLocation.task_id) {
+        document.querySelector(".js-close")?.classList?.add("active");
+        resolveTask(currentLocation.task_id, actions.completeLocation);
       }
       break;
     case "4":
     case "s":
       document.querySelector(".js-skip")?.classList?.add("active");
       actions.skipLocation();
-      break;
-    case "5":
-    case "n":
-      if (currentLocation.task_id) {
-        document.querySelector(".js-no-merges")?.classList?.add("active");
-        resolveTask(currentLocation.task_id, actions.completeLocation);
-      }
       break;
   }
 };

@@ -1,7 +1,7 @@
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
-import { createCandidates } from "./candidates.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
+import { distance } from "./distance.js";
 
 import matchActionsTemplate from "../templates/velma/matchActions.handlebars";
 import matchKeybindsTemplate from "../templates/velma/matchKeybinds.handlebars";
@@ -58,7 +58,16 @@ const getData = async (id, onError) => {
   currentLocation.phone_number = sourceLocation?.import_json?.contact?.find((method) => !!method.phone)?.phone;
   currentLocation.full_address = `${sourceLocation.import_json.address.street1}, ${sourceLocation.import_json.address.city}, ${sourceLocation.import_json.address.state} ${sourceLocation.import_json.address.zip}`;
 
-  const candidates = await createCandidates(sourceLocation, null, (error) => {
+  const candidatesResponse = await fetchJsonFromEndpoint(
+    "/searchLocations?size=50&latitude=" +
+      location.latitude +
+      "&longitude=" +
+      location.longitude +
+      "&radius=2000",
+    "GET"
+  );
+
+  if (candidatesResponse.error) {
     showErrorModal(
       "Error fetching locations to match against",
       "We ran into an error trying to fetch you locations to match against. Please show this error message to your captain or lead on Slack." +
@@ -67,8 +76,23 @@ const getData = async (id, onError) => {
             ".",
       error
     );
-    onError();
     return;
+  }
+
+  let candidates = candidatesResponse?.results || [];
+
+  // record the distance. then sort the results by it
+  candidates.forEach((item) => {
+    item.distance =
+      Math.round(100 * distance(item.latitude, item.longitude, location.latitude, location.longitude)) /
+      100;
+  });
+  candidates.sort((a, b) => (a.distance > b.distance ? 1 : -1));
+  candidates.forEach((candidate) => {
+    if (candidate && candidate.latitude && candidate.longitude) {
+      candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
+      candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
+    }
   });
 
   return {
