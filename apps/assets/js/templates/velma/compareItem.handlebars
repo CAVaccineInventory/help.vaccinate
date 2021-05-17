@@ -1,76 +1,48 @@
+{{#*inline "compareHeader"}}
+<h4 class="{{#if (isEq currentItem candidateItem matching)}}text-muted{{else}}text-danger{{/if}} d-inline">
+  {{#if currentItem}} {{currentItem}} {{else}} {{default}} {{/if}}
+</h4>
+vs
+<h4 class="{{#if (isEq currentItem candidateItem matching)}}text-muted{{else}}text-primary{{/if}}">
+  {{#if candidateItem}} {{candidateItem}} {{else}} {{default}} {{/if}}
+</h4>
+{{/inline}} {{#*inline "compareLink"}}
+<a
+  href="{{currentItem}}"
+  class="{{#if (isEq currentItem candidateItem matching)}}text-muted{{else}}text-danger{{/if}} d-inline text-break"
+>
+  {{#if currentItem}} {{currentItem}} {{else}} {{default}} {{/if}}
+</a>
+vs
+<div class="mb-2">
+  <a
+    href="{{candidateItem}}"
+    class="{{#if (isEq currentItem candidateItem matching)}}text-muted{{else}}text-primary{{/if}} text-break"
+  >
+    {{#if candidateItem}} {{candidateItem}} {{else}} {{default}} {{/if}}
+  </a>
+</div>
+{{/inline}} {{#*inline "compare"}}
+<div class="{{#if (isEq currentItem candidateItem matching)}}text-muted{{else}}text-danger{{/if}} d-inline">
+  {{#if currentItem}} {{currentItem}} {{else}} {{default}} {{/if}}
+</div>
+vs
+<div class="mb-2 {{#if (isEq currentItem candidateItem matching)}}text-muted{{else}}text-primary{{/if}}">
+  {{#if candidateItem}} {{candidateItem}} {{else}} {{default}} {{/if}}
+</div>
+{{/inline}}
+
 <div class="candidateContainer row border-start">
   <div class="col-6">
     <div class="{{#if matching}}text-lowercase{{/if}}">
-      {{#if (isEq currentLocation.name candidate.name matching)}}
-      <h4 class="text-muted d-inline">{{currentLocation.name}}</h4>
-      vs
-      <h4 class="text-muted">{{ candidate.name }}</h4>
-      {{else}}
-      <h4 class="text-danger d-inline">{{currentLocation.name}}</h4>
-      vs
-      <h4 class="text-primary">{{ candidate.name }}</h4>
-      {{/if}} {{#if (isEq currentLocation.full_address candidate.full_address matching)}}
-      <div class="text-muted d-inline">{{currentLocation.full_address}}</div>
-      vs
-      <div class="mb-2 text-muted">{{ candidate.full_address }}</div>
-      {{else}}
-      <div class="text-danger d-inline">{{currentLocation.full_address}}</div>
-      vs
-      <div class="mb-2 text-primary">{{ candidate.full_address }}</div>
-      {{/if}}
+      {{> compareHeader currentItem=currentLocation.name candidateItem=candidate.name}} {{> compare
+      currentItem=currentLocation.full_address candidateItem=candidate.full_address}}
     </div>
 
-    {{#if (isEq currentLocation.phone_number candidate.phone_number matching)}}
-    <div class="text-muted d-inline">
-      {{#if currentLocation.phone_number}}{{currentLocation.phone_number}}{{else}}No phone number{{/if}}
-    </div>
-    vs
-    <div class="mb-2 text-muted">
-      {{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number{{/if}}
-    </div>
-    {{else}}
-    <div class="text-danger d-inline">
-      {{#if currentLocation.phone_number}}{{currentLocation.phone_number}}{{else}}No phone number{{/if}}
-    </div>
-    vs
-    <div class="mb-2 text-primary">
-      {{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number{{/if}}
-    </div>
-    {{/if}} {{#if (isEq currentLocation.website candidate.website matching)}}
-    <div class="text-break d-inline">
-      <a class="text-muted" href="{{currentLocation.website}}" target="_new">
-        {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
-      </a>
-    </div>
-    vs
-    <div class="text-break mb-2">
-      <a class="text-muted" href="{{candidate.website}}" target="_new">
-        {{#if candidate.website}}{{candidate.website}}{{else}}No website{{/if}}
-      </a>
-    </div>
-    {{else}}
-    <div class="text-break d-inline">
-      <a class="text-danger" href="{{currentLocation.website}}" target="_new">
-        {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
-      </a>
-    </div>
-    vs
-    <div class="text-break mb-2">
-      <a class="text-primary" href="{{candidate.website}}" target="_new">
-        {{#if candidate.website}}{{candidate.website}}{{else}}No website{{/if}}
-      </a>
-    </div>
-    {{/if}} {{#unless matching}} {{#if (isEq currentLocation.hours candidate.hours matching)}}
-    <div class="text-muted d-inline">{{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}</div>
-    vs
-    <div class="mb-2 text-muted">{{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}</div>
-    {{else}}
-    <div class="text-danger d-inline">
-      {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
-    </div>
-    vs
-    <div class="mb-2 text-primary">{{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}</div>
-    {{/if}} {{/unless}}
+    {{> compare currentItem=currentLocation.phone_number candidateItem=candidate.phone_number default="No phone
+    number"}} {{> compareLink currentItem=currentLocation.website candidateItem=candidate.website default="No website"}}
+    {{#unless matching}} {{> compare currentItem=currentLocation.hours candidateItem=candidate.hours default="No
+    hours"}} {{/unless}}
 
     <div>Distance: {{ candidate.distance }} miles away</div>
     {{#unless matching}}
