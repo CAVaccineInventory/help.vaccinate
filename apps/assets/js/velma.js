@@ -21,6 +21,7 @@ import { mergeLogic } from "./velma/merge.js";
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 
+import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import optionsModalTemplate from "./templates/velma/optionsModal.handlebars";
 import completionToastTemplate from "./templates/velma/completionToast.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
@@ -188,7 +189,7 @@ const enablePowerUserKeybindings = () => {
       return;
     }
     isPressed = true;
-    logic.handleKeybind({
+    logic?.handleKeybind({
       key: e.key,
       candidate: currentCandidates[currentCandidateIndex],
       currentLocation,
