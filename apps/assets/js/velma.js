@@ -21,11 +21,10 @@ import { mergeLogic } from "./velma/merge.js";
 import loggedInAsTemplate from "./templates/loggedInAs.handlebars";
 import notLoggedInTemplate from "./templates/notLoggedIn.handlebars";
 
+import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import optionsModalTemplate from "./templates/velma/optionsModal.handlebars";
 import completionToastTemplate from "./templates/velma/completionToast.handlebars";
-import debugModalTemplate from "./templates/velma/debugModal.handlebars";
 import nextItemPromptTemplate from "./templates/velma/nextItemPrompt.handlebars";
-import compareTemplate from "./templates/velma/compare.handlebars";
 
 document.addEventListener("DOMContentLoaded", () => {
   Sentry.init({
@@ -113,55 +112,14 @@ const requestItem = async (id) => {
 
 const showCandidate = () => {
   const candidate = currentCandidates[currentCandidateIndex];
-
-  let locationUrl;
-  let candidateUrl;
-  if (logic.role === "merge") {
-    locationUrl = `https://vaccinatethestates.com?lat=${currentLocation.latitude}&lng=${currentLocation.longitude}#${currentLocation.id}`;
-  }
-  if (candidate) {
-    candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`;
-  }
-
-  fillTemplateIntoDom(compareTemplate, "#compareCandidate", {
-    currentLocation: currentLocation,
-    candidate: candidate,
+  logic.compareCandidates({
+    currentLocation,
+    candidate,
+    actions,
+    currentCandidateIndex,
     numCandidates: currentCandidates.length,
-    curNumber: currentCandidateIndex + 1,
-    matching: logic.role === "match",
-    locationUrl,
-    candidateUrl,
+    selector: "#compareCandidate",
   });
-
-  if (candidate && candidate.latitude && candidate.longitude) {
-    const mymap = L.map(`map-${candidate.id}`).setView([candidate.latitude, candidate.longitude], 13);
-
-    L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-      attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 18,
-      id: "mapbox/streets-v11",
-      tileSize: 512,
-      zoomOffset: -1,
-      accessToken: "pk.eyJ1IjoiY2FsbHRoZXNob3RzIiwiYSI6ImNrbzNod3B0eDB3cm4ycW1ieXJpejR4cGQifQ.oZSg34AkLAVhksJjLt7kKA",
-    }).addTo(mymap);
-    const srcLoc = L.circle([currentLocation.latitude, currentLocation.longitude], {
-      color: "red",
-      fillColor: "#f03",
-      fillOpacity: 0.5,
-      radius: 15,
-    }).addTo(mymap);
-    const candidateLoc = L.circle([candidate.latitude, candidate.longitude], {
-      color: "blue",
-      fillColor: "#30f",
-      fillOpacity: 0.5,
-      radius: 15,
-    }).addTo(mymap);
-
-    // eslint-disable-next-line
-    const group = new L.featureGroup([srcLoc, candidateLoc]);
-    mymap.fitBounds(group.getBounds(), { padding: L.point(5, 5) });
-  }
 
   bindClick(".js-debug", () => {
     showModal(debugModalTemplate, {
@@ -169,11 +127,10 @@ const showCandidate = () => {
       candidateJson: candidate ? JSON.stringify(candidate, null, 2) : null,
     });
   });
-
-  logic.initActions(currentLocation, candidate, actions);
 };
 
 const showCompletionToast = (source) => {
+  // TODO: this would be better abstracted to logic files
   fillTemplateIntoDom(completionToastTemplate, "#toastContainer", {
     title: currentLocation?.name,
     reasonSkip: source === "skip",
@@ -233,7 +190,12 @@ const enablePowerUserKeybindings = () => {
       return;
     }
     isPressed = true;
-    logic.handleKeybind(e.key, currentLocation, currentCandidates[currentCandidateIndex], actions);
+    logic?.handleKeybind({
+      key: e.key,
+      candidate: currentCandidates[currentCandidateIndex],
+      currentLocation,
+      actions,
+    });
   });
 };
 

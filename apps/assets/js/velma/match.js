@@ -1,17 +1,16 @@
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
-import { createCandidates } from "./candidates.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
+import { distance, setupMap } from "./utils.js";
 
-import matchActionsTemplate from "../templates/velma/matchActions.handlebars";
 import matchKeybindsTemplate from "../templates/velma/matchKeybinds.handlebars";
+import compareMatchTemplate from "../templates/velma/compareMatch.handlebars";
 
 export const matchLogic = () => {
   return {
     getData,
-    initActions,
+    compareCandidates,
     handleKeybind,
-    role: "match",
     supportsRedo: true,
     keybindTemplate: matchKeybindsTemplate,
   };
@@ -58,17 +57,41 @@ const getData = async (id, onError) => {
   currentLocation.phone_number = sourceLocation?.import_json?.contact?.find((method) => !!method.phone)?.phone;
   currentLocation.full_address = `${sourceLocation.import_json.address.street1}, ${sourceLocation.import_json.address.city}, ${sourceLocation.import_json.address.state} ${sourceLocation.import_json.address.zip}`;
 
-  const candidates = await createCandidates(sourceLocation, null, (error) => {
+  const candidatesResponse = await fetchJsonFromEndpoint(
+    "/searchLocations?size=50&latitude=" +
+    currentLocation.latitude +
+      "&longitude=" +
+      currentLocation.longitude +
+      "&radius=2000",
+    "GET"
+  );
+
+  if (candidatesResponse.error) {
     showErrorModal(
       "Error fetching locations to match against",
       "We ran into an error trying to fetch you locations to match against. Please show this error message to your captain or lead on Slack." +
             " They may also need to know that you are logged in as " +
             user?.email +
             ".",
-      error
+      candidatesResponse.error
     );
-    onError();
     return;
+  }
+
+  const candidates = candidatesResponse?.results || [];
+
+  // record the distance. then sort the results by it
+  candidates.forEach((item) => {
+    item.distance =
+      Math.round(100 * distance(item.latitude, item.longitude, currentLocation.latitude, currentLocation.longitude)) /
+      100;
+  });
+  candidates.sort((a, b) => (a.distance > b.distance ? 1 : -1));
+  candidates.forEach((candidate) => {
+    if (candidate && candidate.latitude && candidate.longitude) {
+      candidate.latitude = Math.round(candidate.latitude * 10000) / 10000;
+      candidate.longitude = Math.round(candidate.longitude * 10000) / 10000;
+    }
   });
 
   return {
@@ -78,10 +101,21 @@ const getData = async (id, onError) => {
   };
 };
 
-const initActions = (currentLocation, candidate, actions) => {
-  fillTemplateIntoDom(matchActionsTemplate, "#actionsContainer", {
+const compareCandidates = ({ currentLocation, candidate, actions, selector, currentCandidateIndex, numCandidates }) => {
+  let candidateUrl;
+  if (candidate) {
+    candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`;
+  }
+
+  fillTemplateIntoDom(compareMatchTemplate, selector, {
+    curNumber: currentCandidateIndex + 1,
+    currentLocation,
     candidate,
+    numCandidates,
+    candidateUrl,
   });
+
+  setupMap(currentLocation, candidate);
 
   bindClick(".js-skip", actions.skipLocation);
   bindClick(".js-tryagain", actions.restart);
@@ -90,7 +124,7 @@ const initActions = (currentLocation, candidate, actions) => {
   bindClick(".js-create", () => createLocation(currentLocation?.id, actions.completeLocation));
 };
 
-const handleKeybind = (key, currentLocation, candidate, actions) => {
+const handleKeybind = ({ key, currentLocation, candidate, actions }) => {
   switch (key) {
     case "1":
     case "m":

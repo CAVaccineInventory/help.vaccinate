@@ -1,0 +1,58 @@
+<div class="candidateContainer row border-start">
+  <div class="col-6">
+    <div class="{{#if matching}}text-lowercase{{/if}}">
+      <h4 class="text-danger d-inline">{{currentLocation.name}}</h4>
+      vs
+      <h4 class="text-primary">{{ candidate.name }}</h4>
+
+      <div class="text-danger d-inline">{{currentLocation.full_address}}</div>
+      vs
+      <div class="mb-2 text-primary">{{ candidate.full_address }}</div>
+    </div>
+
+    <div class="text-danger d-inline">
+      {{#if currentLocation.phone_number}}{{currentLocation.phone_number}}{{else}}No phone number{{/if}}
+    </div>
+    vs
+    <div class="mb-2 text-primary">
+      {{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number{{/if}}
+    </div>
+
+    <div class="text-break d-inline">
+      <a class="text-danger" href="{{currentLocation.website}}" target="_new">
+        {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
+      </a>
+    </div>
+    vs
+    <div class="text-break mb-2">
+      <a class="text-primary" href="{{candidate.website}}" target="_new">
+        {{#if candidate.website}}{{candidate.website}}{{else}}No website{{/if}}
+      </a>
+    </div>
+
+    {{#unless matching}}
+    <!-- merging -->
+    <div class="text-danger d-inline">
+      {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
+    </div>
+    vs
+    <div class="mb-2 text-primary">{{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}</div>
+
+    <div class="text-danger d-inline">
+      {{#if currentLocation.provider.name}}Provider: {{currentLocation.provider.name}}{{else}}No provider{{/if}}
+    </div>
+    vs
+    <div class="mb-2 text-primary">
+      {{#if candidate.provider.name}}Provider: {{candidate.provider.name}}{{else}}No provider{{/if}}
+    </div>
+    {{/unless}}
+
+    <div>Distance: {{ candidate.distance }} miles away</div>
+    {{#unless matching}}
+    <div>
+      IDs: <span class="text-danger">{{currentLocation.id}}</span>, <span class="text-primary">{{candidate.id}}</span>
+    </div>
+    {{/unless}} {{> inlineButtons}}
+  </div>
+  <div class="map col-6" id="map-{{candidate.id}}">Map goes here</div>
+</div>

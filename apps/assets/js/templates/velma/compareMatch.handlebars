@@ -1,0 +1,39 @@
+<h3 class="mt-4 text-center">Matching <span class="text-danger">{{currentLocation.name}}</span></h3>
+
+{{#if candidate}}
+<h5 class="mb-4 text-center">Candidate {{curNumber}} of {{numCandidates}}</h5>
+{{else}}
+<h5 class="mb-4 text-center">
+  {{#if numCandidates}}All potential matches declined{{else}}We couldn't find any matching candidates{{/if}}
+</h5>
+{{/if}} {{#if candidate}} {{> compareItem matching=true}} {{else}}
+<div class="candidateContainer row border-start">
+  <div class="col-6">
+    <h4 class="text-lowercase text-danger">{{ currentLocation.name }}</h4>
+    <div class="text-lowercase text-danger">{{ currentLocation.full_address }}</div>
+    <div class="text-danger">
+      {{#if currentLocation.phone_number}}{{currentLocation.phone_number}}{{else}}No phone number{{/if}}
+    </div>
+    <div class="text-break">
+      <a class="text-danger" href="{{currentLocation.website}}" target="_new">
+        {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
+      </a>
+    </div>
+    {{> inlineButtons}}
+  </div>
+</div>
+{{/if}}
+
+<div id="actions" class="d-flex flex-column align-items-center p-2 position-fixed w-100 bottom-0 bg-white">
+  <div id="actionsContainer" class="d-flex justify-content-center mt-2">
+    {{#if candidate}}
+    <button class="js-match btn btn-success me-4 my-2">Matches this one!</button>
+    <button class="js-close btn btn-secondary me-4 my-2">Does not match</button>
+    <button class="js-skip btn btn-warning my-2">Skip this location. Someone else can deal.</button>
+    {{else}}
+    <button class="js-create btn btn-success me-4 my-2">Create a new location</button>
+    <button class="js-tryagain btn btn-secondary me-4 my-2">Try again, I think I messed up</button>
+    <button class="js-skip btn btn-warning my-2">Skip this location. Someone else can deal.</button>
+    {{/if}}
+  </div>
+</div>
