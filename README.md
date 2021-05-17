@@ -18,8 +18,8 @@ For matching, Velma randomly picks unmatched source locations, but can be passed
 - `source_name=<source_name>` to search locations by source_name, e.g. `vaccinespotter_org`.
 
 For merging, Velma pulls tasks from the VIAL merge queue, but can be passed query parameters to be more targeted.
-- `source_q=<name>` to search tasks by location name.
-- `source_state=<state_code>` to search tasks by state code such as `CA`
+- `task_q=<name>` to search tasks by location name.
+- `task_state=<state_code>` to search tasks by state code such as `CA`
 
 ## Report bugs and feature requests using Github [Issues](https://github.com/CAVaccineInventory/help.vaccinate/issues)
 
