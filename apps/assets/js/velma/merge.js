@@ -31,7 +31,7 @@ const getData = async (id, onError) => {
     requestBody.state = urlParams.get("source_state");
   }
 
-  const response = await fetchJsonFromEndpoint(`/requestTask?${createRequestTaskQueryParams()}`, "POST", JSON.stringify(requestBody));
+  const response = await fetchJsonFromEndpoint("/requestTask", "POST", JSON.stringify(requestBody));
   if (response.error) {
     showErrorModal(
       "Error fetching location to merge",
@@ -173,18 +173,4 @@ const resolveTask = async (taskId, completeLocation) => {
     return;
   }
   completeLocation("nomerge");
-};
-
-const createRequestTaskQueryParams = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const params = {};
-  const q = urlParams.get("source_q");
-  const state = urlParams.get("source_state");
-  if (q) {
-    params.q = q;
-  }
-  if (state) {
-    params.state = state;
-  }
-  return new URLSearchParams(params).toString();
 };
