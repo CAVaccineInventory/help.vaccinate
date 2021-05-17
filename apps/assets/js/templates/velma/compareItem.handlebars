@@ -1,7 +1,7 @@
 <div class="candidateContainer row border-start">
   <div class="col-6">
     <div class="{{#if matching}}text-lowercase{{/if}}">
-      {{#if (isEq currentLocation.name candidate.name matching)}} 
+      {{#if (isEq currentLocation.name candidate.name matching)}}
       <h4 class="text-muted d-inline">{{currentLocation.name}}</h4>
       vs
       <h4 class="text-muted">{{ candidate.name }}</h4>
@@ -9,9 +9,7 @@
       <h4 class="text-danger d-inline">{{currentLocation.name}}</h4>
       vs
       <h4 class="text-primary">{{ candidate.name }}</h4>
-      {{/if}}
-
-      {{#if (isEq currentLocation.full_address candidate.full_address matching)}}
+      {{/if}} {{#if (isEq currentLocation.full_address candidate.full_address matching)}}
       <div class="text-muted d-inline">{{currentLocation.full_address}}</div>
       vs
       <div class="mb-2 text-muted">{{ candidate.full_address }}</div>
@@ -38,9 +36,7 @@
     <div class="mb-2 text-primary">
       {{#if candidate.phone_number}}{{candidate.phone_number}}{{else}}No phone number{{/if}}
     </div>
-    {{/if}}
-
-    {{#if (isEq currentLocation.website candidate.website matching)}}
+    {{/if}} {{#if (isEq currentLocation.website candidate.website matching)}}
     <div class="text-break d-inline">
       <a class="text-muted" href="{{currentLocation.website}}" target="_new">
         {{#if currentLocation.website}}{{currentLocation.website}}{{else}}No website{{/if}}
@@ -64,14 +60,8 @@
         {{#if candidate.website}}{{candidate.website}}{{else}}No website{{/if}}
       </a>
     </div>
-    {{/if}}
-
-    {{#unless matching}}
-
-    {{#if (isEq currentLocation.hours candidate.hours matching)}}
-    <div class="text-muted d-inline">
-      {{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}
-    </div>
+    {{/if}} {{#unless matching}} {{#if (isEq currentLocation.hours candidate.hours matching)}}
+    <div class="text-muted d-inline">{{#if currentLocation.hours}}{{currentLocation.hours}}{{else}}No Hours{{/if}}</div>
     vs
     <div class="mb-2 text-muted">{{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}</div>
     {{else}}
@@ -80,9 +70,7 @@
     </div>
     vs
     <div class="mb-2 text-primary">{{#if candidate.hours}}{{candidate.hours}}{{else}}No hours{{/if}}</div>
-    {{/if}}
-
-    {{/unless}}
+    {{/if}} {{/unless}}
 
     <div>Distance: {{ candidate.distance }} miles away</div>
     {{#unless matching}}
