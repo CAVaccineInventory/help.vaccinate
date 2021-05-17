@@ -1,15 +1,15 @@
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
-import { distance } from "./distance.js";
+import { distance, setupMap } from "./utils.js";
 
-import matchActionsTemplate from "../templates/velma/matchActions.handlebars";
 import matchKeybindsTemplate from "../templates/velma/matchKeybinds.handlebars";
+import compareMatchTemplate from "../templates/velma/compareMatch.handlebars";
 
 export const matchLogic = () => {
   return {
     getData,
-    initActions,
+    compareCandidates,
     handleKeybind,
     role: "match",
     supportsRedo: true,
@@ -60,9 +60,9 @@ const getData = async (id, onError) => {
 
   const candidatesResponse = await fetchJsonFromEndpoint(
     "/searchLocations?size=50&latitude=" +
-      location.latitude +
+    currentLocation.latitude +
       "&longitude=" +
-      location.longitude +
+      currentLocation.longitude +
       "&radius=2000",
     "GET"
   );
@@ -74,7 +74,7 @@ const getData = async (id, onError) => {
             " They may also need to know that you are logged in as " +
             user?.email +
             ".",
-      error
+      candidatesResponse.error
     );
     return;
   }
@@ -84,7 +84,7 @@ const getData = async (id, onError) => {
   // record the distance. then sort the results by it
   candidates.forEach((item) => {
     item.distance =
-      Math.round(100 * distance(item.latitude, item.longitude, location.latitude, location.longitude)) /
+      Math.round(100 * distance(item.latitude, item.longitude, currentLocation.latitude, currentLocation.longitude)) /
       100;
   });
   candidates.sort((a, b) => (a.distance > b.distance ? 1 : -1));
@@ -102,10 +102,21 @@ const getData = async (id, onError) => {
   };
 };
 
-const initActions = (currentLocation, candidate, actions) => {
-  fillTemplateIntoDom(matchActionsTemplate, "#actionsContainer", {
+const compareCandidates = ({currentLocation, candidate, actions, selector, currentCandidateIndex, numCandidates}) => {
+  let candidateUrl;
+  if (candidate) {
+    candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`;
+  }
+
+  fillTemplateIntoDom(compareMatchTemplate, selector, {
+    curNumber: currentCandidateIndex + 1,
+    currentLocation,
     candidate,
+    numCandidates,
+    candidateUrl,
   });
+
+  setupMap(currentLocation, candidate);
 
   bindClick(".js-skip", actions.skipLocation);
   bindClick(".js-tryagain", actions.restart);

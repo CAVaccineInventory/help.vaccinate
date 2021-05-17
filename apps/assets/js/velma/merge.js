@@ -1,15 +1,15 @@
 import { getUser } from "../util/auth.js";
 import { fetchJsonFromEndpoint } from "../util/api.js";
 import { fillTemplateIntoDom, showErrorModal, bindClick, showLoadingScreen, hideLoadingScreen } from "../util/fauxFramework.js";
-import { distance } from "./distance.js";
+import { distance, setupMap } from "./utils.js";
 
-import mergeActionsTemplate from "../templates/velma/mergeActions.handlebars";
+import compareMergeTemplate from "../templates/velma/compareMerge.handlebars";
 import mergeKeybindsTemplate from "../templates/velma/mergeKeybinds.handlebars";
 
 export const mergeLogic = () => {
   return {
     getData,
-    initActions,
+    compareCandidates,
     handleKeybind,
     role: "merge",
     supportsRedo: false,
@@ -23,9 +23,16 @@ const getData = async (id, onError) => {
     return;
   }
   const user = await getUser();
-  const response = await fetchJsonFromEndpoint("/requestTask", "POST", JSON.stringify({
-    task_type: "Potential duplicate",
-  }));
+  const urlParams = new URLSearchParams(window.location.search);
+  let requestBody = {task_type: "Potential duplicate"};
+  if (urlParams.get("source_q")) {
+    requestBody.q = urlParams.get("source_q");
+  }
+  if (urlParams.get("source_state")) {
+    requestBody.state = urlParams.get("source_state");
+  }
+
+  const response = await fetchJsonFromEndpoint(`/requestTask?${createRequestTaskQueryParams()}`, "POST", JSON.stringify(requestBody));
   if (response.error) {
     showErrorModal(
       "Error fetching location to merge",
@@ -42,7 +49,10 @@ const getData = async (id, onError) => {
     showErrorModal(
       "No locations left to merge",
       "We could not find a location that needed to be merged:",
-      response
+      {
+        requestBody,
+        response
+      }
     );
     onError();
     return;
@@ -72,8 +82,21 @@ const getData = async (id, onError) => {
   };
 };
 
-const initActions = (currentLocation, candidate, actions) => {
-  fillTemplateIntoDom(mergeActionsTemplate, "#actionsContainer");
+const compareCandidates = ({currentLocation, candidate, actions, selector }) => {
+  const locationUrl = `https://vaccinatethestates.com?lat=${currentLocation.latitude}&lng=${currentLocation.longitude}#${currentLocation.id}`;
+  let candidateUrl;
+  if (candidate) {
+    candidateUrl = `https://vaccinatethestates.com?lat=${candidate.latitude}&lng=${candidate.longitude}#${candidate.id}`;
+  }
+
+  fillTemplateIntoDom(compareMergeTemplate, selector, {
+    currentLocation,
+    candidate,
+    candidateUrl,
+    locationUrl,
+  });
+
+  setupMap(currentLocation, candidate);
 
   bindClick(".js-current-wins", () => mergeLocations(currentLocation.id, candidate.id, currentLocation.task_id, actions.completeLocation));
   bindClick(".js-candidate-wins", () => mergeLocations(candidate.id, currentLocation.id, currentLocation.task_id, actions.completeLocation));
@@ -151,4 +174,18 @@ const resolveTask = async (taskId, completeLocation) => {
     return;
   }
   completeLocation("nomerge");
+};
+
+const createRequestTaskQueryParams = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const params = {};
+  const q = urlParams.get("source_q");
+  const state = urlParams.get("source_state");
+  if (q) {
+    params.q = q;
+  }
+  if (state) {
+    params.state = state;
+  }
+  return new URLSearchParams(params).toString();
 };
