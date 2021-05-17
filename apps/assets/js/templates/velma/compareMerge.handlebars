@@ -1,0 +1,15 @@
+<h3 class="my-4 text-center">
+  Merging <span class="text-danger">{{currentLocation.name}}</span> and
+  <span class="text-primary">{{candidate.name}}</span>
+</h3>
+
+{{> compareItem matching=false}}
+
+<div id="actions" class="d-flex flex-column align-items-center p-2 position-fixed w-100 bottom-0 bg-white">
+  <div id="actionsContainer" class="d-flex justify-content-center mt-2">
+    <button class="js-current-wins btn btn-danger me-4 my-2">Red wins merge</button>
+    <button class="js-candidate-wins btn btn-primary me-4 my-2">Blue wins merge</button>
+    <button class="js-close btn btn-secondary me-4 my-2">Does not match</button>
+    <button class="js-skip btn btn-warning my-2">Skip this location. Someone else can deal.</button>
+  </div>
+</div>

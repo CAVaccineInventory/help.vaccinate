@@ -219,11 +219,6 @@ const constructReportFromDom = () => {
       case "noNotYet":
         availability.push("No: may be a vaccination site in the future");
         break;
-      case "pausedJJ":
-        availability.push(
-          "Vaccinations may be on hold due to CDC/FDA guidance regarding the Johnson & Johnson vaccine"
-        );
-        break;
       default:
         break;
     }

@@ -11,10 +11,15 @@ displays a script of questions callers use to ask sites about vaccines, and then
 ## What does Velma do?
 
 Velma is the web frontend for manually matching and merging vaccination locations in VIAL. 
+
 For matching, Velma randomly picks unmatched source locations, but can be passed query parameters to be more targeted.
 - `source_q=<name>` to search locations by name.
 - `source_state=<state_code>` to search locations by state code such as `CA`
 - `source_name=<source_name>` to search locations by source_name, e.g. `vaccinespotter_org`.
+
+For merging, Velma pulls tasks from the VIAL merge queue, but can be passed query parameters to be more targeted.
+- `source_q=<name>` to search tasks by location name.
+- `source_state=<state_code>` to search tasks by state code such as `CA`
 
 ## Report bugs and feature requests using Github [Issues](https://github.com/CAVaccineInventory/help.vaccinate/issues)
 
