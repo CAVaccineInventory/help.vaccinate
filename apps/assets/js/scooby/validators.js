@@ -20,11 +20,11 @@ const AVAIL_TO_BLOCKING_ISSUES = {
   "No: will never be a vaccination site": NEVER_BLOCK,
   "No: location permanently closed": PERM_CLOSED_BLOCK,
   "No: not open to the public": PRIVATE_ONLY_BLOCK,
-  "Yes: walk-ins accepted": WALKINS_ACCEPTED_BLOCK,
+  "Yes: walk-ins only": WALKINS_ACCEPTED_BLOCK,
   "Yes: appointments or walk-ins accepted": WALKINS_ACCEPTED_BLOCK,
 };
 
-const ALWAYS_REVIEW_CALL_TAGS = new Set(["Yes: walk-ins accepted"]);
+const ALWAYS_REVIEW_CALL_TAGS = new Set(["Yes: walk-ins only"]);
 
 const phoneNumberRegex = /\s+(\+?\d{1,2}(\s|-)*)?(\(\d{3}\)|\d{3})(\s|-)*\d{3}(\s|-)*\d{4}/;
 const emailRegex = /\S+@\S+\.\S+/; // This is very much not RFC-compliant, but generally matches common addresses.
