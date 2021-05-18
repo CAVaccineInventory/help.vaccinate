@@ -246,8 +246,8 @@ const constructReportFromDom = () => {
     // And do you require appointments, or are walk-ins accepted?
     const apptRequired = document.querySelector("[name=appointmentRequired]:checked")?.value;
     switch (apptRequired) {
-      case "walkinOk":
-        availability.push("Yes: walk-ins accepted");
+      case "walkinOnly":
+        availability.push("Walk-ins only");
         break;
       case "required":
         availability.push("Yes: appointment required");

@@ -21,7 +21,7 @@ Sets `Vaccines offered` as an array of values: `["Moderna", "Pfizer", "Johnson &
 
 - Appointment Required - Adds availability tag `Yes: appointment required`
 - Accept appointments and walk-ins - Adds availability tag `Yes: appointments or walk-ins accepted`
-- Walk-ins only - Adds availability tag `Yes: walk-ins accepted`
+- Walk-ins only - Adds availability tag `Walk-ins only`
 
 ***If nothing is selected, defaults to `Yes: appointment required`***
 
