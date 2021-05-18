@@ -8,8 +8,8 @@ const PERM_CLOSED_BLOCK =
   "Before we mark a site as being permanently closed, we'd like some more information about why. Fill in the private notes field with as much information as you can about what the location told you.";
 const PRIVATE_ONLY_BLOCK =
   "Before we mark a site as not being open to the public, we'd like some more information about why. Please fill in the private notes field with as much information as you can about what the location told you.";
-const WALKINS_ONLY_BLOCK =
-  "In general, locations that only allow walk-ins are rare. Fill in the private notes field with details about what the pharmacist told you.";
+const WALKINS_ACCEPTED_BLOCK =
+  "In general, locations that allow walk-ins are rare. Fill in the private notes field with details about what the pharmacist told you.";
 const INVALID_DATE_FORMAT_BLOCK =
   "The date that was entered for when the site will stop offering vaccines was not in a format we recognize. If you are using Safari, that would be yyyy-mm-dd. For example: 2021-05-25.";
 const OTHER_VACCINE_BLOCK =
@@ -20,7 +20,7 @@ const AVAIL_TO_BLOCKING_ISSUES = {
   "No: will never be a vaccination site": NEVER_BLOCK,
   "No: location permanently closed": PERM_CLOSED_BLOCK,
   "No: not open to the public": PRIVATE_ONLY_BLOCK,
-  "Yes: walk-ins only": WALKINS_ONLY_BLOCK,
+  "Yes: walk-ins only": WALKINS_ACCEPTED_BLOCK,
   "Yes: appointments or walk-ins accepted": WALKINS_ACCEPTED_BLOCK,
 };
 
