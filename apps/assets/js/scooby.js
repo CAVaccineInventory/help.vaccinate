@@ -421,19 +421,9 @@ const submitSkipUntil = (when) => {
 };
 
 // Busy signals, no answer, voice mail, and long holds
-const submitCallTwoHours = () => {
+const submitCallLater = () => {
   const when = new Date();
-  when.setTime(when.getTime() + 2 * HOUR);
-  submitSkipUntil(when);
-};
-
-const submitCallTomorrow = () => {
-  const when = new Date();
-  // Advance the clock 24 hours to get to tomorrow, then bounce back to 8am localtime.
-  // / TODO this shouldn't be in localtime
-  when.setTime(when.getTime() + 24 * HOUR);
-  when.setHours(8);
-  when.setMinutes(0);
+  when.setTime(when.getTime() + 48 * HOUR);
   submitSkipUntil(when);
 };
 
@@ -572,10 +562,10 @@ const activateCallTemplate = () => {
   bindClick("#scoobyRecordCall", saveCallReport);
   bindClick("#wrongNumber", submitBadContactInfo);
   bindClick("#permanentlyClosed", submitPermanentlyClosed);
-  bindClick("#closedForTheDay", submitCallTomorrow);
   bindClick("#closedForTheWeekend", submitCallMonday);
-  bindClick("#noAnswer", submitCallTwoHours);
-  bindClick("#longHold", submitCallTwoHours);
+  bindClick("#closedForTheDay", submitCallLater);
+  bindClick("#noAnswer", submitCallLater);
+  bindClick("#longHold", submitCallLater);
 
   // don't show "on hold for more than 4 minutes" until 4 min have elapsed
   const el = document.querySelector("#longHold");
