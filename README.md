@@ -1,3 +1,5 @@
+### Vaccinate The States has shut down as of August 2, 2021. [Learn more →](https://github.com/CAVaccineInventory/vaccinatethestates/blob/main/shutdown-notice.md)
+
 # help.vaccinateca.com
 
 help.vaccinateca.com is the home for internal webapps. Today, that consists of Scooby and Velma.
